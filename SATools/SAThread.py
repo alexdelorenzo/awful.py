@@ -1,0 +1,34 @@
+from SATools.SAPost import SAPost
+
+__author__ = 'alex'
+
+from bs4 import BeautifulSoup
+
+
+class SAThread(object):
+	def __init__(self, id, session, name=None):
+		self.name = name
+		self.id = id
+		self.session = session
+
+		self.base_url = session.base_url + 'showthread.php'
+		self.url = self.base_url + '?threadid=' + id
+		self.content = None
+		self.posts = None
+
+	def read(self, page=1):
+		request = self.session.get(self.url)
+		self.content = BeautifulSoup(request.content)
+		self.posts = self._get_posts()
+
+	def _get_posts(self):
+		return {post['id']: SAPost(post['id'], self.session, post) for post in self.content.select('table.post')}
+
+
+
+def main():
+	pass
+
+
+if __name__ == "__main__":
+	main()

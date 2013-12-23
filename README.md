@@ -6,6 +6,9 @@ with great power comes great responsibility.
 Usage
 =======
 
+
+
+```
 from AwfulPy import AwfulPy
 
 username, password = 'your_username', 'your_passwd'
@@ -26,11 +29,9 @@ for post in bad_thread.posts:
   print(post.body)
 
 shitty_poster_profile = post.poster.url
+```
 
 
-
-
-Browsing threads
 License
 ========
 

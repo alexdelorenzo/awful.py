@@ -8,7 +8,7 @@ Usage
 
 
 
-```
+```python
 from AwfulPy import AwfulPy
 
 username, password = 'your_username', 'your_passwd'

@@ -2,16 +2,16 @@ __author__ = 'alex'
 from SATools.SAPoster import SAPoster
 import requests
 from bs4 import BeautifulSoup
+import pickle, os
 
 class SASession(requests.Session):
 	def __init__(self, username, passwd):
-		super().__init__()
+		super(SASession, self).__init__() #super() args for 2.7 & 3.0+ compat
 		self.username = username
 		self.base_url = 'https://forums.somethingawful.com/'
 		self.login(username, passwd)
 		self.id = self.cookies.get('bbuserid')
 		self.profile = SAPoster(self.id, username, self)
-
 
 	def login(self, username, passwd):
 		login_url = self.base_url + 'account.php'
@@ -33,7 +33,8 @@ class SASession(requests.Session):
 		bs = BeautifulSoup(response.content)
 
 		want = 'action', 'formkey', 'form_cookie'
-		inputs = {i['name']: i['value'] for i in bs.find_all('input') if i.has_key('value') and i['name'] in want}
+		inputs = {i['name']: i['value'] for i in bs.find_all('input')
+		          if i.has_key('value') and i['name'] in want}
 		inputs['parseurl'] = 'yes'
 		inputs['message'] = body
 

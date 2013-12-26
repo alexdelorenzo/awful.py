@@ -1,5 +1,5 @@
 from SATools.SAThread import SAThread
-
+from collections import OrderedDict as ordered
 __author__ = 'alex'
 
 import bs4
@@ -18,8 +18,11 @@ class SAForum(object):
 
 	def read(self, pg=1):
 		self.listings = self._get_threads(pg)
-		self.threads = {id: SAThread(id, self.session, name=name)
-		                for id, name in self.listings.items()}
+
+		gen_threads = ((id, SAThread(id, self.session, name=name))
+		                for id, name in self.listings.items())
+
+		self.threads = ordered(thread for thread in gen_threads)
 
 
 	def _get_threads(self, pg):
@@ -30,10 +33,11 @@ class SAForum(object):
 
 		self.bs_content = bs4.BeautifulSoup(content)
 
-		threads = {link['href'].split('=')[-1]: link.text
-		           for link in self.bs_content.select('a.thread_title')}
+		gen_threads = ((link['href'].split('=')[-1], link.text)
+		              for link in self.bs_content.select('a.thread_title'))
 
-		#self.bs_content = None
+		threads = ordered(thread for thread in gen_threads)
+
 		return threads
 
 

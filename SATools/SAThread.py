@@ -1,5 +1,5 @@
 from SATools.SAPost import SAPost
-
+from collections import OrderedDict as ordered
 __author__ = 'alex'
 
 from bs4 import BeautifulSoup
@@ -22,7 +22,12 @@ class SAThread(object):
 		self.posts = self._get_posts()
 
 	def _get_posts(self):
-		return {post['id']: SAPost(post['id'], self.session, post) for post in self.content.select('table.post')}
+		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
+		             for post in self.content.select('table.post'))
+
+		posts = ordered(post for post in gen_posts)
+
+		return posts
 
 
 

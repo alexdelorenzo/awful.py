@@ -1,5 +1,6 @@
 from SATools.SAForum import SAForum
 import bs4
+from collections import OrderedDict as ordered
 
 class SAIndex(object):
 	def __init__(self, sa_session):
@@ -10,7 +11,7 @@ class SAIndex(object):
 
 		self.listings = self._get_forums_listing(self.content)
 		self.forums = [SAForum(id, self.session, name=name) for id, name in self.listings.items()]
-		self.forums = {forum.id: forum for forum in self.forums}
+		self.forums = ordered((forum.id, forum) for forum in self.forums)
 
 		del self.content
 
@@ -18,7 +19,11 @@ class SAIndex(object):
 		if not content:
 			content = self.content
 
-		return {link['href'].split('=')[-1]: link.text for link in content.find_all('a') if 'forumid' in link['href']}
+		gen_listings = ((link['href'].split('=')[-1], link.text)
+		                for link in content.find_all('a')
+		                if 'forumid' in link['href'])
+
+		return ordered(listing for listing in gen_listings)
 
 
 

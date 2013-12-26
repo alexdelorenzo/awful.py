@@ -13,6 +13,11 @@ class SASession(requests.Session):
 		self.id = self.cookies.get('bbuserid')
 		self.profile = SAPoster(self.id, username, self)
 
+	def __getstate__(self):
+		pickle_this = self.__dict__
+		pickle_this['prefetch'], pickle_this['timeout'] = None, None
+		return pickle_this
+
 	def login(self, username, passwd):
 		login_url = self.base_url + 'account.php'
 		post_data = {'username': username, 'password': passwd, 'action': 'login'}
@@ -20,7 +25,7 @@ class SASession(requests.Session):
 		response = self.post(login_url, post_data)
 
 		if not response.ok:
-			raise Exception((response.status_code, response.reason))
+			raise Exception(("Unable to login", response.status_code, response.reason))
 
 
 	def post_thread(self, title, body, tag=None, poll=None):

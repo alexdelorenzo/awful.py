@@ -4,12 +4,12 @@ from SATools.SAIndex import SAIndex
 import os, pickle
 
 class AwfulPy(object):
-	def __init__(self, username, passwd):
+	def __init__(self, username, passwd=None):
 		self.username = username
 		self.passwd = passwd
 		self.session_bak = '.sa_session.bak'
 
-		self.session = SASession(username, passwd)
+		self.session = self._load_session()
 		self.index = SAIndex(self.session)
 
 		del passwd
@@ -18,16 +18,19 @@ class AwfulPy(object):
 	def _load_session(self):
 		backup_exists = os.path.exists(self.session_bak)
 		session = None
+
 		if backup_exists:
 			with open(self.session_bak, 'rb') as old_session:
 				session = pickle.load(old_session)
+				print("Loading from backup...")
+
 		else:
 			session = SASession(self.username, self.passwd)
-			self._save_cookies(session)
+			self._save_session(session)
 
 		return session
 
-	def _save_cookies(self, session):
+	def _save_session(self, session):
 		with open(self.session_bak, 'wb') as session_file:
 			pickle.dump(session, session_file)
 

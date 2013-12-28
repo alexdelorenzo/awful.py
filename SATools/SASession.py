@@ -2,7 +2,6 @@ __author__ = 'alex'
 from SATools.SAPoster import SAPoster
 import requests
 from bs4 import BeautifulSoup
-import pickle, os
 
 class SASession(requests.Session):
 	def __init__(self, username, passwd):

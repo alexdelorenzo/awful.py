@@ -9,7 +9,7 @@ class QtPost(QtWidgets.QTextBrowser):
 		self.doc = QtGui.QTextDocument(post_obj.body)
 		self.setDocument(self.doc)
 		self.setMinimumHeight(10)
-		self.setMaximumHeight(80)
+		#self.setMaximumHeight(80)
 
 class QtTar(QtWidgets.QLabel):
 	def __init__(self, poster_obj):

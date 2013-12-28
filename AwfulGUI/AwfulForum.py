@@ -27,11 +27,10 @@ class AwfulThreadList(QtWidgets.QListWidget):
 	def __init__(self, sa_forum):
 		super().__init__()
 
-		self.setWordWrap(True)
-
 		if not sa_forum.threads:
 			sa_forum.read()
 
+		self.setWordWrap(True)
 		self.threads = []
 
 		for thread in sa_forum.threads.values():
@@ -43,6 +42,7 @@ class AwfulThreadList(QtWidgets.QListWidget):
 class AwfulThreadItem(QtWidgets.QListWidgetItem):
 	def __init__(self, sa_thread):
 		super().__init__()
+
 		self.thread = sa_thread
 		self.setText(sa_thread.name)
 		self.setToolTip(sa_thread.name)

@@ -7,9 +7,10 @@ class AwfulPy(object):
 	def __init__(self, username, passwd=None):
 		self.username = username
 		self.passwd = passwd
-		self.session_bak = '.sa_session.bak'
 
+		self.session_bak = '.' + username + '_sa.bak'
 		self.session = self._load_session()
+
 		self.index = SAIndex(self.session)
 
 		del passwd
@@ -21,8 +22,8 @@ class AwfulPy(object):
 
 		if backup_exists:
 			with open(self.session_bak, 'rb') as old_session:
+				print("Loading from backup: " + self.session_bak)
 				session = pickle.load(old_session)
-				print("Loading from backup...")
 
 		else:
 			session = SASession(self.username, self.passwd)

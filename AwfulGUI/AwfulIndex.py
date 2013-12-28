@@ -13,10 +13,12 @@ class AwfulIndex(QtWidgets.QMainWindow):
 		super().__init__()
 		self.awful_py = awful_py
 
-		self.root = QtWidgets.QWidget(self)
-		self.setMinimumSize(500, 500)
-		self.root.setMinimumSize(500, 500)
+		self.root = QtWidgets.QWidget()
+		self.setMinimumSize(1200, 800)
+		self.root.setMinimumSize(1200, 800)
 		self.hbox_main = QtWidgets.QHBoxLayout(self.root)
+
+		self.setCentralWidget(self.root)
 
 		self.vbox_lists = _Vbox_Lists(awful_py)
 		self.vbox_console = _Vbox_Console()
@@ -24,8 +26,8 @@ class AwfulIndex(QtWidgets.QMainWindow):
 		self.size_policy = QtWidgets.QSizePolicy(
 			QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
-		self.organize_layout()
 		self.setup_sizes()
+		self.organize_layout()
 
 		self.slots = AwfulSlots(self)
 
@@ -48,7 +50,7 @@ class _Gridbox_Threads(QtWidgets.QMainWindow):
 		super().__init__()
 		self.root = QtWidgets.QWidget(self)
 
-		self.setMinimumSize(500, 500)
+		self.setMinimumSize(1000, 600)
 		self.layout = QtWidgets.QGridLayout(self.root)
 
 
@@ -93,7 +95,7 @@ class _Vbox_Console(QtWidgets.QWidget):
 class AwfulPost(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
-		self.setMaximumHeight(100)
+		#self.setMaximumHeight(100)
 		self.layout = QtWidgets.QHBoxLayout(self)
 		self.text_box = QtWidgets.QPlainTextEdit(self)
 		self.post_button = QtWidgets.QPushButton('Post', self)

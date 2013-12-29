@@ -22,7 +22,7 @@ class SAForum(object):
 		gen_threads = ((id, SAThread(id, self.session, name=name))
 		                for id, name in self.listings.items())
 
-		self.threads = ordered(thread for thread in gen_threads)
+		self.threads = ordered(gen_threads)
 
 
 	def _get_threads(self, pg):
@@ -36,7 +36,7 @@ class SAForum(object):
 		gen_threads = ((link['href'].split('=')[-1], link.text)
 		              for link in self.bs_content.select('a.thread_title'))
 
-		threads = ordered(thread for thread in gen_threads)
+		threads = ordered(gen_threads)
 
 		return threads
 

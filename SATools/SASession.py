@@ -28,7 +28,7 @@ class SASession(requests.Session):
 
 
 	def post_thread(self, title, body, tag=None, poll=None):
-		pass
+		raise NotImplementedError
 
 	def reply(self, id, body):
 		url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
@@ -43,7 +43,10 @@ class SASession(requests.Session):
 		inputs['message'] = body
 
 		response = self.post(url, inputs)
-		return response
+
+		if not response.ok:
+			raise Exception(("Unable to reply", response.status_code, response.reason))
+
 
 
 

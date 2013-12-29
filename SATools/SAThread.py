@@ -25,7 +25,7 @@ class SAThread(object):
 		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
 		             for post in self.content.select('table.post'))
 
-		posts = ordered(post for post in gen_posts)
+		posts = ordered(gen_posts)
 
 		return posts
 

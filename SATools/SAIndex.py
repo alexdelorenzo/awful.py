@@ -23,7 +23,7 @@ class SAIndex(object):
 		                for link in content.find_all('a')
 		                if 'forumid' in link['href'])
 
-		return ordered(listing for listing in gen_listings)
+		return ordered(gen_listings)
 
 
 

@@ -1,7 +1,7 @@
 AwfulPy
 =======
 
-with great power comes great responsibility.
+don't get this banned. thanks.
 
 Usage
 =======
@@ -24,7 +24,7 @@ print(the_pos.listings)
 bad_thread = the_pos.threads['3596817']
 bad_thread.read()
 
-for post in bad_thread.posts:
+for post in bad_thread.posts.values():
   print(post.poster.name + " is a shitty poster. Don't post")
   print(post.body)
 

@@ -17,7 +17,7 @@ SATools
 ```python
 from AwfulPy import AwfulPy
 
-username, password = 'your_username', 'your_passwd'
+username, passwd = 'your_username', 'your_passwd'
 ap = AwfulPy(username, passwd) # pass 'save_session=False' if you're paranoid
 
 print(ap.index.listings)
@@ -49,7 +49,7 @@ Try out AwfulGUI
 ```python
 from AwfulPy import AwfulPy
 
-username, password = 'your_username', 'your_passwd'
+username, passwd = 'your_username', 'your_passwd'
 ap = AwfulPy(username, passwd)
 
 from PyQt5 import QtWidgets

@@ -4,10 +4,8 @@ AwfulPy
 works with python 2.7 and 3.3, probably everything in between as well. 
 
 SATools -> forums session, methods, and scraper. 
-    set the 'save_session' kwarg to False if you don't want your cookies saved to the current working dir.
 
-AwfulGUI -> PyQt5 front-end to SATools. 
-    this is really bad since im still picking up qt5 conventions, but 'twill improve. py3k only.
+AwfulGUI -> PyQt5 front-end to SATools. work in progress. py3k only.
 
 don't get this banned. thanks.
 
@@ -20,7 +18,7 @@ SATools
 from AwfulPy import AwfulPy
 
 username, password = 'your_username', 'your_passwd'
-ap = AwfulPy(username, passwd)
+ap = AwfulPy(username, passwd) # pass 'save_session=False' if you're paranoid
 
 print(ap.index.listings)
 

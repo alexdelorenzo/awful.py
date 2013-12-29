@@ -9,7 +9,8 @@ class SAIndex(object):
 		self.content = sa_session.get(sa_session.base_url).content
 		self.content = bs4.BeautifulSoup(self.content)
 
-		self.listings = self._get_forums_listing(self.content)
+		self.listings = self._get_forums_listing()
+
 		self.forums = ((id, SAForum(id, self.session, name=name))
 		               for id, name in self.listings.items())
 		self.forums = ordered(self.forums)

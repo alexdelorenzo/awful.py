@@ -13,6 +13,10 @@ class SASession(requests.Session):
 		self.profile = SAPoster(self.id, username, self)
 
 	def __getstate__(self):
+		"""
+		Friends don't let friends use inheritance. Something in the hierarchy is
+		  overriding the sane behavior which lets us pickle easily. This fixes that.
+		"""
 		pickle_this = self.__dict__
 		pickle_this['prefetch'], pickle_this['timeout'] = None, None
 		return pickle_this

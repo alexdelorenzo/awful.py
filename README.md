@@ -31,10 +31,10 @@ bad_thread = the_pos.threads['3596817']
 bad_thread.read()
 
 for post in bad_thread.posts.values():
-  print(post.poster.name + " is a shitty poster. Don't post")
+  print(post.poster.name + "'s post:")
   print(post.body)
 
-shitty_poster_profile = post.poster.url
+poster_profile = post.poster.url
 
 my_bad_post = "Dear Richard,"
 threadid = bad_thread.id
@@ -76,4 +76,4 @@ TODO
 License
 ========
 
-Modified GPLv3 w/ no commercial use w/o my consent + this clause must be applied to all derivatives, motherfuckers.
+Modified GPLv3 w/ no commercial use w/o my consent + this clause must be applied to all derivatives.

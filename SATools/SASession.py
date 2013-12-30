@@ -31,11 +31,11 @@ class SASession(requests.Session):
 			raise Exception(("Unable to login", response.status_code, response.reason))
 
 
-	def post_thread(self, title, body, tag=None, poll=None):
+	def post_thread(self, forumid, title, body, tag=None, poll=None):
 		raise NotImplementedError
 
 	def reply(self, id, body):
-		url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
+		url = "https://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
 
 		response = self.get(url)
 		bs = BeautifulSoup(response.content)

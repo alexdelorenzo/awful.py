@@ -15,6 +15,7 @@ class SAForum(object):
 		self.bs_content = None
 		self.listings = None
 		self.threads = None
+		self.pages = None
 
 	def read(self, pg=1):
 		self.listings = self._get_threads(pg)
@@ -29,9 +30,8 @@ class SAForum(object):
 		response = self.session.post(self.base_url,
 		                        {'forumid': self.id,
 		                         'pagenumber': pg})
-		content = response.content
 
-		self.bs_content = bs4.BeautifulSoup(content)
+		self.bs_content = bs4.BeautifulSoup(response.content)
 
 		gen_threads = ((link['href'].split('=')[-1], link.text)
 		              for link in self.bs_content.select('a.thread_title'))

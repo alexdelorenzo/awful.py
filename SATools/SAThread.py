@@ -15,6 +15,7 @@ class SAThread(object):
 		self.url = self.base_url + '?threadid=' + id
 		self.content = None
 		self.posts = None
+		self.pages = None
 
 	def read(self, page=1):
 		request = self.session.get(self.url)

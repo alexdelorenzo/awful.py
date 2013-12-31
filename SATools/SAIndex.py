@@ -15,14 +15,10 @@ class SAIndex(object):
 		               for id, name in self.listings.items())
 		self.forums = ordered(self.forums)
 
-		del self.content
 
-	def _get_forums_listing(self, content=None):
-		if not content:
-			content = self.content
-
+	def _get_forums_listing(self):
 		gen_listings = ((link['href'].split('=')[-1], link.text)
-		                for link in content.find_all('a')
+		                for link in self.content.find_all('a')
 		                if 'forumid' in link['href'])
 
 		return ordered(gen_listings)

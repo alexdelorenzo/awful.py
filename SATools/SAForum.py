@@ -34,13 +34,15 @@ class SAForum(object):
 		return self.content.table['id'] == 'subforums'
 
 	def _get_subforums(self):
-		for tr_subforum in self.content.select('tr.subforum'):
-			subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
-			name = tr_subforum.a.text
+		if not self.subforums:
+			for tr_subforum in self.content.select('tr.subforum'):
+				subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
+				name = tr_subforum.a.text
 
-			forum_obj = SAForum(subforum_id, self.session, name, parent=self)
+				forum_obj = SAForum(subforum_id, self.session, name, parent=self)
 
-			yield subforum_id, forum_obj
+				yield subforum_id, forum_obj
+		return
 
 	def _get_threads(self, pg):
 		response = self.session.post(self.base_url,
@@ -86,6 +88,7 @@ class SAForum(object):
 
 			elif td_class == 'replies':
 				properties['pages'] = int(int(text) / 40)
+				properties[td_class] = text
 
 			elif td_class == 'author':
 				user_id = td.a['href'].split('id=')[-1]
@@ -93,7 +96,7 @@ class SAForum(object):
 				properties[td_class] = text
 
 			elif td_class == 'title' or td_class == 'title_sticky':
-				link_text = td.select('a.thread_title').pop().text
+				link_text = td.find('a','thread_title').text
 				properties['title'] = link_text
 				properties[td_class] = link_text
 

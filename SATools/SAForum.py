@@ -1,8 +1,9 @@
 from SATools.SAThread import SAThread
 from collections import OrderedDict as ordered
-__author__ = 'alex'
 
 import bs4
+import re
+from math import floor
 
 
 class SAForum(object):
@@ -12,18 +13,14 @@ class SAForum(object):
 		self.id = id
 		self.session = session
 
-		self.bs_content = None
+		self.content = None
 		self.listings = None
 		self.threads = None
 		self.pages = None
 
 	def read(self, pg=1):
-		self.listings = self._get_threads(pg)
-
-		gen_threads = ((id, SAThread(id, self.session, name=name))
-		                for id, name in self.listings.items())
-
-		self.threads = ordered(gen_threads)
+		self.threads = self._get_threads()
+		self.listings = self.threads
 
 
 	def _get_threads(self, pg):
@@ -31,14 +28,56 @@ class SAForum(object):
 		                        {'forumid': self.id,
 		                         'pagenumber': pg})
 
-		self.bs_content = bs4.BeautifulSoup(response.content)
+		self.content = bs4.BeautifulSoup(response.content)
 
-		gen_threads = ((link['href'].split('=')[-1], link.text)
-		              for link in self.bs_content.select('a.thread_title'))
-
-		threads = ordered(gen_threads)
-
+		threads = ordered(self.gen_threads())
 		return threads
+
+	def _gen_threads(self):
+		thread_blocks = self.content.select('tr.thread')
+
+		for tr_thread in thread_blocks:
+			thread_id = tr_thread['id'][6:]
+			properties = self._parse_tr_thread(tr_thread)
+
+			key_val = thread_id, \
+			     SAThread(thread_id, self.session, properties['title'], properties)
+
+			yield key_val
+
+	def _parse_tr_thread(self, tr_thread):
+		properties = dict()
+
+		for td in tr_thread.find_all('td'):
+			td_class = td['class'].pop()
+
+			properties[td_class] = td.text.strip()
+
+			if td_class == 'lastpost':
+				groups = 'time', 'date', 'user'
+				regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
+
+				matches = re.compile(regex).search(properties[td_class])
+				matches = {group: match for group, match in zip(groups, matches)}
+
+				properties[td_class] = matches
+
+			elif td_class == 'replies':
+				properties['pages'] = floor(properties[td_class] / 40)
+
+			elif td_class == 'author':
+				user_id = td.a['href'].split('id=')[-1]
+				properties['user_id'] = user_id
+
+		return properties
+
+
+
+
+
+
+
+
 
 
 def main():

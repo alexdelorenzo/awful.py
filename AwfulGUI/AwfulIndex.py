@@ -7,7 +7,6 @@ from AwfulGUI import AwfulForum
 from AwfulGUI.AwfulSlots import AwfulSlots
 
 
-
 class AwfulIndex(QtWidgets.QMainWindow):
 	def __init__(self, awful_py):
 		super().__init__()
@@ -38,11 +37,9 @@ class AwfulIndex(QtWidgets.QMainWindow):
 		self.vbox_console.setSizePolicy(self.size_policy)
 		self.vbox_console.grid_threads.setSizePolicy(self.size_policy)
 
-
 	def organize_layout(self):
 		self.hbox_main.addWidget(self.vbox_lists)
 		self.hbox_main.addWidget(self.vbox_console)
-
 
 
 class _Gridbox_Threads(QtWidgets.QMainWindow):
@@ -65,15 +62,9 @@ class _Vbox_Lists(QtWidgets.QWidget):
 
 		self.setup_sizes()
 
-		self.layout.addWidget(self.list_forums)
-		self.layout.addWidget(self.list_threads)
-
 	def setup_sizes(self):
 		self.setMinimumWidth(240)
 		self.setMaximumWidth(240)
-
-		#self.list_forums.setMaximumHeight(300)
-		#self.list_threads.setMaximumHeight(300)
 
 		self.size_policy.setHorizontalPolicy(QtWidgets.QSizePolicy.Maximum)
 		self.size_policy.setVerticalPolicy(QtWidgets.QSizePolicy.Expanding)
@@ -81,6 +72,10 @@ class _Vbox_Lists(QtWidgets.QWidget):
 		self.setSizePolicy(self.size_policy)
 		self.list_forums.setSizePolicy(self.size_policy)
 		self.list_threads.setSizePolicy(self.size_policy)
+
+		self.layout.addWidget(self.list_forums)
+		self.layout.addWidget(self.list_threads)
+
 
 class _Vbox_Console(QtWidgets.QWidget):
 	def __init__(self):
@@ -95,7 +90,6 @@ class _Vbox_Console(QtWidgets.QWidget):
 class AwfulPost(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
-		#self.setMaximumHeight(100)
 		self.layout = QtWidgets.QHBoxLayout(self)
 		self.text_box = QtWidgets.QPlainTextEdit(self)
 		self.post_button = QtWidgets.QPushButton('Post', self)

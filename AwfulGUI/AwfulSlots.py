@@ -3,6 +3,7 @@ from AwfulGUI.AwfulForum import AwfulThreadList
 from AwfulGUI.AwfulThread import AwfulThread, AwfulThreadDocker
 from PyQt5.QtCore import Qt
 
+
 class AwfulSlots(object):
 	def __init__(self, application_obj):
 		self.forums = SlotsForumsList(application_obj)
@@ -12,23 +13,26 @@ class AwfulSlots(object):
 class SlotsForumsList(object):
 	def __init__(self, application_obj):
 		self.app = application_obj
-		self.forums_list = self.app.vbox_lists.list_forums
-		self.threads_list = self.app.vbox_lists.list_threads
-		self.layout = self.app.vbox_lists.layout
-
 		self.setup_slots_signals()
 
 	def setup_slots_signals(self):
-		self.forums_list.itemActivated.connect(self.signal_item_activated)
+		self.app.vbox_lists.list_forums.itemActivated.connect(self.signal_item_activated)
 
-	def signal_item_activated(self, list_item=None):
+	def signal_item_activated(self, list_item):
+		list_item.forum.read()
 		forum = list_item.forum
 
 		if not forum.threads:
 			forum.read()
 
-		self.threads_list.clear()
-		self.threads_list.__init__(forum)
+		self.app.vbox_lists.list_threads.close()
+
+		self.app.vbox_lists.list_threads = \
+			AwfulThreadList(forum)
+
+		self.app.vbox_lists.setup_sizes()
+		self.app.slots.threads.setup_slots_signals()
+
 
 class SlotsThreadsList(SlotsForumsList):
 	def __init__(self, application_obj):
@@ -38,12 +42,10 @@ class SlotsThreadsList(SlotsForumsList):
 		self.dock_area = 6
 
 	def setup_slots_signals(self):
-		self.threads_list.itemActivated.connect(self.signal_item_activated)
-		print('rawhide')
+		self.app.vbox_lists.list_threads.itemActivated.connect(self.signal_item_activated)
 
 	def signal_item_activated(self, list_item=None):
 		thread = list_item.thread
-		print(thread)
 
 		if not thread.posts:
 			thread.read()
@@ -51,10 +53,6 @@ class SlotsThreadsList(SlotsForumsList):
 		self.gridbox.addDockWidget(Qt.DockWidgetArea(self.dock_area % 5), AwfulThreadDocker(thread))
 		self.dock_area += 1
 		self.setup_slots_signals()
-
-
-
-
 
 
 def main():

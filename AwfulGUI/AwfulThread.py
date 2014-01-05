@@ -4,12 +4,12 @@ from PyQt5 import QtWidgets
 from AwfulGUI.AwfulPost import AwfulPost
 
 class AwfulLongThread(QtWidgets.QWidget):
-		def __init__(self, sa_thread):
+		def __init__(self, sa_thread, pg=1):
 			super().__init__()
 			self.layout = QtWidgets.QVBoxLayout(self)
 
 			if not sa_thread.posts:
-				sa_thread.read()
+				sa_thread.read(pg)
 
 			self.add_posts(sa_thread)
 
@@ -19,11 +19,21 @@ class AwfulLongThread(QtWidgets.QWidget):
 
 
 class AwfulThread(QtWidgets.QScrollArea):
-	def __init__(self, sa_thread):
-		super().__init__()
+	def __init__(self, sa_thread, pg=1, **kwargs):
+		super().__init__(**kwargs)
 		self.setMaximumHeight(800)
-		self.long_thread = AwfulLongThread(sa_thread)
+		self.long_thread = AwfulLongThread(sa_thread, pg)
 		self.setWidget(self.long_thread)
+
+
+class AwfulThreadStackedWidget(QtWidgets.QStackedWidget):
+	def __init__(self, sa_thread, pg=1):
+		super().__init__()
+		self.thread = AwfulThread(sa_thread, parent=self)
+		self.addWidget(self.thread)
+		self.setCurrentWidget(self.thread)
+
+		self.addWidget(AwfulThread(sa_thread, pg=2, parent=self))
 
 
 class AwfulThreadDocker(QtWidgets.QDockWidget):

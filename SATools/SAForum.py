@@ -6,7 +6,9 @@ import re
 
 
 class SAForum(object):
-	def __init__(self, id, session, name=None, subforums=dict(), parent=None):
+	def __init__(self, id, session, name=None,
+	             subforums=dict(), parent=None,
+	             pg=1):
 		self.name = name
 		self.id = id
 		self.session = session
@@ -20,6 +22,7 @@ class SAForum(object):
 		self.listings = None
 		self.threads = None
 		self.pages = None
+		self.page = None
 
 
 	def read(self, pg=1):
@@ -27,22 +30,21 @@ class SAForum(object):
 		self.listings = {threadid: thread.name
 		                 for threadid, thread in self.threads.items()}
 
-		if self._has_subforums():
+		if not self.subforums and self._has_subforums():
 			self.subforums = ordered(self._get_subforums())
 
 	def _has_subforums(self):
 		return self.content.table['id'] == 'subforums'
 
 	def _get_subforums(self):
-		if not self.subforums:
-			for tr_subforum in self.content.select('tr.subforum'):
-				subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
-				name = tr_subforum.a.text
+		for tr_subforum in self.content.select('tr.subforum'):
+			subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
+			name = tr_subforum.a.text
 
-				forum_obj = SAForum(subforum_id, self.session, name, parent=self)
+			forum_obj = SAForum(subforum_id, self.session, name, parent=self)
 
-				yield subforum_id, forum_obj
-		return
+			yield subforum_id, forum_obj
+
 
 	def _get_threads(self, pg):
 		response = self.session.post(self.base_url,
@@ -75,7 +77,7 @@ class SAForum(object):
 			text = td.text.strip()
 
 			if td_class == 'icon':
-				properties[td_class] = td.a['href'].split('posticon=').pop(-1)
+				text = td.a['href'].split('posticon=').pop(-1)
 
 			elif td_class == 'lastpost':
 				groups = 'time', 'date', 'user'
@@ -84,24 +86,20 @@ class SAForum(object):
 				matches = re.compile(regex).search(text).groups()
 				matches = {group: match for group, match in zip(groups, matches)}
 
-				properties[td_class] = matches
+				text = matches
 
 			elif td_class == 'replies':
 				properties['pages'] = int(int(text) / 40)
-				properties[td_class] = text
 
 			elif td_class == 'author':
 				user_id = td.a['href'].split('id=')[-1]
 				properties['user_id'] = user_id
-				properties[td_class] = text
 
 			elif td_class == 'title' or td_class == 'title_sticky':
-				link_text = td.find('a','thread_title').text
-				properties['title'] = link_text
-				properties[td_class] = link_text
+				text = td.find('a', 'thread_title').text
+				properties['title'] = text
 
-			else:
-				properties[td_class] = text
+			properties[td_class] = text
 
 		return properties
 

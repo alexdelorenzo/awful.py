@@ -1,4 +1,5 @@
 from SATools.SAForum import SAForum
+from SATools.SASection import SASection
 from bs4 import BeautifulSoup
 from collections import OrderedDict as ordered
 
@@ -28,14 +29,17 @@ class SAIndex(object):
 			section_subforums = ordered(self._gen_forum(
 																				section.find_next_siblings('tr')))
 
-			sa_section = SAForum(section_id, self.session,
+			sa_section = SASection(section_id, self.session,
 			                                  section_name,
-			                                  subforums=section_subforums)
+			                                  subforums=section_subforums,
+			                                  parent=self)
 
-			self.forums[section_id] = sa_section
-			self.listings[section_id] = sa_section.name
+			self._save(section_id, sa_section)
 			yield section_id, sa_section
 
+	def _save(self, section_id, sa_section):
+			self.forums[section_id] = sa_section
+			self.listings[section_id] = sa_section.name
 
 	def _gen_forum(self, section_iter):
 		for forum in section_iter:
@@ -44,7 +48,7 @@ class SAIndex(object):
 			if nx_class == 'section':
 				break
 
-			forum_id = nx_class
+			forum_id = nx_class[6:]
 			forum_name = forum.find('a', 'forum').text
 
 			subforums = ordered(
@@ -55,8 +59,7 @@ class SAIndex(object):
 			sa_forum = SAForum(forum_id, self.session,
 			                   forum_name, subforums=subforums)
 
-			self.forums[forum_id] = sa_forum
-			self.listings[forum_id] = sa_forum.name
+			self._save(forum_id, sa_forum)
 			yield forum_id, sa_forum
 
 	def _gen_subforum(self, forum_iter):
@@ -66,42 +69,8 @@ class SAIndex(object):
 			sa_subforum = SAForum(subforum_id, self.session,
 			                      subforum_name, subforum_name)
 
-			self.forums[subforum_id] = sa_subforum
-			self.listings[subforum_id] = sa_subforum.name
+			self._save(subforum_id, sa_subforum)
 			yield subforum_id, sa_subforum
-
-	def __get_forums_listing_old(self):
-		for forum_id, forum_obj in self.__gen_forums_old():
-			self.forums[forum_id] = forum_obj
-			self.listings[forum_id] = forum_obj.name
-			return DeprecationWarning
-
-	def __get_sections_old(self):
-		for section_id, section_obj in self.__gen_sections_old:
-			self.sections[section_id] = section_obj
-			return DeprecationWarning
-
-	def __gen_forums_old(self):
-		"""
-		TODO: this can be made recursive if attr names had a sane
-					naming scheme. lol at a quadruple nested for loop that
-					doesn't touch all the sub-sub-subforums
-		"""
-		for section_id, section_obj in self.sections.items():
-			for forum_id, forum_obj in section_obj.subforums.items():
-				forum_obj._get_subforums()
-				yield DeprecationWarning
-
-	def __gen_sections_old(self):
-		for category in self.content.select('th.category'):
-			category_id = category.a['href'].split('forumid=')[-1]
-			name = category.a.text
-
-			category_obj = SAForum(category_id, self.session, name=name)
-			category_obj.read()
-
-			yield DeprecationWarning
-
 
 
 def main():

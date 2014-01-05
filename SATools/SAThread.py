@@ -17,6 +17,7 @@ class SAThread(object):
 		self.content = None
 		self.posts = None
 		self.pages = None
+		self.page = None
 
 		self._set_properties(properties)
 
@@ -28,9 +29,6 @@ class SAThread(object):
 			if name == 'user_id':
 				name = 'poster'
 				attr = SAPoster(attr, properties['author'], self.session)
-
-			elif name == 'author':
-				pass
 
 			setattr(self, name, attr)
 
@@ -48,6 +46,8 @@ class SAThread(object):
 
 		self.content = BeautifulSoup(request.content)
 		self.posts = self._get_posts()
+
+		self.page = page
 
 
 

@@ -1,7 +1,7 @@
 __author__ = 'alex'
 
-from AwfulGUI.AwfulIndex import AwfulIndex
-from AwfulGUI.AwfulSlots import AwfulSlots
+from AwfulGUI_old.AwfulIndex import AwfulIndex
+from AwfulGUI_old.AwfulSlots import AwfulSlots
 
 class AwfulGUI(AwfulIndex, AwfulSlots):
 	def __init__(self):

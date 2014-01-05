@@ -1,6 +1,6 @@
 __author__ = 'alex'
-from AwfulGUI.AwfulForum import AwfulThreadList
-from AwfulGUI.AwfulThread import AwfulThread, AwfulThreadDocker
+from AwfulGUI_old.AwfulForum import AwfulThreadList
+from AwfulGUI_old.AwfulThread import AwfulThread, AwfulThreadDocker
 from PyQt5.QtCore import Qt
 
 

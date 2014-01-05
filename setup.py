@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
 	name='AwfulPy',
 	version='0.0.0.0.0.1',
-	packages=['.', 'SATools', 'AwfulGUI'],
+	packages=['.', 'SATools', 'AwfulGUI_old'],
 	url='https://github.com/thismachinechills/AwfulPy',
 	license='Modified Gippel; see readme',
 	author='alex',

@@ -1,10 +1,10 @@
 __author__ = 'alex'
 
 from PyQt5 import QtGui, QtWidgets, QtCore
-from AwfulGUI.AwfulThread import AwfulThreadDocker as DockingThread
-from AwfulGUI.AwfulForum import AwfulForumsList, AwfulThreadList
-from AwfulGUI import AwfulForum
-from AwfulGUI.AwfulSlots import AwfulSlots
+from AwfulGUI_old.AwfulThread import AwfulThreadDocker as DockingThread
+from AwfulGUI_old.AwfulForum import AwfulForumsList, AwfulThreadList
+from AwfulGUI_old import AwfulForum
+from AwfulGUI_old.AwfulSlots import AwfulSlots
 
 
 class AwfulIndex(QtWidgets.QMainWindow):

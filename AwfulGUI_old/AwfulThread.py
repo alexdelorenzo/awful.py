@@ -1,7 +1,7 @@
 __author__ = 'alex'
 
 from PyQt5 import QtWidgets
-from AwfulGUI.AwfulPost import AwfulPost
+from AwfulGUI_old.AwfulPost import AwfulPost
 
 class AwfulLongThread(QtWidgets.QWidget):
 		def __init__(self, sa_thread, pg=1):

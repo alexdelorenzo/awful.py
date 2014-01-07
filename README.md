@@ -45,32 +45,8 @@ ap.session.reply(threadid, my_bad_post)
 
 ```
 
-Try out AwfulGUI
-
-```python
-from AwfulPy import AwfulPy
-
-username, passwd = 'your_username', 'your_passwd'
-ap = AwfulPy(username, passwd)
-
-from PyQt5 import QtWidgets
-from sys import argv
-
-app = QtWidgets.QApplication(argv)
-
-from AwfulGUI.AwfulIndex import AwfulIndex
-
-awfully_gui = AwfulIndex(ap)
-awfully_gui.show()
-
-#start crying
-```
-
 TODO
 ====
-
-+ metatodo: name features to be fleshed out. add method signatures. raise NotImplmentedError.
-+ compile list of methods raising the exception and add it here.
 
 
 

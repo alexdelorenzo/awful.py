@@ -3,6 +3,7 @@ from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
 import os, pickle
 
+
 class AwfulPy(object):
 	def __init__(self, username, passwd=None, save_session=True):
 		self.username = username
@@ -36,9 +37,6 @@ class AwfulPy(object):
 	def _save_session(self, session):
 		with open(self.session_bak, 'wb') as session_file:
 			pickle.dump(session, session_file)
-
-
-
 
 
 def main():

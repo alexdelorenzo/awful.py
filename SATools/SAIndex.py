@@ -17,6 +17,10 @@ class SAIndex(object):
 
 		self._select_sections()
 
+	def _save(self, section_id, sa_section):
+		self.forums[section_id] = sa_section
+		self.listings[section_id] = sa_section.name
+
 	def _select_sections(self):
 		forums_table = self.content.find('table', id='forums')
 		self.sections = ordered(self._gen_sections(forums_table.select('tr.section')))
@@ -29,17 +33,14 @@ class SAIndex(object):
 			section_subforums = ordered(self._gen_forum(
 																				section.find_next_siblings('tr')))
 
-			sa_section = SASection(section_id, self.session,
-			                                  section_name,
-			                                  subforums=section_subforums,
-			                                  parent=self)
+			sa_section = SASection(section_id,
+			                       self.session,
+                             section_name,
+                             subforums=section_subforums,
+                             parent=self)
 
 			self._save(section_id, sa_section)
 			yield section_id, sa_section
-
-	def _save(self, section_id, sa_section):
-			self.forums[section_id] = sa_section
-			self.listings[section_id] = sa_section.name
 
 	def _gen_forum(self, section_iter):
 		for forum in section_iter:

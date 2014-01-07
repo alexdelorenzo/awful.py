@@ -2,10 +2,12 @@ from SATools.SAPoster import SAPoster
 
 
 class SAPost(object):
-	def __init__(self, id, session, content=None):
+	def __init__(self, id, session, content=None, parent=None):
 		self.id = id
 		self.content = content
 		self.session = session
+		self.parent = parent
+		self.unread = True
 
 		user_id = self.content.td['class'][0][7:]
 		user_name = self.content.dt.text
@@ -14,8 +16,10 @@ class SAPost(object):
 
 		if content:
 			self.body = content.td.next_sibling.next_sibling.text.strip()
+			self.unread = False
 
 	def read(self):
+		self.unread = False
 		pass
 
 

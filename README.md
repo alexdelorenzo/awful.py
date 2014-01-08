@@ -22,8 +22,8 @@ Pass `save_session=False` if you'd rather not save cookies to disk, otherwise it
 
 ```python
 In [1]: from AwfulPy import AwfulPy
-In [2]: username, passwd, is_paranoid = 'your_username', 'your_passwd', False
-In [3]: ap = AwfulPy(username, passwd, save_session=is_paranoid)
+In [2]: username, passwd, not_paranoid = 'your_username', 'your_passwd', False
+In [3]: ap = AwfulPy(username, passwd, save_session=not_paranoid)
 Loading from backup: .salisbury shake_sa.bak
 
 ```

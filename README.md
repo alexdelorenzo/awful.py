@@ -13,19 +13,11 @@ Usage
 =======
 
 
-SATools
+## SATools
 
-Here's an illustration of:
+### Authenticating
 
--logging in
-
--navigating forums
-
--navigating threads
-
--reading threads/posts/poster data
-
--replying to a thread
+Pass `save_session=False` if you'd rather not save cookies to disk, otherwise it will do just that. If your session is saved you only need to pass your username to AwfulPy
 
 ```python
 In [1]: from AwfulPy import AwfulPy
@@ -33,6 +25,20 @@ In [2]: username, passwd, is_paranoid = 'your_username', 'your_passwd', False
 In [3]: ap = AwfulPy(username, passwd, save_session=is_paranoid)
 Loading from backup: .salisbury shake_sa.bak
 
+```
+
+### Navigating Index
+
+the AwfulPy object has an `index` and `session` object. the former is used to navigate the forum, the latter has the relavent methods to accomplish that. `reply()` is a member of the `session` object.
+
+`listing` attributes provide a readable output of a section or forum. use the key from the listings to retrieve the SAForum object from the `forums` attribute. we can also browse by the `section` hierarchial method
+
+to save time and battery life, `read()` will pull and parse the forums data. if `listings` is empty, call `read()`.
+
+Here we navigate the forum index, and select a forum.
+
+
+```python
 In [4]: ap.
 ap.index        ap.session      ap.session_bak  ap.username
 
@@ -51,6 +57,18 @@ In [5]: pprint(ap.index.listings)
  '48': 'Main',
 
 In [6]: the_pos = ap.index.forums['219']
+```
+
+### Navigating Forum
+
+call `read()` to pull and parse the forum's data.
+
+`listings` provides a human readable index for the `threads` map of `SAThread`s
+
+Here we select a thread.
+
+
+```python
 In [7]: the_pos.read()
 
 In [8]: the_pos.
@@ -64,7 +82,19 @@ Out[13]:
  '3201527': 'Description: that darn feline.jpg',
  '3263403': 'Post the most worthless thing you can find on wikipedia',
 
-In [10]: bad_thread = the_pos.threads['3136320']                                
+In [10]: bad_thread = the_pos.threads['3136320']
+```
+
+### Navigating thread
+
+call `read()` to parse the thread's posts and op's metadata. 
+
+We can see the different attributes the `SAThread` object has after being read.
+
+Here we iterate over the `posts` map of `SAPost` objects.
+
+
+```python
 In [11]: bad_thread.read()
 
 In [11]: bad_thread.
@@ -86,7 +116,13 @@ if youre like me and i know you are sometimes you have a computer related questi
 
 CRIP EATIN BREAD's post:
 it starts to shut down every two hours in march, and will expire in june 2010
+```
 
+Post and Poster objects
+
+if a post was generated from a `SAThread` that's been read, there is no reason to call `read()` if attributes are missing, you may call it, but it will pull info from the poster's profile url. best option is to just display what's been given to the object unless an individual poster needs to be inspected.
+
+```python
 In [13]: post.
 post.body     post.id       post.poster   post.session  
 post.content  post.parent   post.read     post.unread   
@@ -100,7 +136,16 @@ In [13]: post.poster.url
 Out[13]: 'http://forums.somethingawful.com/member.php?action=getinfo&userid=22993'
 
 In [14]: profile = post.poster.url
+```
 
+### Posting
+The `SASession` object at `ap.session` holds methods that need to be invoked with your credentials.
+`reply()` lives here and so will `post_thread()`, eventually. 
+
+`reply()` requires an existing threadid to reply to and a message to be posted. an exception will be raised if it didn't work
+
+
+```python
 In [15]: my_bad_post = "Dear Richard,"
 In [16]: thread_id = bad_thread.id
 In [17]: ap.session.reply(threadid, my_bad_post)
@@ -109,8 +154,10 @@ In [17]: ap.session.reply(threadid, my_bad_post)
 ```
 
 TODO
-
 ====
++ provide qobject intermediates for satools objects
++ provide qml models/views for qobjects
++ clean up SATools. if you want to contribute, look here first. code is simple but bad.
 
 
 

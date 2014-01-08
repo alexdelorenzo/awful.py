@@ -140,7 +140,7 @@ In [14]: profile = post.poster.url
 ```
 
 ### Posting
-The `SASession` object at `ap.session` holds methods that need to be invoked with your credentials.
+The `SASession` object at `AwfulPy.session` holds methods that need to be invoked with your credentials.
 `reply()` lives here and so will `post_thread()`, `pms`, and `search()` eventually. 
 
 `reply()` requires an existing threadid to reply to and a message to be posted. an exception will be raised if it didn't work

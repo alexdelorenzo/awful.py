@@ -18,7 +18,7 @@ Usage
 
 ### Authenticating
 
-Pass `save_session=False` if you'd rather not save cookies to disk, otherwise it will do just that. If your session is saved you only need to pass your username to AwfulPy
+Pass `save_session=False` if you'd rather not save cookies to diskt. If your session is saved you only need to pass your username to AwfulPy
 
 ```python
 In [1]: from AwfulPy import AwfulPy
@@ -30,9 +30,9 @@ Loading from backup: .salisbury shake_sa.bak
 
 ### Navigating Index
 
-the AwfulPy object has an `index` and `session` object. the former is used to navigate the forum, the latter has the relavent methods to accomplish that. `reply()` is a member of the `session` object.
+the AwfulPy object has members `index` and `session`. the former is used to navigate the forum, the latter has the relevant methods to do so. `reply()` is a method of the `session` object.
 
-`listing` attributes provide a readable output of a section or forum. use the key from the listings to retrieve the SAForum object from the `forums` attribute. we can also browse by the `section` hierarchial method
+`listing` threadid: thread_title map provides a readable output of a section or forum. use the key from the listings to retrieve the SAForum object from the `forums` attribute. we can also walk down the `section`.
 
 to save time and battery life, `read()` will pull and parse the forums data. if `listings` is empty, call `read()`.
 
@@ -119,7 +119,7 @@ CRIP EATIN BREAD's post:
 it starts to shut down every two hours in march, and will expire in june 2010
 ```
 
-Post and Poster objects
+### Post and Poster objects
 
 if a post was generated from a `SAThread` that's been read, there is no reason to call `read()` if attributes are missing, you may call it, but it will pull info from the poster's profile url. best option is to just display what's been given to the object unless an individual poster needs to be inspected.
 
@@ -141,7 +141,7 @@ In [14]: profile = post.poster.url
 
 ### Posting
 The `SASession` object at `ap.session` holds methods that need to be invoked with your credentials.
-`reply()` lives here and so will `post_thread()`, eventually. 
+`reply()` lives here and so will `post_thread()`, `pms`, and `search()` eventually. 
 
 `reply()` requires an existing threadid to reply to and a message to be posted. an exception will be raised if it didn't work
 

@@ -3,9 +3,11 @@ AwfulPy
 
 works with python 2.7 and 3.3, probably everything in between as well. 
 
-SATools -> forums session, methods, and scraper. 
+#### SATools
+forums session, methods, and scraper. 
 
-AwfulGUI -> PyQt5 front-end to SATools. work in progress. py3k only.
+##### AwfulQML
+preliminary gui to SATools. this is not ready for any kind of use.
 
 don't get this banned. thanks.
 

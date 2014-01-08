@@ -17,9 +17,7 @@ SATools
 
 ```python
 In [1]: from AwfulPy import AwfulPy
-
 In [2]: username = 'salisbury shake'
-
 In [3]: ap = AwfulPy(username)
 Loading from backup: .salisbury shake_sa.bak
 
@@ -41,7 +39,6 @@ In [5]: pprint(ap.index.listings)
  '48': 'Main',
 
 In [6]: the_pos = ap.index.forums['219']
-
 In [7]: the_pos.read()
 
 In [8]: the_pos.
@@ -56,7 +53,6 @@ Out[13]:
  '3263403': 'Post the most worthless thing you can find on wikipedia',
 
 In [10]: bad_thread = the_pos.threads['3136320']                                
-
 In [11]: bad_thread.read()
 
 In [11]: bad_thread.
@@ -94,9 +90,7 @@ Out[13]: 'http://forums.somethingawful.com/member.php?action=getinfo&userid=2299
 In [14]: profile = post.poster.url
 
 In [15]: my_bad_post = "Dear Richard,"
-
 In [16]: thread_id = bad_thread.id
-
 In [17]: ap.session.reply(threadid, my_bad_post)
 
 

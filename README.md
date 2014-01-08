@@ -18,7 +18,7 @@ Usage
 
 ### Authenticating
 
-Pass `save_session=False` if you'd rather not save cookies to diskt. If your session is saved you only need to pass your username to AwfulPy
+Pass `save_session=False` if you'd rather not save cookies to disk. If your session is saved you only need to pass your username to AwfulPy
 
 ```python
 In [1]: from AwfulPy import AwfulPy
@@ -32,7 +32,7 @@ Loading from backup: .salisbury shake_sa.bak
 
 the AwfulPy object has members `index` and `session`. the former is used to navigate the forum, the latter has the relevant methods to do so. `reply()` is a method of the `session` object.
 
-`listing` threadid: thread_title map provides a readable output of a section or forum. use the key from the listings to retrieve the SAForum object from the `forums` attribute. we can also walk down the `section`.
+`listing` threadid: thread_title map provides a readable output of a section or forum. use the key from the listings to retrieve the `SAForum` object from the `forums` attribute. we can also walk down the `sections` map if you like hierarchy.
 
 to save time and battery life, `read()` will pull and parse the forums data. if `listings` is empty, call `read()`.
 
@@ -57,7 +57,7 @@ In [5]: pprint(ap.index.listings)
  '26': 'FYAD: Cherry blossom petal landed in the lunch',
  '48': 'Main',
 
-In [6]: the_pos = ap.index.forums['219']
+In [6]: the_pos = ap.index.forums['219']TODO
 ```
 
 ### Navigating Forum

@@ -18,6 +18,11 @@ Usage
 
 ### Authenticating
 
+```python
+from AwfulPy import AwfulPy
+ap = AwfulPy('username', 'passwd')
+```
+
 Pass `save_session=False` if you'd rather not save cookies to disk. If your session is saved you only need to pass your username to AwfulPy
 
 ```python
@@ -25,10 +30,14 @@ In [1]: from AwfulPy import AwfulPy
 In [2]: username, passwd, not_paranoid = 'your_username', 'your_passwd', False
 In [3]: ap = AwfulPy(username, passwd, save_session=not_paranoid)
 Loading from backup: .salisbury shake_sa.bak
-
+
 ```
 
 ### Navigating Index
+
+```python
+gbs = ap.index.forums['1']
+```
 
 the AwfulPy object has members `index` and `session`. the former is used to navigate the forum, the latter has the relevant methods to do so. `reply()` is a method of the `session` object.
 
@@ -57,10 +66,14 @@ In [5]: pprint(ap.index.listings)
  '26': 'FYAD: Cherry blossom petal landed in the lunch',
  '48': 'Main',
 
-In [6]: the_pos = ap.index.forums['219']TODO
+In [6]: the_pos = ap.index.forums['219']
 ```
 
 ### Navigating Forum
+
+```python
+cat_thread = ap.index.forums['219'].threads['3136320']
+```
 
 call `read()` to pull and parse the forum's data.
 
@@ -87,6 +100,10 @@ In [10]: bad_thread = the_pos.threads['3136320']
 ```
 
 ### Navigating thread
+
+```python 
+dont_fuck_with = [post for post in cat_thread if post.poster.name == 'Debt']
+```
 
 call `read()` to parse the thread's posts and op's metadata. 
 
@@ -120,6 +137,11 @@ it starts to shut down every two hours in march, and will expire in june 2010
 ```
 
 ### Post and Poster objects
+
+```python
+take_a_better_look_at = post.date, post.poster.reg_date
+
+```
 
 if a post was generated from a `SAThread` that's been read, there is no reason to call `read()` if attributes are missing, you may call it, but it will pull info from the poster's profile url. best option is to just display what's been given to the object unless an individual poster needs to be inspected.
 

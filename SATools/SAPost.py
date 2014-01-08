@@ -9,10 +9,13 @@ class SAPost(object):
 		self.parent = parent
 		self.unread = True
 
-		user_id = self.content.td['class'][0][7:]
+		user_id = self.content.td['class'].pop()[7:]
 		user_name = self.content.dt.text
 
-		self.poster = SAPoster(user_id, user_name, self.session)
+		self.poster = SAPoster(user_id,
+		                       user_name,
+		                       session=self.session,
+		                       content=self.content.find('td', 'userinfo'))
 
 		if content:
 			self.body = content.td.next_sibling.next_sibling.text.strip()

@@ -15,10 +15,22 @@ Usage
 
 SATools
 
+Here's an illustration of:
+
+-logging in
+
+-navigating forums
+
+-navigating threads
+
+-reading threads/posts/poster data
+
+-replying to a thread
+
 ```python
 In [1]: from AwfulPy import AwfulPy
-In [2]: username = 'salisbury shake'
-In [3]: ap = AwfulPy(username)
+In [2]: username, passwd, is_paranoid = 'your_username', 'your_passwd', False
+In [3]: ap = AwfulPy(username, passwd, save_session=is_paranoid)
 Loading from backup: .salisbury shake_sa.bak
 
 In [4]: ap.

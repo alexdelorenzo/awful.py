@@ -15,7 +15,7 @@ Rectangle {
         AwfulThreadBar {
             id: thread_bar
 
-            textsize: 12
+            textsize: 11
             model: AwfulThreadModelObj
         }
 

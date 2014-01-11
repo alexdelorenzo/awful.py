@@ -8,9 +8,11 @@ Rectangle {
 
     width: parent.width
     anchors.fill: parent
-    color: "#AAA"
+    color: "#E8E8E8"
 
-    Flow{
+    Flow {
+        id: thread_bar_flowbox
+
         Text {
             id: thread_title
 
@@ -29,8 +31,6 @@ Rectangle {
             textsize: thread_bar.textsize
 
             x: parent.width + switcher.width
-
-            }
-
+        }
     }
 }

@@ -16,7 +16,7 @@ class SAPoster(object):
 		self.url = None
 
 		if self.id:
-			self.url = "http://forums.somethingawful.com/member.php?action=getinfo&userid=" + self.id
+			self.url = "https://forums.somethingawful.com/member.php?action=getinfo&userid=" + self.id
 
 		self.read()
 
@@ -31,7 +31,7 @@ class SAPoster(object):
 
 			self.title = self.content.find('dd', 'title')
 			self.reg_date = self.content.find('dd', 'registered')
-			self.url = "http://forums.somethingawful.com/member.php?action=getinfo&userid=" + self.id
+			self.url = "https://forums.somethingawful.com/member.php?action=getinfo&userid=" + self.id
 
 		else:
 			pass

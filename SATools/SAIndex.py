@@ -6,8 +6,10 @@ from collections import OrderedDict as ordered
 
 class SAIndex(object):
 	def __init__(self, sa_session):
-		self.session, self.base_url = sa_session, sa_session.base_url
-		self.content = BeautifulSoup(sa_session.get(sa_session.base_url).content)
+		self.session = sa_session
+		self.base_url = self.session.base_url
+
+		self.content = BeautifulSoup(self.session.get(self.base_url).content)
 
 		self.sections = ordered()
 		self.section_listings = ordered()
@@ -23,7 +25,8 @@ class SAIndex(object):
 
 	def _select_sections(self):
 		forums_table = self.content.find('table', id='forums')
-		self.sections = ordered(self._gen_sections(forums_table.select('tr.section')))
+		self.sections = \
+			ordered(self._gen_sections(forums_table.select('tr.section')))
 
 	def _gen_sections(self, forums_iter):
 		for section in forums_iter:
@@ -31,13 +34,10 @@ class SAIndex(object):
 			section_id = section.a['href'].split('=')[-1]
 
 			section_subforums = ordered(self._gen_forum(
-																				section.find_next_siblings('tr')))
+																	section.find_next_siblings('tr')))
 
-			sa_section = SASection(section_id,
-			                       self.session,
-                             section_name,
-                             subforums=section_subforums,
-                             parent=self)
+			sa_section = SASection(section_id, self.session, section_name,
+                             subforums=section_subforums, parent=self)
 
 			self._save(section_id, sa_section)
 			yield section_id, sa_section
@@ -52,10 +52,8 @@ class SAIndex(object):
 			forum_id = nx_class[6:]
 			forum_name = forum.find('a', 'forum').text
 
-			subforums = ordered(
-				self._gen_subforum(
-					forum.find('div', 'subforums').find_all('a')))
-
+			div_subforums = forum.find('div', 'subforums').find_all('a')
+			subforums = ordered(self._gen_subforum(div_subforums))
 
 			sa_forum = SAForum(forum_id, self.session,
 			                   forum_name, subforums=subforums)

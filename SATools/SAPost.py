@@ -23,7 +23,6 @@ class SAPost(object):
 
 	def read(self):
 		self.unread = False
-		pass
 
 
 def main():

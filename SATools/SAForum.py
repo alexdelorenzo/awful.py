@@ -6,9 +6,8 @@ import re
 
 
 class SAForum(object):
-	def __init__(self, id, session, name=None,
-	             subforums=dict(), parent=None,
-	             pg=1):
+	def __init__(self, id, session, name=None, subforums=dict(),
+	             parent=None,pg=1):
 		self.name = name
 		self.id = id
 		self.session = session
@@ -82,7 +81,6 @@ class SAForum(object):
 			elif td_class == 'lastpost':
 				groups = 'time', 'date', 'user'
 				regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-
 				matches = re.compile(regex).search(text).groups()
 				matches = {group: match for group, match in zip(groups, matches)}
 

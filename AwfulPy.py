@@ -25,6 +25,7 @@ class AwfulPy(object):
 			with open(self.session_bak, 'rb') as old_session:
 				print("Loading from backup: " + self.session_bak)
 				session = pickle.load(old_session)
+				print("Finished loading from backup.")
 
 		else:
 			session = SASession(self.username, self.passwd)

@@ -8,21 +8,28 @@ Rectangle {
     
     ListView {
         id: thread_list
-        spacing: 10
+
         width: parent.width
         height: parent.height
 
         AwfulThreadBar {
             id: thread_bar
+
             textsize: 12
             model: AwfulThreadModelObj
         }
 
         AwfulPosts {
-            y: 25
             id: posts
-            clip: true
+
+            y: 25
+            x:1
+
+            width: parent.width - x - spacing
             height: thread_qml.height
+
+            clip: true
+            spacing: 5
 
             model: AwfulThreadModelObj
         }

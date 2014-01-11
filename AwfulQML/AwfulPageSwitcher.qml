@@ -5,46 +5,55 @@ Rectangle {
 
     property var model: AwfulThreadModelObj
     property double textsize: 12
+    
     anchors.right: parent.right
 
-    function update_thread()
-    {
+    function update_thread() {
          page_number.text = ''.concat(model.page, " of ", model.pages)
     }
 
-    Text {
-        id: left_arrow
+    Flow {
+        id: switcher_flowbox
+        
+        Text {
+            id: prev_page
 
-        font.pointSize: page_switcher.textsize
-        text: "<"
+            font.pointSize: page_switcher.textsize
+            text: "<"
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                model.prev_page();
-                page_switcher.update_thread()}
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: {
+                    model.prev_page();
+                    page_switcher.update_thread()
+                }
             }
         }
 
-    Text {
-        id: page_number
+        Text {
+            id: page_number
 
-        anchors.left: left_arrow.right
-        font.pointSize: page_switcher.textsize
-        text: parent.update_thread()
-    }
+            anchors.left: prev_page.right
+            font.pointSize: page_switcher.textsize
+            text: page_switcher.update_thread()
+        }
 
-    Text{
-        id: right_arrow
+        Text {
+            id: next_page
 
-        anchors.left: page_number.right
-        font.pointSize: page_switcher.textsize
-        text: ">"
+            anchors.left: page_number.right
+            font.pointSize: page_switcher.textsize
+            text: ">"
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {model.next_page()
-                page_switcher.update_thread()}
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: {
+                    model.next_page()
+                    page_switcher.update_thread()
+                }
+            }
         }
     }
 }

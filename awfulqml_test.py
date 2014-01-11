@@ -19,13 +19,16 @@ class QMLTest(unittest.TestCase):
 		self.atm = AwfulThreadModel(self.ap_test.thread)
 
 	def test_load_qml(self):
-		self.test_atm()
+		self.atm = AwfulThreadModel(self.ap_test.thread)
 		self.app = QtWidgets.QApplication(['',''])
 		self.view = QtQuick.QQuickView()
 		self.rc = self.view.rootContext()
 		self.rc.setContextProperty('AwfulThreadModelObj', self.atm)
 
 		self.view.setSource(QtCore.QUrl('AwfulQML/AwfulThread.qml'))
+		self.view.setResizeMode(1)
+
+		self.view.show()
 
 if __name__ == '__main__':
 	unittest.main()

@@ -1,27 +1,30 @@
 import QtQuick 2.0
 
-ListView {
-    id: thread_list
+Rectangle {
+    id: thread_qml
+
     width: 800
     height: 500
-    spacing: 5
+    
+    ListView {
+        id: thread_list
+        spacing: 10
+        width: parent.width
+        height: parent.height
 
-    snapMode: ListView.SnapToItem
-    model: AwfulThreadModelObj
+        AwfulThreadBar {
+            id: thread_bar
+            textsize: 12
+            model: AwfulThreadModelObj
+        }
 
+        AwfulPosts {
+            y: 25
+            id: posts
+            clip: true
+            height: thread_qml.height
 
-    delegate: AwfulPost {
-        poster: post.poster
-        body: post.body
+            model: AwfulThreadModelObj
+        }
     }
-
-    populate: Transition {
-        NumberAnimation { properties: "x,y"; duration: 1000 }
-    }
-
-    AwfulThreadBar {
-        model: model
-    }
-
-
 }

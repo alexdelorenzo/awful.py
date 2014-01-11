@@ -1,41 +1,50 @@
 import QtQuick 2.0
 
-Item {
-   // x: parent.width - width
+Rectangle {
+    id: page_switcher
 
     property var model: AwfulThreadModelObj
-    id: thread_bar
+    property double textsize: 12
     anchors.right: parent.right
 
+    function update_thread()
+    {
+         page_number.text = ''.concat(model.page, " of ", model.pages)
+    }
+
     Text {
-        font.pointSize: 12
         id: left_arrow
+
+        font.pointSize: page_switcher.textsize
         text: "<"
+
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                AwfulThreadModelObj.prev_page();
-                page_number.text = AwfulThreadModelObj.page}
+                model.prev_page();
+                page_switcher.update_thread()}
             }
         }
 
     Text {
-        anchors.left: left_arrow.right
-        font.pointSize: 12
         id: page_number
-        text: AwfulThreadModelObj.page
 
+        anchors.left: left_arrow.right
+        font.pointSize: page_switcher.textsize
+        text: parent.update_thread()
     }
 
     Text{
-        anchors.left: page_number.right
-        font.pointSize: 12
         id: right_arrow
+
+        anchors.left: page_number.right
+        font.pointSize: page_switcher.textsize
         text: ">"
+
         MouseArea {
             anchors.fill: parent
-            onClicked: {AwfulThreadModelObj.next_page()
-                page_number.text = AwfulThreadModelObj.page}
+            onClicked: {model.next_page()
+                page_switcher.update_thread()}
         }
     }
 }

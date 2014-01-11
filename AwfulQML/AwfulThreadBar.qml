@@ -7,7 +7,8 @@ Rectangle {
     property double textsize: 22
 
     width: parent.width
-    anchors.fill: parent
+    height: thread_title.height 
+    
     color: "#E8E8E8"
 
     Flow {
@@ -21,7 +22,6 @@ Rectangle {
             color: "black"
             font.bold: true
             font.underline: true
-            elide: Text.ElideLeft
         }
 
         AwfulPageSwitcher {

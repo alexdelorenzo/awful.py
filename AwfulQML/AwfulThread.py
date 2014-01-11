@@ -51,14 +51,28 @@ class AwfulThreadModel(QAbstractListModel, QWrapper):
 
 	@QtCore.pyqtSlot()
 	def next_page(self):
-		pg = self.sa_thread.page + 1
+		pg = int(self.sa_thread.page) + 1
 		self.read_page(pg)
 
 	@QtCore.pyqtSlot()
 	def prev_page(self):
-		pg = self.sa_thread.page - 1
+		pg = int(self.sa_thread.page) - 1
 		self.read_page(pg)
 
+	@QtCore.pyqtSlot()
+	def first_page(self):
+		self.read_page(1)
+
+	@QtCore.pyqtSlot()
+	def last_page(self):
+		self.read_page(self.pages)
+
+
+	@QtCore.pyqtSlot(str, str)
+	def reply(self, thread_id, post_body):
+		self.sa_thread.session.reply(thread_id, post_body)
+		self.last_page()
+		
 
 class AwfulPostQWrapper(QWrapper):
 	def __init__(self, sa_post):

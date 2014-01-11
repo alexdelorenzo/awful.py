@@ -8,6 +8,8 @@ works with python 2.7 and 3.3, probably everything in between as well.
 ##### AwfulQML
 preliminary gui to SATools. this is not ready for any kind of use. py3k only.
 
+![screenshot](http://i.imgur.com/fobhdSw.png "threads_view")
+
 don't get this banned. thanks.
 
 Usage

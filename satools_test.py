@@ -1,11 +1,10 @@
-__author__ = 'alex'
 from AwfulPy import AwfulPy
 import unittest
 
 
 class AwfulPyTest(unittest.TestCase):
 	def setUp(self):
-		self.ap = AwfulPy('salisbury shake')
+		self.ap = AwfulPy('Your Username')
 
 	def tearDown(self):
 		pass

@@ -17,7 +17,8 @@ class SAThread(object):
 		self.content = None
 		self.posts = None
 		self.pages = None
-		self.page = None
+		self.page = 1
+		self.unread = True
 
 		self._set_properties(properties)
 
@@ -33,12 +34,13 @@ class SAThread(object):
 			setattr(self, name, attr)
 
 	def _get_posts(self):
-		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
-		             for post in self.content.select('table.post'))
-
-		posts = ordered(gen_posts)
-
+		posts = ordered(self._parse_posts())
 		return posts
+
+	def _parse_posts(self):
+		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
+             for post in self.content.select('table.post'))
+		return gen_posts
 
 	def read(self, page=1):
 		new_url = self.url + '&pagenumber=' + str(page)

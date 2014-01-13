@@ -1,5 +1,6 @@
 from SATools.SAThread import SAThread
 from collections import OrderedDict as ordered
+from math import ceil
 
 import bs4
 import re
@@ -21,7 +22,7 @@ class SAForum(object):
 		self.listings = None
 		self.threads = None
 		self.pages = None
-		self.page = None
+		self.page = 1
 
 
 	def read(self, pg=1):
@@ -31,6 +32,10 @@ class SAForum(object):
 
 		if not self.subforums and self._has_subforums():
 			self.subforums = ordered(self._get_subforums())
+
+		self.page = pg or self.content.find('option', selected='selected').text
+		self.pages = self.content.find('div', id='content').div.find_all('option')[-1].text
+
 
 	def _has_subforums(self):
 		return self.content.table['id'] == 'subforums'
@@ -52,6 +57,8 @@ class SAForum(object):
 
 		self.content = bs4.BeautifulSoup(response.content)
 		threads = ordered(self._gen_threads())
+
+		self.page = pg
 
 		return threads
 
@@ -87,7 +94,7 @@ class SAForum(object):
 				text = matches
 
 			elif td_class == 'replies':
-				properties['pages'] = int(int(text) / 40)
+				properties['pages'] = ceil(int(text) / 40)
 
 			elif td_class == 'author':
 				user_id = td.a['href'].split('id=')[-1]

@@ -8,6 +8,7 @@ class SAPost(object):
 		self.session = session
 		self.parent = parent
 		self.unread = True
+		self.url = ""
 
 		user_id = self.content.td['class'].pop()[7:]
 		user_name = self.content.dt.text

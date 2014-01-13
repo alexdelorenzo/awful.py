@@ -1,12 +1,14 @@
 import QtQuick 2.0
 
-Rectangle {
+Item {
     id: page_switcher
 
     property var model: AwfulThreadModelObj
     property double textsize: 12
+
+    width: switcher_flowbox.width
+    height: parent.height
     
-    anchors.right: parent.right
 
     function update_thread() {
          page_number.text = ''.concat(model.page, "/", model.pages)
@@ -49,7 +51,7 @@ Rectangle {
             }
         }
 
-        Text {
+        TextInput {
             id: page_number
 
             //anchors.left: prev_page.right

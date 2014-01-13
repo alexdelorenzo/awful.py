@@ -4,21 +4,23 @@ from PyQt5.QtCore import pyqtProperty
 
 
 class QWrapper(QtCore.QObject):
+	"""This was pointless"""
 	def __init__(self, data):
 		super().__init__()
 		self.data = data
 
 
-class AwfulThreadModel(QAbstractListModel, QWrapper):
+class AwfulThreadModel(QAbstractListModel):
 	def __init__(self, sa_thread):
+		super().__init__()
 		self.sa_thread = sa_thread
-		super().__init__(data=self.sa_thread)
+		self.data = self.sa_thread
 		self.posts = []
-		self._wrap_posts()
+		#self._wrap_posts()
 
 	def _wrap_posts(self):
 		self.posts = \
-			[AwfulPostQWrapper(post) for post in self.sa_thread.posts.values()]
+			[AwfulPostQWrapper(post) for post in self.data.posts.values()]
 
 	def rowCount(self, parent=QtCore.QModelIndex()):
 		return len(self.posts)
@@ -32,31 +34,35 @@ class AwfulThreadModel(QAbstractListModel, QWrapper):
 
 	@pyqtProperty(str, constant=True)
 	def page(self):
-		return str(self.sa_thread.page)
+		return str(self.data.page)
 
 	@pyqtProperty(str, constant=True)
 	def pages(self):
-		return str(self.sa_thread.pages)
+		return str(self.data.pages)
 
 	@pyqtProperty(str, constant=True)
 	def title(self):
-		return self.sa_thread.name
+		return self.data.name
+
+	@pyqtProperty(str, constant=True)
+	def id(self):
+		return self.data.id
 
 	@QtCore.pyqtSlot(int)
 	def read_page(self, pg=1):
 		self.beginResetModel()
-		self.sa_thread.read(pg)
+		self.data.read(pg)
 		self._wrap_posts()
 		self.endResetModel()
 
 	@QtCore.pyqtSlot()
 	def next_page(self):
-		pg = int(self.sa_thread.page) + 1
+		pg = int(self.data.page) + 1
 		self.read_page(pg)
 
 	@QtCore.pyqtSlot()
 	def prev_page(self):
-		pg = int(self.sa_thread.page) - 1
+		pg = int(self.data.page) - 1
 		self.read_page(pg)
 
 	@QtCore.pyqtSlot()
@@ -67,10 +73,9 @@ class AwfulThreadModel(QAbstractListModel, QWrapper):
 	def last_page(self):
 		self.read_page(self.pages)
 
-
-	@QtCore.pyqtSlot(str, str)
-	def reply(self, thread_id, post_body):
-		self.sa_thread.session.reply(thread_id, post_body)
+	@QtCore.pyqtSlot(str)
+	def reply(self, post_body):
+		self.data.session.reply(self.id, post_body)
 		self.last_page()
 		
 

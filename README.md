@@ -6,7 +6,7 @@ forums session, methods, and scraper.
 works with python 2.7 and 3.3, probably everything in between as well. 
 
 ##### AwfulQML
-preliminary gui to SATools. this is not ready for any kind of use. py3k only.
+preliminary gui to SATools. this is not ready for any kind of use. py3k only, qtquick controls from qt 5.2
 
 ![screenshot](http://i.imgur.com/PhZrAzU.png "threads_view")
 ![screenshot1](http://i.imgur.com/rRWS7k6.png "forums_view")

@@ -42,7 +42,7 @@ class AwfulThreadModel(QAbstractListModel):
 
 	@pyqtProperty(str, constant=True)
 	def title(self):
-		return self.data.name
+		return self.data.title
 
 	@pyqtProperty(str, constant=True)
 	def id(self):
@@ -75,7 +75,7 @@ class AwfulThreadModel(QAbstractListModel):
 
 	@QtCore.pyqtSlot(str)
 	def reply(self, post_body):
-		self.data.session.reply(self.id, post_body)
+		self.data.session.reply(self.data.id, post_body)
 		self.last_page()
 		
 

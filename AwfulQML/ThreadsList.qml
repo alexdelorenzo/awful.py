@@ -15,6 +15,9 @@ ListView {
     }
 
     populate: Transition {
-        NumberAnimation { properties: "x,y"; duration: 250 }
+        NumberAnimation { properties: "x,y"; duration: 100 }
+    }
+    displaced: Transition {
+        NumberAnimation { properties: "x,y"; duration: 1000 }
     }
 }

@@ -26,7 +26,7 @@ Rectangle {
             id: thread_title
 
             font.pointSize: thread_bar.textsize
-            text: model.title
+            text: thread_bar.model.title
             color: "black"
             font.bold: true
             font.underline: true

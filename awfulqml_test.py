@@ -6,7 +6,7 @@ import unittest
 
 from PyQt5 import QtCore, QtGui, QtWidgets, QtQml, QtQuick
 
-class QMLTest(unittest.TestCase):
+class QMLSetupTest(unittest.TestCase):
 	def setUp(self):
 		self.ap_test = AwfulPyTest()
 		self.ap_test.setUp()

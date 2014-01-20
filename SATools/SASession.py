@@ -35,7 +35,7 @@ class SASession(requests.Session):
 		raise NotImplementedError
 
 	def reply(self, id, body):
-		url = "https://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
+		url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
 
 		response = self.get(url)
 		bs = BeautifulSoup(response.content)
@@ -50,6 +50,8 @@ class SASession(requests.Session):
 
 		if not response.ok:
 			raise Exception(("Unable to reply", response.status_code, response.reason))
+
+		return bs, response
 
 
 

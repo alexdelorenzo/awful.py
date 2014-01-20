@@ -3,10 +3,12 @@ from SATools.SAPoster import SAPoster
 from collections import OrderedDict as ordered
 
 from bs4 import BeautifulSoup
+from math import ceil
+import re
 
 
 class SAThread(object):
-	def __init__(self, id, session, name=None, **properties):
+	def __init__(self, id, session, name=None, tr_thread=None, **properties):
 		self.name = name
 		self.id = id
 		self.session = session
@@ -20,6 +22,7 @@ class SAThread(object):
 		self.page = 1
 		self.unread = True
 
+		self._set_properties(self._parse_tr_thread(tr_thread))
 		self._set_properties(properties)
 
 	def __str__(self):
@@ -38,9 +41,58 @@ class SAThread(object):
 		return posts
 
 	def _parse_posts(self):
+		"""TODO: grab more info from content, put it in sa_post module..."""
 		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
              for post in self.content.select('table.post'))
 		return gen_posts
+
+	def _parse_tr_thread(self, tr_thread):
+		properties = dict()
+
+		for td in tr_thread.find_all('td'):
+			td_class = td['class'].pop()
+			text = td.text.strip()
+
+			if td_class == 'icon':
+				text = td.a['href'].split('posticon=').pop(-1)
+
+			elif td_class == 'lastpost':
+				groups = 'time', 'date', 'user'
+				regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
+				matches = re.compile(regex).search(text).groups()
+				matches = {group: match for group, match in zip(groups, matches)}
+
+				text = matches
+
+			elif td_class == 'replies':
+				properties['pages'] = ceil(int(text) / 40)
+
+			elif td_class == 'author':
+				user_id = td.a['href'].split('id=')[-1]
+				properties['user_id'] = user_id
+
+			elif td_class == 'title' or td_class == 'title_sticky':
+				text = td.find('a', 'thread_title').text
+				properties['title'] = text
+
+				last_read = td.find('div', 'lastseen')
+
+				if last_read:
+					close_link = last_read.a
+					stop_tracking_url = self.session.base_url + close_link['href']
+					last_post_link = last_read.find('a', 'count')
+
+					if last_post_link:
+						unread_count = last_post_link.text
+						last_post_url = self.session.base_url + last_post_link['href']
+						properties['last_url'] = last_post_url
+						properties['unread_count'] = unread_count
+						properties['unread_pages'] = ceil(int(unread_count) / 40)
+						properties['last_off'] = stop_tracking_url
+
+			properties[td_class] = text
+
+		return properties
 
 	def read(self, page=1):
 		new_url = self.url + '&pagenumber=' + str(page)
@@ -51,12 +103,3 @@ class SAThread(object):
 
 		self.page = page
 
-
-
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()

@@ -20,10 +20,10 @@ class SAForum(object):
 
 		self.content = None
 		self.listings = None
-		self.threads = None
 		self.pages = None
 		self.page = 1
 
+		self.unread = True
 
 	def read(self, pg=1):
 		self.threads = self._get_threads(pg)
@@ -67,51 +67,6 @@ class SAForum(object):
 
 		for tr_thread in thread_blocks:
 			thread_id = tr_thread['id'][6:]
-			properties = self._parse_tr_thread(tr_thread)
-			title = properties['title']
-
+			val = SAThread(thread_id, self.session, tr_thread=tr_thread)
 			key = thread_id
-			val = SAThread(thread_id, self.session, title, **properties)
-
 			yield key, val
-
-	def _parse_tr_thread(self, tr_thread):
-		properties = dict()
-
-		for td in tr_thread.find_all('td'):
-			td_class = td['class'].pop()
-			text = td.text.strip()
-
-			if td_class == 'icon':
-				text = td.a['href'].split('posticon=').pop(-1)
-
-			elif td_class == 'lastpost':
-				groups = 'time', 'date', 'user'
-				regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-				matches = re.compile(regex).search(text).groups()
-				matches = {group: match for group, match in zip(groups, matches)}
-
-				text = matches
-
-			elif td_class == 'replies':
-				properties['pages'] = ceil(int(text) / 40)
-
-			elif td_class == 'author':
-				user_id = td.a['href'].split('id=')[-1]
-				properties['user_id'] = user_id
-
-			elif td_class == 'title' or td_class == 'title_sticky':
-				text = td.find('a', 'thread_title').text
-				properties['title'] = text
-
-			properties[td_class] = text
-
-		return properties
-
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()

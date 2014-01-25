@@ -24,6 +24,11 @@ class SAPost(object):
 
 	def read(self):
 		self.unread = False
+		for td in self.content.find_all('td'):
+			if td['class'] == 'userinfo':
+				for dd in td.find_all('dd'):
+					pass
+		raise NotImplemented
 
 
 def main():

@@ -40,18 +40,18 @@ class SASession(requests.Session):
 		response = self.get(url)
 		bs = BeautifulSoup(response.content)
 
-		want = 'action', 'formkey', 'form_cookie'
-		inputs = {i['name']: i['value'] for i in bs.find_all('input')
-		          if i.has_key('value') and i['name'] in want}
-		inputs['parseurl'] = 'yes'
+		inputs = {i['name']: i['value'] 
+			  for i in bs.find_all('input')
+		          if i.has_key('value')}
 		inputs['message'] = body
+		inputs.pop('preview')
 
 		response = self.post(url, inputs)
 
 		if not response.ok:
 			raise Exception(("Unable to reply", response.status_code, response.reason))
 
-		return bs, response
+		return {'content': bs, 'response': response}
 
 
 

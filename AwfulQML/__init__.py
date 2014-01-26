@@ -1,3 +1,5 @@
+from AwfulQML import *
+
 __author__ = 'alex'
 
 

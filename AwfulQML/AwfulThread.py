@@ -6,13 +6,13 @@ from PyQt4.QtCore import pyqtProperty
 class QWrapper(QtCore.QObject):
 	"""This was pointless"""
 	def __init__(self, data):
-		super().__init__()
+		super(QWrapper, self).__init__()
 		self.data = data
 
 
 class AwfulThreadModel(QAbstractListModel):
 	def __init__(self, sa_thread):
-		super().__init__()
+		super(AwfulThreadModel, self).__init__()
 		self.sa_thread = sa_thread
 		self.data = self.sa_thread
 		self.posts = []
@@ -81,7 +81,7 @@ class AwfulThreadModel(QAbstractListModel):
 
 class AwfulPostQWrapper(QWrapper):
 	def __init__(self, sa_post):
-		super().__init__(sa_post)
+		super(AwfulPostQWrapper, self).__init__(sa_post)
 		self.post = self.data
 
 	@pyqtProperty(str, constant=True)

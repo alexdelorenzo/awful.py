@@ -7,7 +7,7 @@ from AwfulQML.AwfulThread import AwfulThreadModel
 
 class ForumModel(QAbstractListModel):
 	def __init__(self, forum):
-		super().__init__()
+		super(ForumModel, self).__init__()
 		self.threads = []
 		self.data = forum
 

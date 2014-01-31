@@ -9,7 +9,7 @@ Rectangle {
 	width: parent.width
 	height: parent.height
 
-	color: "#c1c1c1"
+	color: "#ececec"
 
 	Column {
 		spacing: 5

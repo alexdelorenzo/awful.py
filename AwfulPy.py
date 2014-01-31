@@ -1,17 +1,15 @@
-__author__ = 'alex'
 from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
-import os, pickle
-
+import os, pickle, sys
 
 class AwfulPy(object):
 	def __init__(self, username, passwd=None, save_session=True):
+		py_version = str(sys.version_info.major)
 		self.username = username
-		self.passwd = passwd
-
-		self.session_bak = '.' + username + '_sa.bak'
+		self.passwd = passwd		
+		self.session_bak = \
+			'.' + username.replace(' ', '_') + py_version + '.bak'
 		self.session = self._load_session(save_session)
-
 		self.index = SAIndex(self.session)
 
 		del passwd

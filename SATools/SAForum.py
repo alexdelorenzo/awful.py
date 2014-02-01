@@ -1,14 +1,18 @@
 from SATools.SAThread import SAThread
+from SATools.SAObj import SAListObj
+
 from collections import OrderedDict as ordered
 from math import ceil
-
 import bs4
 import re
 
 
-class SAForum(object):
+class SAForum(SAListObj):
 	def __init__(self, id, session, name=None, subforums=dict(),
-	             parent=None,pg=1):
+	             parent=None, page=1, **properties):
+		super().__init__(id=id, session=session, name=name,
+		                 subforums=subforums, parent=parent,
+		                 page=page, **properties)
 		self.name = name
 		self.id = id
 		self.session = session

@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 class SASearch(SAListObj):
 	def __init__(self, query, type, session, **options):
-		super().__init__(session=session, **options)
+		super().__init__(name=query, session=session, **options)
 		self.base_url = "http://forums.somethingawful.com/search.php"
 		self.query = query
 		self.type = type
@@ -22,12 +22,23 @@ class SASearch(SAListObj):
 		self.search_userid(sa_profile.id)
 
 	def search_userid(self, user_id):
-		search_url = self.base_url + "?action=do_search_posthistory&userid="
-		response = self.session.get(search_url + str(user_id))
+		params = {'action': 'do_search_posthistory', 'userid': user_id}
+		response = self.session.post(self.base_url, params)
 		response = self._jump(response)
 
 		self._content = BeautifulSoup(response.text)
 		self._parse_search_results()
+
+	def search_keywords(self, keywords):
+		url = "http://forums.somethingawful.com/f/search/submit"
+		response = self.session.get(url)
+		bs = BeautifulSoup(response.content)
+
+		inputs = {'keywords': keywords}
+		response = self.session.post(url, inputs)
+		response = self._jump(response, url)
+
+		return response
 
 	def _parse_search_results(self):
 		table_rows = self._content.find('table', id='main_full').find_all('tr')
@@ -45,7 +56,8 @@ class SASearch(SAListObj):
 			base_url = self.base_url
 
 		bs_content = BeautifulSoup(response.text)
-		request_id = bs_content.find('div', 'inner').a['href']
+		request_id = bs_content.head.meta['content'].lower()
+		request_id = request_id.split('url=').pop()
 		jump_url = base_url + request_id
 		self.url = jump_url
 

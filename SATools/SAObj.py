@@ -17,7 +17,8 @@ class SAObj(object):
 				setattr(self, name, attr)
 
 	def read(self, pg=1):
-		self.unread = False
+		if self.unread:
+			self.unread = False
 
 
 class SAListObj(SAObj):
@@ -34,9 +35,10 @@ class SAListObj(SAObj):
 	def read(self, pg=1):
 		super().read(pg)
 		self.navi.read(pg)
-		new_url = self.url + '&pagenumber=' + str(pg)
-		request = self.session.get(new_url)
+		url = self.url + 'pagenumber' + str(pg)
+		request = self.session.get(url)
 		self._content = BeautifulSoup(request.text)
+
 
 class SAPageNav(SAObj):
 	def __init__(self, content=None, parent=None, **properties):
@@ -50,9 +52,9 @@ class SAPageNav(SAObj):
 		if not self.content:
 			self.content = self.parent.content
 
-		self.page = pg or self.content.find('option', selected='selected').text
+		pg_option = self.content.find('option', selected='selected')
+		self.page = pg_option.text if pg_option else pg
 		page_selector = self.content.find_all('option')
-
 		if len(page_selector):
 			self.pages = page_selector[-1].text
 		else:
@@ -64,10 +66,3 @@ class SAPageNav(SAObj):
 		self.parent.page = self.page
 		self.parent.pages = self.pages
 
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()

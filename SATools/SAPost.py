@@ -17,7 +17,8 @@ class SAPost(SAObj):
 		                       content=self.content.find('td', 'userinfo'))
 
 		if content:
-			self.body = content.td.next_sibling.next_sibling.text.strip()
+			has_post = content.find('td', 'postbody')
+			self.body = has_post.text if has_post else ""
 			self.unread = False
 
 	def read(self):

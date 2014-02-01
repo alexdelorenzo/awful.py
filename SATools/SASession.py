@@ -55,7 +55,7 @@ class SASession(requests.Session):
 
 	def find_user_posts(self, user_id):
 		search = SASearch(query=user_id, session=self.session)
-		search.find_user_posts()
+		search.search_userid(user_id)
 		return search
 
 	def search(self):

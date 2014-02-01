@@ -1,5 +1,5 @@
-__author__ = 'alex'
 from SATools.SAPoster import SAPoster
+from SATools.SASearch import SASearch
 import requests
 from bs4 import BeautifulSoup
 
@@ -40,10 +40,10 @@ class SASession(requests.Session):
 		response = self.get(url)
 		bs = BeautifulSoup(response.content)
 
-		inputs = {i['name']: i['value'] 
-			  for i in bs.find_all('input')
-		          if i.has_key('value')}
-		inputs['message'] = body
+		inputs = {i['name']: i['value']
+		          for i in bs.find_all('input')
+		          if i.has_attr('value')}
+		inputs['message'] = str(body)
 		inputs.pop('preview')
 
 		response = self.post(url, inputs)
@@ -51,14 +51,12 @@ class SASession(requests.Session):
 		if not response.ok:
 			raise Exception(("Unable to reply", response.status_code, response.reason))
 
-		return {'content': bs, 'response': response}
+		return response
 
+	def find_user_posts(self, user_id):
+		search = SASearch(query=user_id, session=self.session)
+		search.search_userid(user_id)
+		return search
 
-
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()
+	def search(self):
+		raise NotImplementedError

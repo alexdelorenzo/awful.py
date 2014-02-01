@@ -1,14 +1,18 @@
 from SATools.SAThread import SAThread
+from SATools.SAObj import SAListObj
+
 from collections import OrderedDict as ordered
 from math import ceil
-
 import bs4
 import re
 
 
-class SAForum(object):
+class SAForum(SAListObj):
 	def __init__(self, id, session, name=None, subforums=dict(),
-	             parent=None,pg=1):
+	             parent=None, page=1, **properties):
+		super().__init__(id=id, session=session, name=name,
+		                 subforums=subforums, parent=parent,
+		                 page=page, **properties)
 		self.name = name
 		self.id = id
 		self.session = session
@@ -34,8 +38,12 @@ class SAForum(object):
 			self.subforums = ordered(self._get_subforums())
 
 		self.page = pg or self.content.find('option', selected='selected').text
-		self.pages = self.content.find('div', id='content').div.find_all('option')[-1].text
+		page_selector = self.content.find_all('option')
 
+		if len(page_selector):
+			self.pages = page_selector[-1].text
+		else:
+			self.pages = 1
 
 	def _has_subforums(self):
 		return self.content.table['id'] == 'subforums'
@@ -56,6 +64,7 @@ class SAForum(object):
 		                         'pagenumber': pg})
 
 		self.content = bs4.BeautifulSoup(response.content)
+		self.content = self.content.find('div', id='content')
 		threads = ordered(self._gen_threads())
 
 		self.page = pg
@@ -67,6 +76,6 @@ class SAForum(object):
 
 		for tr_thread in thread_blocks:
 			thread_id = tr_thread['id'][6:]
-			val = SAThread(thread_id, self.session, tr_thread=tr_thread)
+			val = SAThread(id=thread_id, session=self.session, tr_thread=tr_thread)
 			key = thread_id
 			yield key, val

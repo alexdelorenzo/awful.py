@@ -1,18 +1,16 @@
 from SATools.SAPost import SAPost
 from SATools.SAPoster import SAPoster
-from collections import OrderedDict as ordered
+from SATools.SAObj import SAObj, SAListObj
 
+from collections import OrderedDict as ordered
 from bs4 import BeautifulSoup
 from math import ceil
 import re
 
 
-class SAThread(object):
-	def __init__(self, id, session, name=None, tr_thread=None, **properties):
-		self.name = name
-		self.id = id
-		self.session = session
-
+class SAThread(SAListObj):
+	def __init__(self, tr_thread=None, **properties):
+		super().__init__(tr_thread=tr_thread, **properties)
 		self.base_url = self.session.base_url + 'showthread.php'
 		self.url = self.base_url + '?threadid=' + self.id
 
@@ -20,7 +18,6 @@ class SAThread(object):
 		self.posts = None
 		self.pages = None
 		self.page = 1
-		self.unread = True
 
 		self._set_properties(self._parse_tr_thread(tr_thread))
 		self._set_properties(properties)
@@ -43,7 +40,7 @@ class SAThread(object):
 	def _parse_posts(self):
 		"""TODO: grab more info from content, put it in sa_post module..."""
 		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
-             for post in self.content.select('table.post'))
+                  for post in self.content.select('table.post'))
 		return gen_posts
 
 	def _parse_tr_thread(self, tr_thread):

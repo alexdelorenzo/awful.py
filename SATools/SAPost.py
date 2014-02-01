@@ -1,12 +1,10 @@
 from SATools.SAPoster import SAPoster
+from SATools.SAObj import SAObj
 
 
-class SAPost(object):
-	def __init__(self, id, session, content=None, parent=None):
-		self.id = id
-		self.content = content
-		self.session = session
-		self.parent = parent
+class SAPost(SAObj):
+	def __init__(self, id, session, content=None, parent=None, **properties):
+		super().__init__(id=id, session=session, content=content, parent=parent, **properties)
 		self.unread = True
 		self.url = ""
 
@@ -19,7 +17,8 @@ class SAPost(object):
 		                       content=self.content.find('td', 'userinfo'))
 
 		if content:
-			self.body = content.td.next_sibling.next_sibling.text.strip()
+			has_post = content.find('td', 'postbody')
+			self.body = has_post.text if has_post else ""
 			self.unread = False
 
 	def read(self):

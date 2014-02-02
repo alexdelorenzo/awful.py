@@ -49,6 +49,10 @@ class ForumModel(QAbstractListModel):
 	def id(self):
 		return self.data.id
 
+	@pyqtProperty(bool, constant=True)
+	def has_lr(self):
+		return False
+
 	@QtCore.pyqtSlot()
 	def next_page(self):
 		pg = int(self.data.page) + 1

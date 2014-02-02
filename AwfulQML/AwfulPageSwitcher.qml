@@ -14,8 +14,18 @@ Item {
     onUpdate: page_switcher.update_thread()
 
     function update_thread() {
+         var int_page = parseInt(model.page)
+         var int_pages = parseInt(model.pages)
+
+         first_page.text = int_page <= 2 ? "" : "<<"
+         prev_page.text = int_page <= 1 ? "" : "<"
          page_number.text = ''.concat(model.page, "/", model.pages)
+         next_page.text = int_page >= int_pages ? "" : ">"
+         last_page.text = int_page >= int_pages - 2 ? "" : ">>"
+
     }
+
+    Component.onCompleted: page_switcher.update()
 
     Flow {
         id: switcher_flowbox

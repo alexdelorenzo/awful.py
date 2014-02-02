@@ -9,7 +9,7 @@ works with python 2.7 and 3.3, probably everything in between as well.
 preliminary gui to SATools. this is not ready for any kind of use. py3k only, qtquick controls from qt 5.2
 
 ![screenshot](http://i.imgur.com/PhZrAzU.png "threads_view")
-![screenshot1](http://i.imgur.com/7WJFb3T.png "forums_view")
+![screenshot1](http://i.imgur.com/9PEAQjS.png "forums_view")
 
 don't get this banned. thanks.
 

@@ -1,0 +1,6 @@
+bs4
+requests
+PyQt5
+
+#PyQt4
+#PyKde4

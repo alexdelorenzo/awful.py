@@ -9,17 +9,13 @@ import re
 
 class SAForum(SAListObj):
 	def __init__(self, id, session, content=None, parent=None, name=None,
-	             subforums=dict(), page=1, **properties):
-		super().__init__(id, session, content, parent, name, page=page,
-		                 subforums=subforums, **properties)
-
+	             page=1, subforums=None, **properties):
+		super().__init__(id, session, content, parent, name, page=page, **properties)
 		self.subforums = subforums
 		self.listings = None
-
 		self.base_url = \
 			'http://forums.somethingawful.com/forumdisplay.php'
 		self.url = self.base_url + '?forumid=' + str(id)
-
 
 	def read(self, pg=1):
 		super().read(pg)
@@ -29,14 +25,6 @@ class SAForum(SAListObj):
 
 		if not self.subforums and self._has_subforums():
 			self.subforums = ordered(self._get_subforums())
-
-		self.page = pg or self.content.find('option', selected='selected').text
-		page_selector = self.content.find_all('option')
-
-		if len(page_selector):
-			self.pages = page_selector[-1].text
-		else:
-			self.pages = 1
 
 	def _has_subforums(self):
 		return self.content.table['id'] == 'subforums'

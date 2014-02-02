@@ -16,11 +16,17 @@ class AwfulThreadModel(QAbstractListModel):
 		self.sa_thread = sa_thread
 		self.data = self.sa_thread
 		self.posts = []
-		#self._wrap_posts()
+
+		if self.data.last_read:
+			self._last_read = \
+				LastReadWrapper(self.data.last_read, self)
+		else:
+			self._last_read = False
 
 	def _wrap_posts(self):
 		self.posts = \
-			[AwfulPostQWrapper(post) for post in self.data.posts.values()]
+			[AwfulPostQWrapper(post)
+			 for post in self.data.posts.values()]
 
 	def rowCount(self, parent=QtCore.QModelIndex()):
 		return len(self.posts)
@@ -31,6 +37,10 @@ class AwfulThreadModel(QAbstractListModel):
 	def data(self, index, role=0):
 		if index.isValid():
 			return self.posts[index.row()]
+
+	@pyqtProperty(QtCore.QObject, constant=True)
+	def last_read(self):
+		return self._last_read
 
 	@pyqtProperty(str, constant=True)
 	def page(self):
@@ -77,7 +87,47 @@ class AwfulThreadModel(QAbstractListModel):
 	def reply(self, post_body):
 		self.data.session.reply(self.data.id, post_body)
 		self.last_page()
-		
+
+	@QtCore.pyqtProperty(bool, constant=True)
+	def has_lr(self):
+		return bool(self.data.last_read)
+
+
+class LastReadWrapper(QWrapper):
+	def __init__(self, lr_obj, parent):
+		super().__init__(lr_obj)
+		self.data.read()
+		self.parent = parent
+
+	@pyqtProperty(str, constant=True)
+	def lastpost(self):
+		return self.data.url_last_post
+
+	@pyqtProperty(str, constant=True)
+	def unread_pages(self):
+		return self.data.unread_pages
+
+	@pyqtProperty(str, constant=True)
+	def unread_count(self):
+		return self.data.unread_count
+
+	@pyqtProperty(str, constant=True)
+	def lastread_off(self):
+		return self.data.url_switch_off
+
+	@QtCore.pyqtSlot(int)
+	def read(self, pg=1):
+		self.data.read(pg)
+
+	@QtCore.pyqtSlot()
+	def jump(self):
+		self.parent.read_page(int(self.parent.data.pages) - int(self.data.unread_pages))
+
+	@QtCore.pyqtSlot()
+	def stop(self):
+		self.data.stop_tracking()
+
+
 
 class AwfulPostQWrapper(QWrapper):
 	def __init__(self, sa_post):
@@ -96,10 +146,3 @@ class AwfulPostQWrapper(QWrapper):
 	def poster(self):
 		return self.post.poster.name
 
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()

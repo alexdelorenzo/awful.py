@@ -17,10 +17,12 @@ Rectangle {
 		width: parent.width
 		height: parent.height
 
+		property variant model: parent.model
+
 		AwfulThreadBar {
 			id: thread_bar
 
-			model: forum_rect.model
+			model: parent.model
 			textsize: 10
 		}
 

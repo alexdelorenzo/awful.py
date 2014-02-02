@@ -11,12 +11,15 @@ revamped. 80ms vs 600ms start up time? yaes.
 class SAIndex(object):
 	def __init__(self, sa_session):
 		self.session = sa_session
-		self.base_url = self.session.base_url
+		self.base_url = 'http://forums.somethingawful.com/'
 
 		self.forums = ordered()
 		self.listings = ordered()
 		self.sections = None
+		self.content = None
+		self.json = None
 
+		self._get_json()
 		self._get_sections()
 
 	def _save(self, section_id, sa_section):
@@ -24,7 +27,7 @@ class SAIndex(object):
 		self.listings[section_id] = sa_section.name
 
 	def _get_json(self):
-		url = self.base_url + '/json/forumtree'
+		url = self.base_url + 'f/json/forumtree'
 		request = self.session.get(url)
 		self.content = request.content
 		self.json = request.json()
@@ -44,7 +47,7 @@ class SAIndex(object):
 		sa_children = []
 
 		for child in children:
-			for sa_child in self._gen_from_json(child, parent):
+			for sa_child in self.__gen_from_json(child, parent):
 				sa_children.append(sa_child)
 
 		parent.children = sa_children
@@ -53,10 +56,3 @@ class SAIndex(object):
 		yield parent
 
 
-
-def main():
-	pass
-
-
-if __name__ == "__main__":
-	main()

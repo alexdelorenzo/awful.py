@@ -46,7 +46,7 @@ class SAListObj(SAObj):
 		self._content = BeautifulSoup(request.text)
 
 		if not self.navi:
-			navi = self._content.find('select')
+			navi = self._content.find('div', 'pages')
 			print(len(self._content.text))
 			self.navi = SAPageNav(content=navi, parent=self)
 

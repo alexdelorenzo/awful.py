@@ -48,4 +48,14 @@ Rectangle {
             textsize: thread_bar.textsize
         }
     }
+
+    LastRead {
+        model: thread_bar.model
+        update_this: switcher
+        color: 'orange' //thread_bar.color
+
+        visible: thread_bar.model.has_lr ?  true : false
+
+        x: parent.width - width
+    }
 }

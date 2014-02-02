@@ -8,7 +8,10 @@ Item {
 
     width: switcher_flowbox.width
     height: parent.height
-    
+
+    signal update()
+
+    onUpdate: page_switcher.update_thread()
 
     function update_thread() {
          page_number.text = ''.concat(model.page, "/", model.pages)

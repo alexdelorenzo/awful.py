@@ -4,7 +4,7 @@ import QtQuick 2.0
 Rectangle {
 	id: forum_rect
 
-	property var model: AwfulForumModelObj
+	property variant model: AwfulForumModelObj
 	
 	width: parent.width
 	height: parent.height

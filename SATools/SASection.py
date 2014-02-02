@@ -3,8 +3,8 @@ from SATools.SAForum import SAForum
 
 
 class SASection(SAForum):
-	def __init__(self, id, session, name=None, subforums=dict(), parent=None):
-		super(SASection, self).__init__(id, session, name=name, subforums=subforums, parent=parent)
+	def __init__(self, id, session, content=None, parent=None, name=None, subforums=dict()):
+		super(SASection, self).__init__(id, session, content, parent, name, subforums=subforums)
 
 		if not self.subforums:
 			self.read()

@@ -1,6 +1,6 @@
-from PyQt4.QtCore import QAbstractListModel
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import pyqtProperty, pyqtSlot
+from PyQt5.QtCore import QAbstractListModel
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import pyqtProperty, pyqtSlot
 
 from AwfulQML.AwfulThread import AwfulThreadModel
 

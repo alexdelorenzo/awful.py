@@ -8,28 +8,21 @@ import re
 
 
 class SAForum(SAListObj):
-	def __init__(self, id, session, name=None, subforums=dict(),
-	             parent=None, page=1, **properties):
-		super().__init__(id=id, session=session, name=name,
-		                 subforums=subforums, parent=parent,
-		                 page=page, **properties)
-		self.name = name
-		self.id = id
-		self.session = session
+	def __init__(self, id, session, content=None, parent=None, name=None,
+	             subforums=dict(), page=1, **properties):
+		super().__init__(id, session, content, parent, name, page=page,
+		                 subforums=subforums, **properties)
+
 		self.subforums = subforums
-		self.parent = parent
+		self.listings = None
 
 		self.base_url = \
 			'http://forums.somethingawful.com/forumdisplay.php'
+		self.url = self.base_url + '?forumid=' + str(id)
 
-		self.content = None
-		self.listings = None
-		self.pages = None
-		self.page = 1
-
-		self.unread = True
 
 	def read(self, pg=1):
+		super().read(pg)
 		self.threads = self._get_threads(pg)
 		self.listings = {threadid: thread.name
 		                 for threadid, thread in self.threads.items()}
@@ -53,7 +46,7 @@ class SAForum(SAListObj):
 			subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
 			name = tr_subforum.a.text
 
-			forum_obj = SAForum(subforum_id, self.session, name, parent=self)
+			forum_obj = SAForum(subforum_id, self.session, self, name)
 
 			yield subforum_id, forum_obj
 

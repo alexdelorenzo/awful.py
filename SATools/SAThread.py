@@ -25,6 +25,11 @@ class SAThread(SAListObj):
 	def __str__(self):
 		return self.name
 
+	def read(self, page=1):
+		super().read(page)
+		self.content = self._content
+		self.posts = self._get_posts()
+
 	def _set_properties(self, properties):
 		for name, attr in properties.items():
 			if name == 'user_id':
@@ -39,9 +44,11 @@ class SAThread(SAListObj):
 
 	def _parse_posts(self):
 		"""TODO: grab more info from content, put it in sa_post module..."""
-		gen_posts = ((post['id'], SAPost(post['id'], self.session, post))
-                  for post in self.content.select('table.post'))
-		return gen_posts
+		for post in self.content.select('table.post'):
+			postid = post['id']
+			sa_post = SAPost(postid, self.session, post)
+			#sa_post.read()
+			yield postid, sa_post
 
 	def _parse_tr_thread(self, tr_thread):
 		properties = dict()
@@ -57,7 +64,7 @@ class SAThread(SAListObj):
 				groups = 'time', 'date', 'user'
 				regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
 				matches = re.compile(regex).search(text).groups()
-				matches = {group: match for group, match in zip(groups, matches)}
+				matches = dict(zip(groups, matches))
 
 				text = matches
 
@@ -91,12 +98,5 @@ class SAThread(SAListObj):
 
 		return properties
 
-	def read(self, page=1):
-		new_url = self.url + '&pagenumber=' + str(page)
-		request = self.session.get(new_url)
 
-		self.content = BeautifulSoup(request.content)
-		self.posts = self._get_posts()
-
-		self.page = page
 

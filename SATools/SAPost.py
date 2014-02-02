@@ -4,20 +4,18 @@ from SATools.SAObj import SAObj
 
 class SAPost(SAObj):
 	def __init__(self, id, session, content=None, parent=None, **properties):
-		super().__init__(id=id, session=session, content=content, parent=parent, **properties)
+		super().__init__(id, session, content, parent, **properties)
 		self.unread = True
 		self.url = ""
 
 		user_id = self.content.td['class'].pop()[7:]
 		user_name = self.content.dt.text
 
-		self.poster = SAPoster(user_id,
-		                       user_name,
-		                       session=self.session,
-		                       content=self.content.find('td', 'userinfo'))
+		content = self.content.find('td', 'userinfo')
+		self.poster = SAPoster(user_id, self.session, content, name=user_name)
 
-		if content:
-			has_post = content.find('td', 'postbody')
+		if self.content:
+			has_post = self.content.find('td', 'postbody')
 			self.body = has_post.text if has_post else ""
 			self.unread = False
 

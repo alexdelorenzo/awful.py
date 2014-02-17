@@ -81,17 +81,21 @@ Rectangle {
     LastRead {
         id: last_read
 
+        property int offset_border: 2
+
+        x: parent.width - width - offset_border
+
         model: thread_bar.model
         update_this: switcher
-        color: 'orange' //thread_bar.color
 
         visible: is_visible()
 
         function toggle_visibility() {
             var is_visible = last_read.is_visible();
 
-            if (is_visible){
-                last_read.visible = last_read.visible ? false : true;}
+            if (is_visible) {
+                last_read.visible = last_read.visible ? false : true;
+            }
         }
 
         function is_visible () {
@@ -100,7 +104,5 @@ Rectangle {
 
             return (!is_overlapping && has_lr);
         }
-
-        x: parent.width - width
     }
 }

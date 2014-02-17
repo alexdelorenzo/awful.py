@@ -13,6 +13,6 @@ ListView {
     }
 
     populate: Transition {
-        NumberAnimation { properties: "x,y"; duration: 250 }
+        NumberAnimation { properties: "x,y"; duration: 450 }
     }
 }

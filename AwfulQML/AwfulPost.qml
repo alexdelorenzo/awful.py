@@ -1,4 +1,7 @@
 import QtQuick 2.0
+import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.0
+
 
 Rectangle {
     id: post_frame
@@ -11,6 +14,7 @@ Rectangle {
 
     color: "#F4F4F4"
 
+    
     Rectangle {
         id: username_box
 
@@ -18,18 +22,31 @@ Rectangle {
         height: username.height
         color: "#EEEEEE"
 
-        Text {
-            id: username
+        RowLayout {
+            Text {
+                id: username
 
-            width: post_frame.width
+                color:'black'
+                font.pointSize: 11
+                
+                text: post.poster
 
-            color:'black'
-            font.pointSize: 11
-            verticalAlignment: Text.AlignTop
-            
-            text: post.poster
-        }
-    }   
+                Layout.alignment: Qt.AlignLeft
+                Layout.rowSpan: 0
+            }
+            CheckBox {
+                id: chk_box
+
+                text: "Quote"
+                Layout.alignment: Qt.AlignRight
+                Layout.fillWidth: true
+
+                visible: false
+
+                onClicked: {}
+            }
+        }   
+    }
 
     Text {
         id: post_text
@@ -43,5 +60,21 @@ Rectangle {
 
         text: post.content
 
+        onLinkActivated: Qt.openUrlExternally(link)
+
     }
+
+    MouseArea {
+        id: username_ma
+
+        width: parent.width
+        height: parent.height
+        
+        hoverEnabled: true
+
+        onEntered: chk_box.visible = true
+        onExited: chk_box.visible = chk_box.checked ? true : false
+        onClicked: chk_box.checked = chk_box.checked ? false : true
+    }
+
 }

@@ -25,7 +25,7 @@ class SAPost(SAObj):
 			if td['class'] == 'userinfo':
 				for dd in td.find_all('dd'):
 					pass
-		raise NotImplemented
+		raise NotImplemented()
 
 
 def main():

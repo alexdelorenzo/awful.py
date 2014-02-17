@@ -14,16 +14,16 @@ Rectangle {
 
     gradient: Gradient {
         GradientStop { position: 0.0; color: "#ececec"}
-        GradientStop { position: 1.0; color: "orange" }
+        GradientStop { position: 1.0; color: "#BAB9B7" }
     }
 
     Row {
         id: lr_flow
 
-        width: unread_count.width + stop_tracking.width + 2
+        width: unread_count.width + stop_tracking.width
         height: parent.height
 
-        spacing: 5
+        spacing: 3
 
         Text {
             id: stop_tracking

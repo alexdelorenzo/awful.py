@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
+import QtQuick.Window 2.1
+import "Window.js" as WindowJS
 
 Rectangle {
     id: thread_qml
@@ -20,14 +22,10 @@ Rectangle {
             model.read_page(page)
     }   
     
-    Column {
+    ColumnLayout {
         id: thread_list
-
-        width: parent.width
-        height: parent.height
-
-        anchors.fill: parent
-        spacing: 5
+        
+        spacing: 1
 
         AwfulThreadBar {
             id: thread_bar
@@ -35,33 +33,33 @@ Rectangle {
             textsize: 8
             model: thread_qml.model
 
-            Layout.maximumHeight: height
-            Layout.minimumHeight: height
+            Layout.minimumWidth: thread_qml.width
+            Layout.maximumWidth: thread_qml.width
 
             onToggled: {
+                model.read_page(model.page)
                 if (thread_qml.state == 'list') {
-                    thread_qml.state = 'read'
-                    model.read_page(model.page)
-                    //console.log('list -> read')
+                    var url = "WindowThread.qml";
+                    var winder = WindowJS.createWindow(model, url);
                     }
                 else {
-                    thread_qml.state = 'list'
-                    //console.log('read - > list')
+                    //thread_qml.state = 'list'
                 }
             }
         }
         SplitView {
-                height: parent.height - thread_bar.height
-                width: parent.width
-                orientation: Qt.Vertical
+            Layout.maximumHeight: thread_qml.height - thread_bar.height
+            Layout.minimumHeight: thread_qml.height
+
+            Layout.minimumWidth: thread_qml.width
+            Layout.maximumWidth: thread_qml.width 
+            orientation: Qt.Vertical
+
 
             AwfulPosts {
                 id: posts
 
                 x: spacing
-                width: thread_qml.width - spacing*2
-                height: thread_qml.height - post_box.height - spacing*2 - 16
-
                 clip: true
                 spacing: 5
 
@@ -69,13 +67,14 @@ Rectangle {
 
                 Layout.fillHeight: true
             }
+    
 
             PostBox {
                 id: post_box
                 model: thread_qml.model
             }
         }
-       }
+    }
 
     states: [
         State {
@@ -97,11 +96,11 @@ Rectangle {
 
         State {
             name: 'read'
+
             PropertyChanges {
                 target: thread_qml
-                height: 300
+                height: 500 
             }
-
             PropertyChanges {
                 target: posts
                 visible: true
@@ -111,7 +110,6 @@ Rectangle {
                 visible: true
             }
         }
-
     ]
 
     transitions: [

@@ -118,7 +118,6 @@ class SALastRead(SAObj):
 		self.parent.read(self.parent.pages - self.unread_pages)
 
 	def stop_tracking(self):
-		print(self.url_switch_off)
 		self.session.post(self.url_switch_off)
 
 

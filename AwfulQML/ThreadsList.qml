@@ -1,4 +1,5 @@
 import QtQuick 2.0 
+import QtQuick.Window 2.1
 
 ListView {
     id: threads_list
@@ -10,12 +11,13 @@ ListView {
 
     model: AwfulForumModelObj
 
-    delegate: AwfulThread {
-        model: thread
-    }
-
+    delegate:
+        AwfulThread {
+            model: thread
+        }
+        
     populate: Transition {
-        NumberAnimation { properties: "x,y"; duration: 100 }
+        NumberAnimation { properties: "x,y"; duration: 300 }
     }
     displaced: Transition {
         NumberAnimation { properties: "x,y"; duration: 1000 }

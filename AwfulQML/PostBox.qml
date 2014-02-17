@@ -6,7 +6,7 @@ Rectangle {
 	property double borderscale: 5
 
 	width: parent.width
-	height: parent.height * 0.14
+	height: 45
 
 	property double textsize: 12
 	property var model: ''

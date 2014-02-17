@@ -47,7 +47,6 @@ class SAListObj(SAObj):
 
 		if not self.navi:
 			navi = self._content.find('div', 'pages')
-			print(len(self._content.text))
 			self.navi = SAPageNav(content=navi, parent=self)
 
 		self.navi.read(pg)

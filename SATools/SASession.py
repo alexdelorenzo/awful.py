@@ -32,7 +32,7 @@ class SASession(requests.Session):
 
 
 	def post_thread(self, forumid, title, body, tag=None, poll=None):
-		raise NotImplementedError
+		raise NotImplementedError()
 
 	def reply(self, id, body):
 		url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
@@ -59,4 +59,4 @@ class SASession(requests.Session):
 		return search
 
 	def search(self):
-		raise NotImplementedError
+		raise NotImplementedError()

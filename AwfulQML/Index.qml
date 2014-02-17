@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Layouts 1.0
 
 
 Rectangle {
@@ -13,7 +14,7 @@ Rectangle {
 
 	color: "#ececec"
 
-	Column {
+	ColumnLayout {
 		spacing: 5
 
 		width: parent.width
@@ -21,11 +22,15 @@ Rectangle {
 
 		property variant model: parent.model
 
-		ScrollView {IndexList {
-			id: index_list
+		ScrollView {
+			Layout.fillHeight: true
+			
+			IndexList {
+				id: index_list
 
-			model: index_rect.model
-			spacing: 1
-		}}
+				model: index_rect.model
+				spacing: 1
+			}
+		}
 	}
 }

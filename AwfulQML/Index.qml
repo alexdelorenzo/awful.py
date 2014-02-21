@@ -7,14 +7,16 @@ import QtQuick.Layouts 1.0
 Rectangle {
 	id: index_rect
 
+	signal selected(Item item)
+
 	property variant model: AwfulIndexObj
 
-	width: index_list.width
+	width: 190
 	height: parent.height
 
-	color: "#ececec"
+	color: "#f4f4f4"
 
-	ColumnLayout {
+	RowLayout {
 		spacing: 5
 
 		width: parent.width
@@ -22,14 +24,21 @@ Rectangle {
 
 		property variant model: parent.model
 
-		ScrollView {
+		IndexList {
+			id: index_list
 			Layout.fillHeight: true
-			
-			IndexList {
-				id: index_list
+			model: index_rect.model
+			spacing: 1
 
-				model: index_rect.model
-				spacing: 1
+			MouseArea {
+				id: _mouse
+
+				anchors.fill: parent
+
+				onClicked: {
+					var item = index_list.itemAt(mouse.x, mouse.y);
+					index_rect.selected(item);
+				}
 			}
 		}
 	}

@@ -21,7 +21,7 @@ Item {
          prev_page.text = int_page <= 1 ? "" : "<"
          page_number.text = ''.concat(model.page, "/", model.pages)
          next_page.text = int_page >= int_pages ? "" : ">"
-         last_page.text = int_page >= int_pages - 2 ? "" : ">>"
+         last_page.text = int_page >= int_pages - 1 ? "" : ">>"
 
     }
 

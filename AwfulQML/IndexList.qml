@@ -13,21 +13,24 @@ ListView {
     height: parent.height
 
     model: AwfulIndexObj
-    highlight: Rectangle { color: "green"; radius: 5 }
+    //highlight: Rectangle { color: "green"; radius: 5 }
 
     delegate: 
         Text {
             text: forum.title
+            property var model: forum
+            font.bold: true
+            font.underline: true
 
-            MouseArea {
-                anchors.fill: parent
+            // MouseArea {
+            //     anchors.fill: parent
 
-                onClicked: {
-                    forum.read_page(1);
-                    var url = "WindowForum.qml";
-                    var winder = WindowJS.createWindow(forum, url);
-                }
-            }
+            //     onClicked: {
+            //         forum.read_page(1);
+            //         var url = "WindowForum.qml";
+            //         var winder = WindowJS.createWindow(forum, url);
+            //     }
+            // }
         }
     populate: Transition {
         NumberAnimation { properties: "x,y"; duration: 100 }

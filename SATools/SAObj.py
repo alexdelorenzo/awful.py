@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 
 class SAObj(object):
 	def __init__(self, id=None, session=None, content=None, parent=None,
-	             name=None, **properties):
+	             name=None, url=None, **properties):
 		super().__init__()
 		self.content = content
 		self.session = session
@@ -11,7 +11,7 @@ class SAObj(object):
 		self.parent = parent
 
 		self.unread = True
-		self.url = ""
+		self.url = url
 		self.base_url = ""
 
 		self.__dont_rely_on_this(properties)

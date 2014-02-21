@@ -67,8 +67,7 @@ Rectangle {
     MouseArea {
         id: username_ma
 
-        width: parent.width
-        height: parent.height
+        anchors.fill: username_box
         
         hoverEnabled: true
 

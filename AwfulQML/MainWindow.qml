@@ -16,8 +16,8 @@ ApplicationWindow {
 
 	color: "#ececec"
 
-	ColumnLayout {
-		spacing: 5
+	SplitView {
+		//spacing: 5
 
 		width: parent.width
 		height: parent.height
@@ -30,13 +30,23 @@ ApplicationWindow {
 			model: main_window.model
 
 			Layout.fillHeight: true
+
+			onSelected: {
+				var forum = Qt.createComponent("Forum.qml");
+				var forum_obj = forum.createObject(tabs, {"model": item.model});
+				forum_obj.model.read_page(1);
+				//tabs.addTab(forum_obj.model.title, forum_obj);
+			}
 		}
 
-		// TabView {
-		// 	id: tab_view
+		TabView {
+		 	id: tabs
 
-		// 	Layout.fillHeight: true
-		// 	visible: false
-		// }
+		 	Layout.fillHeight: true
+		 	Layout.fillWidth: true
+
+		 	tabsVisible: true
+		 	frameVisible: false
+		 }
 	}
 }

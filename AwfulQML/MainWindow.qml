@@ -32,9 +32,9 @@ ApplicationWindow {
 			Layout.fillHeight: true
 
 			onSelected: {
+				item.model.read_page(1);
 				var forum = Qt.createComponent("Forum.qml");
 				var forum_obj = forum.createObject(tabs, {"model": item.model});
-				forum_obj.model.read_page(1);
 				//tabs.addTab(forum_obj.model.title, forum_obj);
 			}
 		}

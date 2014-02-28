@@ -12,10 +12,22 @@ preliminary gui to SATools. this is not ready for any kind of use. py3k only, qt
 
 don't get this banned. thanks.
 
+
+TODO
+=======
+- use the issue tracker...
+
+- sa_tools: implicitly call read() upon property access
+- sa_tools: child object persistence/updating on refresh of parent
+- sa_tools: finish SAObj refactor
+
+- awful_gui: use TabView correctly
+- awful_gui: launch windows with loader
+- awful_gui: clean up qml dir, use relative imports
+- awful_gui: implement sailfish silica ui
+
 Usage
 =======
-
-
 ## SATools
 
 ### Authenticating
@@ -177,13 +189,6 @@ In [17]: ap.session.reply(threadid, my_bad_post)
 
 
 ```
-
-TODO
-====
-+ provide qobject intermediates for satools objects
-+ provide qml models/views for qobjects
-+ clean up SATools. if you want to contribute, look here first. code is simple but bad.
-
 
 
 License

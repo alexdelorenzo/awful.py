@@ -180,4 +180,4 @@ In [17]: ap.session.reply(threadid, my_bad_post)
 License
 ========
 
-Modified GPLv3 w/ no commercial use w/o my consent + this clause must be applied to all derivatives.
+GPLv3

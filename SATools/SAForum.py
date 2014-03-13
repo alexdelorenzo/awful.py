@@ -10,7 +10,7 @@ import re
 class SAForum(SAListObj):
     def __init__(self, id, session, content=None, parent=None, name=None,
                  page=1, subforums=None, **properties):
-        super().__init__(id, session, content, parent, name, page=page, **properties)
+        super(SAForum, self).__init__(id, session, content, parent, name, page=page, **properties)
         self.subforums = subforums
         self.listings = None
         self.base_url = \
@@ -19,7 +19,7 @@ class SAForum(SAListObj):
         self.threads = {}
 
     def read(self, pg=1):
-        super().read(pg)
+        super(SAForum, self).read(pg)
         self.threads = self._get_threads(pg)
         self.listings = {threadid: thread.name
                          for threadid, thread in self.threads.items()}

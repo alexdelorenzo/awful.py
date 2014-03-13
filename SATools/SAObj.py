@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 class SAObj(object):
 	def __init__(self, id=None, session=None, content=None, parent=None,
 	             name=None, url=None, **properties):
-		super().__init__()
+		super(SAObj, self).__init__()
 		self.content = content
 		self.session = session
 		self.id = id
@@ -29,7 +29,7 @@ class SAObj(object):
 
 class SAListObj(SAObj):
 	def __init__(self, *args, **properties):
-		super().__init__(*args, **properties)
+		super(SAListObj, self).__init__(*args, **properties)
 		self.page = None
 		self.pages = None
 		self.navi = None
@@ -39,7 +39,7 @@ class SAListObj(SAObj):
 		self._content = None
 
 	def read(self, pg=1):
-		super().read(pg)
+		super(SAListObj, self).read(pg)
 
 		url = self.url + '&pagenumber=' + str(pg)
 		request = self.session.get(url)
@@ -54,12 +54,12 @@ class SAListObj(SAObj):
 
 class SAPageNav(SAObj):
 	def __init__(self, **properties):
-		super().__init__(**properties)
+		super(SAPageNav, self).__init__(**properties)
 		self.page = 1
 		self.pages = 1
 
 	def read(self, pg=1):
-		super().read(pg)
+		super(SAPageNav, self).read(pg)
 		self.page = pg
 		page_selector = self.content.find_all('option')
 		if len(page_selector):

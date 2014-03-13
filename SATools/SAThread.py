@@ -10,7 +10,7 @@ import re
 
 class SAThread(SAListObj):
 	def __init__(self, tr_thread=None, **properties):
-		super().__init__(tr_thread=tr_thread, **properties)
+		super(SAThread, self).__init__(tr_thread=tr_thread, **properties)
 		self.base_url = "http://forums.somethingawful.com/"
 		self.url = self.base_url + '/showthread.php?threadid=' + self.id
 
@@ -28,7 +28,7 @@ class SAThread(SAListObj):
 		return self.name
 
 	def read(self, page=1):
-		super().read(page)
+		super(SAThread, self).read(page)
 		self.content = self._content
 		self.posts = self._get_posts()
 
@@ -91,7 +91,7 @@ class SAThread(SAListObj):
 
 class SALastRead(SAObj):
 	def __init__(self, id, session, content, parent, name=None, **properties):
-		super().__init__(id, session, content, parent, name, **properties)
+		super(SALastRead, self).__init__(id, session, content, parent, name, **properties)
 		self.page = None
 		self.pages = None
 		self.url_last_post = None
@@ -100,7 +100,7 @@ class SALastRead(SAObj):
 		self.url_switch_off = None
 
 	def read(self):
-		super().read()
+		super(SALastRead, self).read()
 		close_link = self.content.a
 		stop_tracking_url = self.parent.base_url + close_link['href']
 		last_post_link = self.content.find('a', 'count')

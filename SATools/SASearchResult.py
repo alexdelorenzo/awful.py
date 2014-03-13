@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 class SASearchResult(SAObj):
 	def __init__(self, id=None, name=None, content=None, parent=None, **properties):
-		super().__init__(id=id, name=name, content=content, parent=parent, **properties)
+		super(SASearchResult, self).__init__(id=id, name=name, content=content, parent=parent, **properties)
 		self.session = self.parent.session
 		self.header = self.parent._table_header
 		self.forum = None

@@ -4,7 +4,7 @@ from SATools.SAObj import SAObj
 
 class SAPost(SAObj):
 	def __init__(self, id, session, content=None, parent=None, **properties):
-		super().__init__(id, session, content, parent, **properties)
+		super(SAPost, self).__init__(id, session, content, parent, **properties)
 		self.unread = True
 		self.url = ""
 

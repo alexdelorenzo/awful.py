@@ -4,14 +4,14 @@ from bs4 import BeautifulSoup
 
 class SASearch(SAListObj):
 	def __init__(self, query, type, session, **options):
-		super().__init__(name=query, session=session, **options)
+		super(SASearch, self).__init__(name=query, session=session, **options)
 		self.base_url = "http://forums.somethingawful.com/search.php"
 		self.query = query
 		self.type = type
 		self.results = None
 
 	def read(self, pg=1):
-		super().read(pg)
+		super(SASearch, self).read(pg)
 
 		self._parse_search_results()
 
@@ -56,7 +56,7 @@ class SASearch(SAListObj):
 
 class SASearchNewStyle(SAListObj):
 	def __init__(self, query, type, session, **options):
-		super().__init__(name=query, session=session, **options)
+		super(SASearchNewStyle, self).__init__(name=query, session=session, **options)
 		self.base_url = "http://forums.somethingawful.com/f/search"
 		self.query = query
 		self.type = type

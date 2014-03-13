@@ -115,7 +115,8 @@ class SALastRead(SAObj):
 
 
 	def jump_to_new(self):
-		self.parent.read(self.parent.pages - self.unread_pages)
+		if self.parent.pages and self.unread_pages:
+			self.parent.read(self.parent.pages - self.unread_pages)
 
 	def stop_tracking(self):
 		self.session.post(self.url_switch_off)

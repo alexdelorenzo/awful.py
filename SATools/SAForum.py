@@ -21,7 +21,7 @@ class SAForum(SAListObj):
     def read(self, pg=1):
         super(SAForum, self).read(pg)
         self.threads = self._get_threads(pg)
-        self.listings = {threadid: thread.name
+        self.listings = {threadid: thread.title
                          for threadid, thread in self.threads.items()}
 
         if not self.subforums and self._has_subforums():

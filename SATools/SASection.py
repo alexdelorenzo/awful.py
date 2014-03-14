@@ -3,19 +3,22 @@ from SATools.SAForum import SAForum
 
 
 class SASection(SAForum):
-	def __init__(self, id, session, content=None, parent=None, name=None, subforums=dict()):
-		super(SASection, self).__init__(id, session, content, parent, name, subforums=subforums)
+    def __init__(self, id, session, content=None, parent=None, name=None, subforums=dict()):
+        super(SASection, self).__init__(id, session, content, parent, name, subforums=subforums)
 
-		if not self.subforums:
-			self.read()
+        if not self.subforums:
+            self.read()
 
-		self.forums = self.subforums
-		self.threads = self.forums
+        self.forums = self.subforums
+        self.threads = self.forums
+        self._delete_extra()
 
+    def read(self, pg=0):
+        pass
 
 def main():
-	pass
+    pass
 
 
 if __name__ == "__main__":
-	main()
+    main()

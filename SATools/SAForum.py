@@ -27,8 +27,13 @@ class SAForum(SAListObj):
         if not self.subforums and self._has_subforums():
             self.subforums = ordered(self._get_subforums())
 
+        self._delete_extra()
+
     def _has_subforums(self):
-        return self.content.table['id'] == 'subforums'
+        if self.content.table:
+            return self.content.table['id'] == 'subforums'
+        else:
+            return False
 
     def _get_subforums(self):
         for tr_subforum in self.content.select('tr.subforum'):

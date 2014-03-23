@@ -30,13 +30,13 @@ class SAForum(SAListObj):
         self._delete_extra()
 
     def _has_subforums(self):
-        if self.content.table:
-            return self.content.table['id'] == 'subforums'
+        if self._content.table:
+            return self._content.table['id'] == 'subforums'
         else:
             return False
 
     def _get_subforums(self):
-        for tr_subforum in self.content.select('tr.subforum'):
+        for tr_subforum in self._content.select('tr.subforum'):
             subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
             name = tr_subforum.a.text
 
@@ -50,8 +50,8 @@ class SAForum(SAListObj):
                                 {'forumid': self.id,
                                  'pagenumber': pg})
 
-        self.content = bs4.BeautifulSoup(response.content)
-        self.content = self.content.find('div', id='content')
+        self._content = bs4.BeautifulSoup(response.content)
+        self._content = self._content.find('div', id='content')
         threads = ordered(self._gen_threads())
 
         self.page = pg
@@ -59,7 +59,7 @@ class SAForum(SAListObj):
         return threads
 
     def _gen_threads(self):
-        thread_blocks = self.content.select('tr.thread')
+        thread_blocks = self._content.select('tr.thread')
 
         for tr_thread in thread_blocks:
             thread_id = tr_thread['id'][6:]

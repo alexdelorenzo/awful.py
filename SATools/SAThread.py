@@ -13,11 +13,8 @@ class SAThread(SAListObj):
         super(SAThread, self).__init__(parent, tr_thread=tr_thread, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + self.id
-        self.content = None
-        self.posts = None
-        self.pages = None
-        self.page = 1
 
+        self.posts = None
         self.last_read = None
 
         self._set_properties(self._parse_tr_thread(tr_thread))
@@ -28,7 +25,6 @@ class SAThread(SAListObj):
 
     def read(self, page=1):
         super(SAThread, self).read(page)
-        self.content = self._content
         self.posts = self._get_posts()
         self._delete_extra()
 
@@ -48,7 +44,7 @@ class SAThread(SAListObj):
 
     def _parse_posts(self):
         """TODO: grab more info from content, put it in sa_post module..."""
-        for post in self.content.select('table.post'):
+        for post in self._content.select('table.post'):
             post_id = post['id']
             sa_post = SAPost(self, post_id, post)
             #sa_post.read()
@@ -102,9 +98,9 @@ class SALastRead(SAObj):
         self.url_switch_off = None
 
     def _parse_unread(self):
-        close_link = self.content.a
+        close_link = self._content.a
         stop_tracking_url = self.parent.base_url + close_link['href']
-        last_post_link = self.content.find('a', 'count')
+        last_post_link = self._content.find('a', 'count')
         self.url_switch_off = stop_tracking_url
 
         if last_post_link:

@@ -40,13 +40,12 @@ class SAObj(object):
         """
         Second runner up.
         """
-        for attr, val in self.__dict__.items():
-            if not val:
-                not_false = val is not False
-                not_zero = val is not 0
+        significant_false_vals = False, 0
+        delete_these = [attr for attr, val in self.__dict__.items()
+                        if not val and val not in significant_false_vals]
 
-                if not_false and not_zero:
-                    delattr(self, attr)
+        for attr in delete_these:
+            delattr(self, attr)
 
     def _dynamic_attr(self):
         """
@@ -57,7 +56,10 @@ class SAObj(object):
 
         del self._properties
 
-    def _fetch(self, url):
+    def _fetch(self, url=None):
+        if not url:
+          url = self.url
+
         response = self.session.get(url)
 
         if not response.ok:
@@ -92,6 +94,7 @@ class SAListObj(SAObj):
 
         url = self.url + '&pagenumber=' + str(pg)
         self._fetch(url)
+        self._setup_navi()
         self.navi.read(pg)
 
 
@@ -115,7 +118,7 @@ class SAPageNavi(SAObj):
         self.parent.pages = self.pages
 
     def _parse_page_selector(self):
-        page_selector = self.content.find_all('option')
+        page_selector = self._content.find_all('option')
 
         if len(page_selector):
             self.pages = page_selector[-1].text

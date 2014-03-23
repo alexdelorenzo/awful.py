@@ -18,7 +18,7 @@ class SAPoster(SAObj):
 
     def read(self):
         super(SAPoster, self).read()
-        if self.content:
+        if self._content:
             self._parse_tr()
         else:
             self._get_profile_from_url()
@@ -33,24 +33,24 @@ class SAPoster(SAObj):
         rows = table.find_all('tr')
         pertinent_info = rows[1]
 
-        self.content = pertinent_info
+        self._content = pertinent_info
         self.read()
 
     def _parse_tr(self):
         if not self.id:
-            self.id = self.content.td['class'].pop()
-        if self.content.img:
-            self.avatar_url = self.content.img['src']
+            self.id = self._content.td['class'].pop()
+        if self._content.img:
+            self.avatar_url = self._content.img['src']
         if not self.name:
-            self.name = self.content.find('dt', 'author')
+            self.name = self._content.find('dt', 'author')
 
-        self.title = self.content.find('dd', 'title')
-        self.reg_date = self.content.find('dd', 'registered')
+        self.title = self._content.find('dd', 'title')
+        self.reg_date = self._content.find('dd', 'registered')
 
         self._parse_contact_info()
 
     def _parse_contact_info(self):
-        bs_contact = self.content.find('dl', _class='contacts')
+        bs_contact = self._content.find('dl', _class='contacts')
         dts, dds = bs_contact.find_all('dt'), bs_contact.find_all('dd')
         pairs = {dt['class']: dd.text for dt, dd in zip(dts, dds)}
         self.contact_info = pairs

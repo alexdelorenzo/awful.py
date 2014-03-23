@@ -2,9 +2,8 @@ from SATools.SAThread import SAThread
 from SATools.SAObj import SAListObj
 
 from collections import OrderedDict as ordered
-from math import ceil
 import bs4
-import re
+
 
 
 class SAForum(SAListObj):

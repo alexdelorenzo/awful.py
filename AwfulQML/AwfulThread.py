@@ -142,7 +142,7 @@ class AwfulPostQWrapper(QWrapper):
 
     @pyqtProperty(str, constant=True)
     def content(self):
-        return str(self.post.content.find('td', 'postbody'))
+        return str(self.post._content.find('td', 'postbody'))
 
     @pyqtProperty(str, constant=True)
     def poster(self):

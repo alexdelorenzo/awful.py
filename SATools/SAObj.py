@@ -20,6 +20,8 @@ class SAObj(object):
         self.unread = True
         self.base_url = None
 
+        self._dynamic_attr()
+
     def __repr__(self):
         if self.name:
             return self.name
@@ -51,7 +53,7 @@ class SAObj(object):
         """
         Consolation prize.
         """
-        for name, attr in self.properties.items():
+        for name, attr in self._properties.items():
             setattr(self, name, attr)
 
         del self._properties
@@ -75,14 +77,13 @@ class SAObj(object):
 
 class SAListObj(SAObj):
     def __init__(self, *args, collection=None, **properties):
-        super(SAListObj, self).__init__(*args, **properties)
-
         self.page = None
         self.pages = None
         self.navi = None
 
         self._collection = collection
         self.children = self._collection
+        super(SAListObj, self).__init__(*args, **properties)
 
     def _setup_navi(self):
         if not self.navi:

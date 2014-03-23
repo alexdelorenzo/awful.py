@@ -9,10 +9,11 @@ import re
 
 
 class SAThread(SAListObj):
-    def __init__(self, parent, tr_thread=None, **properties):
-        super(SAThread, self).__init__(parent, tr_thread=tr_thread, **properties)
+    def __init__(self, parent, id, tr_thread=None, **properties):
+        super(SAThread, self).__init__(parent, id, tr_thread=tr_thread, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + self.id
+
 
         self.posts = None
         self.last_read = None
@@ -81,7 +82,7 @@ class SAThread(SAListObj):
 
                 last_read = td.find('div', 'lastseen')
                 if last_read:
-                    self.last_read = SALastRead(self.id, self.session, last_read, self)
+                    self.last_read = SALastRead(self, self.id, last_read)
 
             properties[td_class] = text
 

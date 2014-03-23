@@ -3,8 +3,8 @@ from SATools.SAObj import SAObj
 
 
 class SAPost(SAObj):
-	def __init__(self, id, session, content=None, parent=None, **properties):
-		super(SAPost, self).__init__(id, session, content, parent, **properties)
+	def __init__(self, parent, id, content=None, **properties):
+		super(SAPost, self).__init__(parent, id, content, **properties)
 		self.unread = True
 		self.url = ""
 
@@ -12,7 +12,7 @@ class SAPost(SAObj):
 		user_name = self.content.dt.text
 
 		content = self.content.find('td', 'userinfo')
-		self.poster = SAPoster(user_id, self.session, content, name=user_name)
+		self.poster = SAPoster(self, user_id, content, name=user_name)
 
 		if self.content:
 			has_post = self.content.find('td', 'postbody')

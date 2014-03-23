@@ -2,8 +2,8 @@ from SATools.SAObj import SAObj
 from bs4 import BeautifulSoup
 
 class SAPoster(SAObj):
-    def __init__(self, id=None, session=None, content=None, name=None, **properties):
-        super(SAPoster, self).__init__(id, session, content, name=name, **properties)
+    def __init__(self, parent, id=None, content=None, name=None, **properties):
+        super(SAPoster, self).__init__(parent, id, content, name=name, **properties)
         self.avatar_url = None
         self.title = None
         self.reg_date = None

@@ -51,8 +51,6 @@ class SASession(requests.Session):
 		if not response.ok:
 			raise Exception(("Unable to reply", response.status_code, response.reason))
 
-		return response
-
 	def find_user_posts(self, user_id):
 		search = SASearch(query=user_id, session=self.session)
 		search.search_userid(user_id)

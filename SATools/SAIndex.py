@@ -43,7 +43,7 @@ class SAIndex(object):
 		id = json['forumid']
 		title = json['title'] if 'title' in json else 'Index'
 
-		parent = SAForum(id, self.session, name=title, parent=parent)
+		parent = SAForum(parent, id, name=title)
 		sa_children = []
 
 		for child in children:

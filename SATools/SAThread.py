@@ -9,8 +9,8 @@ import re
 
 
 class SAThread(SAListObj):
-    def __init__(self, tr_thread=None, **properties):
-        super(SAThread, self).__init__(tr_thread=tr_thread, **properties)
+    def __init__(self, parent, tr_thread=None, **properties):
+        super(SAThread, self).__init__(parent, tr_thread=tr_thread, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + self.id
         self.content = None
@@ -36,7 +36,7 @@ class SAThread(SAListObj):
         for name, attr in properties.items():
             if name == 'user_id':
                 name = 'poster'
-                attr = SAPoster(attr, properties['author'], self.session)
+                attr = SAPoster(self, attr, properties['author'])
 
             setattr(self, name, attr)
 
@@ -49,10 +49,10 @@ class SAThread(SAListObj):
     def _parse_posts(self):
         """TODO: grab more info from content, put it in sa_post module..."""
         for post in self.content.select('table.post'):
-            postid = post['id']
-            sa_post = SAPost(postid, self.session, post)
+            post_id = post['id']
+            sa_post = SAPost(self, post_id, post)
             #sa_post.read()
-            yield postid, sa_post
+            yield post_id, sa_post
 
     def _parse_tr_thread(self, tr_thread):
         properties = dict()
@@ -92,8 +92,8 @@ class SAThread(SAListObj):
         return properties
 
 class SALastRead(SAObj):
-    def __init__(self, id, session, content, parent, name=None, **properties):
-        super(SALastRead, self).__init__(id, session, content, parent, name, **properties)
+    def __init__(self, parent, id, content, name=None, **properties):
+        super(SALastRead, self).__init__(parent, id, content, name, **properties)
         self.page = None
         self.pages = None
         self.url_last_post = None

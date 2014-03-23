@@ -8,9 +8,9 @@ import re
 
 
 class SAForum(SAListObj):
-    def __init__(self, id, session, content=None, parent=None, name=None,
+    def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
-        super(SAForum, self).__init__(id, session, content, parent, name, page=page, **properties)
+        super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
         self.subforums = subforums
         self.listings = None
         self.base_url = \
@@ -40,7 +40,7 @@ class SAForum(SAListObj):
             subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
             name = tr_subforum.a.text
 
-            forum_obj = SAForum(subforum_id, self.session, self, name)
+            forum_obj = SAForum(self, subforum_id, name)
 
             yield subforum_id, forum_obj
 
@@ -67,7 +67,7 @@ class SAForum(SAListObj):
             if thread_id in self.threads:
                 val = self.threads[thread_id]
             else:
-                val = SAThread(id=thread_id, session=self.session, tr_thread=tr_thread)
+                val = SAThread(self, thread_id, tr_thread)
 
             key = thread_id
             yield key, val

@@ -34,7 +34,7 @@ ApplicationWindow {
 			onSelected: {
 				item.model.read_page(1);
 				var forum = Qt.createComponent("Forum.qml");
-				var forum_obj = forum.createObject(tabs, {"model": item.model});
+				var forum_obj = forum.createObject(null, {"model": item.model});
 				//tabs.addTab(forum_obj.model.title, forum_obj);
 			}
 		}

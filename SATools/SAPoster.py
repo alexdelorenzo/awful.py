@@ -18,6 +18,7 @@ class SAPoster(SAObj):
 
     def read(self):
         super(SAPoster, self).read()
+        print(self._content)
         if self._content:
             self._parse_tr()
         else:
@@ -29,7 +30,7 @@ class SAPoster(SAObj):
     def _get_profile_from_url(self):
         response = self.session.get(self.url)
         bs_content = BeautifulSoup(response.text)
-        table = bs_content.find('table', _class='standard')
+        table = bs_content.find('table', 'standard')
         rows = table.find_all('tr')
         pertinent_info = rows[1]
 
@@ -50,7 +51,7 @@ class SAPoster(SAObj):
         self._parse_contact_info()
 
     def _parse_contact_info(self):
-        bs_contact = self._content.find('dl', _class='contacts')
+        bs_contact = self._content.find('dl', 'contacts')
         dts, dds = bs_contact.find_all('dt'), bs_contact.find_all('dd')
         pairs = {dt['class']: dd.text for dt, dd in zip(dts, dds)}
         self.contact_info = pairs

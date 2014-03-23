@@ -10,10 +10,9 @@ import re
 
 class SAThread(SAListObj):
     def __init__(self, parent, id, tr_thread=None, **properties):
-        super(SAThread, self).__init__(parent, id, tr_thread=tr_thread, **properties)
+        super(SAThread, self).__init__(parent, id, tr_thread=tr_thread, page=1, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + self.id
-
 
         self.posts = None
         self.last_read = None

@@ -22,6 +22,14 @@ class SAObj(object):
 
         self._dynamic_attr()
 
+    def __getstate__(self):
+        """Down the rabbithole, fixes pickle hiccup b/c of __getattr__ override"""
+        return self.__dict__
+
+    def __setstate__(self, state):
+        """fixes pickle hiccup b/c of __getattr__ override"""
+        self.__dict__.update(state)
+
     def __repr__(self):
         if self.name:
             return self.name

@@ -3,59 +3,64 @@ from SATools.SASearch import SASearch
 import requests
 from bs4 import BeautifulSoup
 
+
 class SASession(object):
-  def __init__(self, username, passwd):
-    super(SASession, self).__init__() #super() args for 2.7 & 3.0+ compat
-    self.session = requests.Session()
-    self.username = username
-    self.base_url = 'https://forums.somethingawful.com/'
-    self.login(username, passwd)
-    self.id = self.session.cookies.get('bbuserid')
-    self.profile = SAPoster(self, self.id, name=username)
+    def __init__(self, username, passwd):
+        super(SASession, self).__init__()
+        self.session = requests.Session()
+        self.username = username
+        self.base_url = 'https://forums.somethingawful.com/'
+        self.login(username, passwd)
+        self.id = self.session.cookies.get('bbuserid')
+        self.profile = None
+        self._set_profile()
 
-  def __getstate__(self):
-    """
-    Friends don't let friends use inheritance. Something in the hierarchy is
-      overriding the sane behavior which lets us pickle easily. This fixes that.
-    """
-    pickle_this = self.__dict__
-    #pickle_this['prefetch'], pickle_this['timeout'] = None, None
-    return pickle_this
+    def __getstate__(self):
+        if self.profile:
+            del self.profile
 
-  def login(self, username, passwd):
-    login_url = self.base_url + 'account.php'
-    post_data = {'username': username, 'password': passwd, 'action': 'login'}
+        return self.__dict__
 
-    response = self.session.post(login_url, post_data)
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._set_profile()
 
-    if not response.ok:
-      raise Exception(("Unable to login", response.status_code, response.reason))
+    def _set_profile(self):
+        self.profile = SAPoster(self, self.id, name=self.username)
 
+    def login(self, username, passwd):
+        login_url = self.base_url + 'account.php'
+        post_data = {'username': username, 'password': passwd, 'action': 'login'}
 
-  def post_thread(self, forumid, title, body, tag=None, poll=None):
-    raise NotImplementedError()
+        response = self.session.post(login_url, post_data)
 
-  def reply(self, id, body):
-    url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
+        if not response.ok:
+            raise Exception(("Unable to login", response.status_code, response.reason))
 
-    response = self.session.get(url)
-    bs = BeautifulSoup(response.content)
+    def post_thread(self, forumid, title, body, tag=None, poll=None):
+        raise NotImplementedError()
 
-    inputs = {i['name']: i['value']
-              for i in bs.find_all('input')
-              if i.has_attr('value')}
-    inputs['message'] = str(body)
-    inputs.pop('preview')
+    def reply(self, id, body):
+        url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
 
-    response = self.session.post(url, inputs)
+        response = self.session.get(url)
+        bs = BeautifulSoup(response.content)
 
-    if not response.ok:
-      raise Exception(("Unable to reply", response.status_code, response.reason))
+        inputs = {i['name']: i['value']
+                  for i in bs.find_all('input')
+                  if i.has_attr('value')}
+        inputs['message'] = str(body)
+        inputs.pop('preview')
 
-  def find_user_posts(self, user_id):
-    search = SASearch(query=user_id, session=self.session)
-    search.search_userid(user_id)
-    return search
+        response = self.session.post(url, inputs)
 
-  def search(self):
-    raise NotImplementedError()
+        if not response.ok:
+            raise Exception(("Unable to reply", response.status_code, response.reason))
+
+    def find_user_posts(self, user_id):
+        search = SASearch(query=user_id, session=self.session)
+        search.search_userid(user_id)
+        return search
+
+    def search(self):
+        raise NotImplementedError()

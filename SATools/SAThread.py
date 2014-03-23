@@ -47,7 +47,7 @@ class SAThread(SAListObj):
         for post in self._content.select('table.post'):
             post_id = post['id']
             sa_post = SAPost(self, post_id, post)
-            #sa_post.read()
+
             yield post_id, sa_post
 
     def _parse_tr_thread(self, tr_thread):

@@ -26,7 +26,6 @@ class SAPoster(SAObj):
 
         self._delete_extra()
 
-
     def _get_profile_from_url(self):
         self._fetch()
         table = self._content.find('table', 'standard')

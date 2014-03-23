@@ -11,7 +11,7 @@ class SASession(object):
     self.base_url = 'https://forums.somethingawful.com/'
     self.login(username, passwd)
     self.id = self.session.cookies.get('bbuserid')
-    self.profile = SAPoster(self, self.id, username)
+    self.profile = SAPoster(self, self.id, name=username)
 
   def __getstate__(self):
     """

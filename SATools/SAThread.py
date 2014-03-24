@@ -10,30 +10,39 @@ import re
 
 class SAThread(SAListObj):
     def __init__(self, parent, id, tr_thread=None, **properties):
-        super(SAThread, self).__init__(parent, id, tr_thread=tr_thread, page=1, **properties)
+        super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + self.id
-
         self.posts = None
         self.last_read = None
+        self._parser_map = None
 
-        self._set_properties(self._parse_tr_thread(tr_thread))
+        self._set_parser_map()
+        self._parse_tr_thread()
         self._set_properties(properties)
 
-    def __str__(self):
-        return self.name
+    def _set_parser_map(self):
+        dispatch = \
+            {'icon': self._parse_icon,
+             'lastpost': self._parse_lastpost,
+             'replies': self._parse_replies,
+             'author': self._parse_author,
+             'title': self._parse_title,
+             'title_sticky': self._parse_title}
 
-    def read(self, page=1):
-        super(SAThread, self).read(page)
-        self.posts = self._get_posts()
-        self._delete_extra()
+        self._parser_map = dispatch
+
+    def _parse_tr_thread(self):
+        if not self._content:
+            return
+
+        for td in self._content.find_all('td'):
+            td_class = td['class'].pop()
+            text = td.text.strip()
+            self._parsing_dispatch(td_class, text, td)
 
     def _set_properties(self, properties):
         for name, attr in properties.items():
-            if name == 'user_id':
-                name = 'poster'
-                attr = SAPoster(self, attr, properties['author'])
-
             setattr(self, name, attr)
 
         self.name = self.title
@@ -44,48 +53,56 @@ class SAThread(SAListObj):
 
     def _parse_posts(self):
         """TODO: grab more info from content, put it in sa_post module..."""
-        for post in self._content.select('table.post'):
+        for post in self._content.find_all('table', 'post'):
             post_id = post['id']
             sa_post = SAPost(self, post_id, post)
 
             yield post_id, sa_post
 
-    def _parse_tr_thread(self, tr_thread):
-        properties = dict()
+    def _parsing_dispatch(self, key, val, content):
+        if key not in self._parser_map:
+            return
 
-        for td in tr_thread.find_all('td'):
-            td_class = td['class'].pop()
-            text = td.text.strip()
+        self._parser_map[key](key, val, content)
 
-            if td_class == 'icon':
-                text = td.a['href'].split('posticon=').pop(-1)
+    def _parse_icon(self, key, val, content):
+        text = content.a['href'].split('posticon=').pop(-1)
+        setattr(self, key, text)
 
-            elif td_class == 'lastpost':
-                groups = 'time', 'date', 'user'
-                regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-                matches = re.compile(regex).search(text).groups()
-                matches = dict(zip(groups, matches))
+    def _parse_lastpost(self, key, val, content):
+        groups = 'time', 'date', 'user'
+        regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
+        matches = re.compile(regex).search(val).groups()
+        matches = dict(zip(groups, matches))
+        setattr(self, key, matches)
 
-                text = matches
+    def _parse_replies(self, key, val, content):
+        pages = ceil(int(val) / 40)
+        key = 'pages'
+        setattr(self, key, pages)
 
-            elif td_class == 'replies':
-                properties['pages'] = ceil(int(text) / 40)
+    def _parse_author(self, key, val, content):
+        user_id = content.a['href'].split('id=')[-1]
+        key = 'user_id'
+        setattr(self, key, user_id)
 
-            elif td_class == 'author':
-                user_id = td.a['href'].split('id=')[-1]
-                properties['user_id'] = user_id
+    def _parse_title(self, key, val, content):
+        text = content.find('a', 'thread_title').text
+        key = 'title'
+        last_read = content.find('div', 'lastseen')
 
-            elif td_class == 'title' or td_class == 'title_sticky':
-                text = td.find('a', 'thread_title').text
-                properties['title'] = text
+        setattr(self, 'last_read', self._parse_lastseen(key, val, last_read))
+        setattr(self, key, text)
 
-                last_read = td.find('div', 'lastseen')
-                if last_read:
-                    self.last_read = SALastRead(self, self.id, last_read)
+    def _parse_lastseen(self, key, val, content):
+        return SALastRead(self, self.id, content) if content else None
 
-            properties[td_class] = text
+    def read(self, page=1):
+        super(SAThread, self).read(page)
+        self.posts = self._get_posts()
+        self._delete_extra()
 
-        return properties
+
 
 class SALastRead(SAObj):
     def __init__(self, parent, id, content, name=None, **properties):
@@ -122,7 +139,3 @@ class SALastRead(SAObj):
 
     def stop_tracking(self):
         self.session.post(self.url_switch_off)
-
-
-
-

@@ -19,6 +19,8 @@ class SAPost(SAObj):
             self.body = has_post.text.strip() if has_post else ""
             self.unread = False
 
+        self._delete_extra()
+
     def read(self):
         self.unread = False
         for td in self._content.find_all('td'):

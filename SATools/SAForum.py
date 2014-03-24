@@ -45,15 +45,8 @@ class SAForum(SAListObj):
 
 
     def _get_threads(self, pg):
-        response = self.session.post(self.base_url,
-                                {'forumid': self.id,
-                                 'pagenumber': pg})
-
-        self._content = bs4.BeautifulSoup(response.content)
         self._content = self._content.find('div', id='content')
         threads = ordered(self._gen_threads())
-
-        self.page = pg
 
         return threads
 

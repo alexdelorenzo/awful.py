@@ -76,7 +76,7 @@ class SAObj(object):
             raise Exception(("There was an error with your request ",
                             url, response.status_code, response.reason))
 
-        self._content = BeautifulSoup(response.text)
+        self._content = BeautifulSoup(response.content)
 
     def read(self, pg=1):
         if self.unread:

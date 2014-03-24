@@ -1,7 +1,5 @@
 from SATools.SAForum import SAForum
-#from SATools.SASection import SASection
-#from SATools.SAObj import SAListObj
-#from bs4 import BeautifulSoup
+
 from collections import OrderedDict as ordered
 
 class SAIndex(object):
@@ -10,41 +8,40 @@ class SAIndex(object):
 
         self.session = sa_session.session
         self.base_url = 'http://forums.somethingawful.com/'
-
         self.forums = ordered()
-        self.listings = ordered()
         self.sections = None
         self._content = None
-        self.json = None
+        self._json = None
 
         self._get_json()
         self._get_sections()
 
     def _save(self, section_id, sa_section):
         self.forums[section_id] = sa_section
-        self.listings[section_id] = sa_section.name
 
     def _get_json(self):
         url = self.base_url + 'f/json/forumtree'
         request = self.session.get(url)
+
         self._content = request.content
-        self.json = request.json()
+        self._json = request.json()
 
     def _get_sections(self):
-        self.sections = next(self.__gen_from_json())
+        section_obj = next(self.__gen_from_json())
+        self.sections = section_obj
 
     def __gen_from_json(self, json=None, parent=None):
         if json is None:
-            json = self.json
+            json = self._json
 
         if parent is None:
             parent = self
 
         children = json['children']
-        id = json['forumid']
+        forum_id = json['forumid']
         title = json['title'] if 'title' in json else 'Index'
 
-        parent = SAForum(parent, id, name=title)
+        parent = SAForum(parent, forum_id, name=title)
         sa_children = []
 
         for child in children:
@@ -55,5 +52,3 @@ class SAIndex(object):
         self._save(parent.id, parent)
 
         yield parent
-
-

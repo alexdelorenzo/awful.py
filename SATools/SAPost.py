@@ -7,11 +7,9 @@ class SAPost(SAObj):
         super(SAPost, self).__init__(parent, id, content, **properties)
         self.poster = None
         self.body = None
+        self.read()
 
-        self._parse_post()
-        self._delete_extra()
-
-    def _parse_post(self):
+    def _parse_from_thread(self):
         user_id = self._content.td['class'].pop()[7:]
         user_name = self._content.dt.text
 
@@ -20,12 +18,8 @@ class SAPost(SAObj):
 
         has_post = self._content.find('td', 'postbody')
         self.body = has_post.text.strip() if has_post else ""
-        self.unread = False
 
     def read(self):
-        self.unread = False
-        for td in self._content.find_all('td', 'userinfo'):
-            if td['class'] == 'userinfo':
-                for dd in td.find_all('dd'):
-                    pass
-        raise NotImplementedError()
+        super(SAPost, self).read()
+        self._parse_from_thread()
+        self._delete_extra()

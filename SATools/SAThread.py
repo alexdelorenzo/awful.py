@@ -17,7 +17,9 @@ class SAThread(SAListObj):
 
         self._set_parser_map()
         self._parse_tr_thread()
-        self._set_properties(properties)
+        self._properties = properties
+        self._dynamic_attr()
+        self.name = self.title
 
     def _set_parser_map(self):
         dispatch = \
@@ -39,18 +41,12 @@ class SAThread(SAListObj):
             text = td.text.strip()
             self._parsing_dispatch(td_class, text, td)
 
-    def _set_properties(self, properties):
-        for name, attr in properties.items():
-            setattr(self, name, attr)
-
-        self.name = self.title
 
     def _get_posts(self):
         posts = ordered(self._parse_posts())
         return posts
 
     def _parse_posts(self):
-        """TODO: grab more info from content, put it in sa_post module..."""
         for post in self._content.find_all('table', 'post'):
             post_id = post['id'][4:]
             sa_post = SAPost(self, post_id, post)
@@ -101,7 +97,6 @@ class SAThread(SAListObj):
         self._delete_extra()
 
 
-
 class SALastRead(SAObj):
     def __init__(self, parent, id, content, name=None, **properties):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)
@@ -124,7 +119,6 @@ class SALastRead(SAObj):
             self.url_last_post = last_post_url
             self.unread_count = unread_count
             self.unread_pages = floor(int(unread_count) / 40.0)
-
 
     def read(self):
         super(SALastRead, self).read()

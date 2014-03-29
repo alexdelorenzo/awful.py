@@ -87,7 +87,29 @@ class SAObj(object):
 
         self._content = BeautifulSoup(response.content)
 
-    def read(self, pg=1, setup_callback=None, **kwargs):
+    @staticmethod
+    def _int_check(val):
+        try:
+            val = int(val)
+        except Exception as e:
+            if val is None:
+                return val
+            elif type(e) in (ValueError, TypeError):
+                print('Should be an int or None >:(', e)
+            else:
+                raise e
+
+        return val
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, val):
+        self._id = self._int_check(val)
+
+    def read(self, pg=1):
         """
         You need to call _dynamic_attr() and _delete_extra() for full
         sa_obj interop.
@@ -97,15 +119,11 @@ class SAObj(object):
         if self.unread:
             self.unread = False
 
-        if setup_callback:
-            setup_callback(**kwargs)
-            self._delete_extra()
-
 
 class SAListObj(SAObj):
     def __init__(self, *args, collection=None, **properties):
-        self.page = None
-        self.pages = None
+        self.page = 1
+        self.pages = 1
         self.navi = None
 
         self._collection = collection
@@ -120,6 +138,22 @@ class SAListObj(SAObj):
             self.navi = SAPageNavi(self, content=navi)
 
         self.navi.read(pg)
+
+    @property
+    def page(self):
+        return self._page
+
+    @page.setter
+    def page(self, val):
+        self._page = self._int_check(val)
+
+    @property
+    def pages(self):
+        return self._pages
+
+    @pages.setter
+    def pages(self, val):
+        self._pages = self._int_check(val)
 
     def read(self, pg=1):
         super(SAListObj, self).read(pg)

@@ -5,7 +5,6 @@ from collections import OrderedDict as ordered
 import bs4
 
 
-
 class SAForum(SAListObj):
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
@@ -38,8 +37,7 @@ class SAForum(SAListObj):
 
             forum_obj = SAForum(self, subforum_id, name)
 
-            yield subforum_id, forum_obj
-
+            yield forum_obj.id, forum_obj
 
     def _get_threads(self, pg):
         self._content = self._content.find('div', id='content')
@@ -58,5 +56,4 @@ class SAForum(SAListObj):
             else:
                 val = SAThread(self, thread_id, tr_thread)
 
-            key = thread_id
-            yield key, val
+            yield val.id, val

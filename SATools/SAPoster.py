@@ -14,7 +14,7 @@ class SAPoster(SAObj):
         self.contact_info = dict({})
 
         if self.id:
-            self.url = "https://forums.somethingawful.com/member.php?action=getinfo&userid=" + self.id
+            self.url = "https://forums.somethingawful.com/member.php?action=getinfo&userid=" + str(self.id)
 
     def read(self):
         super(SAPoster, self).read()

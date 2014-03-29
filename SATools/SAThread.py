@@ -12,7 +12,7 @@ class SAThread(SAListObj):
     def __init__(self, parent, id, tr_thread=None, **properties):
         super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
         self.base_url = "http://forums.somethingawful.com/"
-        self.url = self.base_url + '/showthread.php?threadid=' + self.id
+        self.url = self.base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = None
         self.last_read = None
         self._parser_map = None
@@ -54,10 +54,10 @@ class SAThread(SAListObj):
     def _parse_posts(self):
         """TODO: grab more info from content, put it in sa_post module..."""
         for post in self._content.find_all('table', 'post'):
-            post_id = post['id']
+            post_id = post['id'][4:]
             sa_post = SAPost(self, post_id, post)
 
-            yield post_id, sa_post
+            yield sa_post.id, sa_post
 
     def _parsing_dispatch(self, key, val, content):
         if key not in self._parser_map:

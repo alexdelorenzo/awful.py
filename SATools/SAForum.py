@@ -11,7 +11,6 @@ class SAForum(SAListObj):
                  page=1, subforums=None, **properties):
         super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
         self.subforums = subforums
-        self.listings = None
         self.base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self.base_url + '?forumid=' + str(id)
@@ -20,8 +19,6 @@ class SAForum(SAListObj):
     def read(self, pg=1):
         super(SAForum, self).read(pg)
         self.threads = self._get_threads(pg)
-        self.listings = {threadid: thread.title
-                         for threadid, thread in self.threads.items()}
 
         if not self.subforums and self._has_subforums():
             self.subforums = ordered(self._get_subforums())

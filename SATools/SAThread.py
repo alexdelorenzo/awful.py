@@ -107,8 +107,8 @@ class SAThread(SAListObj):
 class SALastRead(SAObj):
     def __init__(self, parent, id, content, name=None, **properties):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)
-        self.page = None
-        self.pages = None
+        self.page = self.parent.page
+        self.pages = self.parent.pages
         self.url_last_post = None
         self.unread_pages = None
         self.unread_count = None
@@ -130,12 +130,14 @@ class SALastRead(SAObj):
 
     def read(self):
         super(SALastRead, self).read()
+        self.page = self.parent.page
+        self.pages = self.parent.pages
         self._parse_unread()
         self._delete_extra()
 
     def jump_to_new(self):
         if self.parent.pages and self.unread_pages:
-            self.parent.read(self.parent.pages - self.unread_pages)
+            self.parent.read(int(self.parent.pages) - int(self.unread_pages))
 
     def stop_tracking(self):
         self.session.post(self.url_switch_off)

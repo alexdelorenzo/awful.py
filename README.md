@@ -33,147 +33,261 @@ Loading from backup: .salisbury shake_sa.bak
 
 ```
 
-### Navigating Index
+### Browse Sections
+
+Flat index map
 
 ```python
-gbs = ap.index.forums['1']
+In [26]: ap.index.forums
+Out[26]: OrderedDict([('155', SA's Front Page Discussion), ('214', E/N Bullshit), ('1', GBS ), ('154', FYAD V), ('26', FYAD), ('48', Main), ('145', The MMO HMO), ('93', Private Game Servers), ('103', The Game Room), ('234', Traditional Games), ('191', Let's Play!), ('44', Games), ('192', Inspect Your Gadgets), ('162', Education & Academics), ('211', Tourism & Travel), ('200', Business, Finance, and Careers), ('158', Ask / Tell), ('46', Debate & Discussion), ('170', Haus of Tech Support), ('202', The Cavern of COBOL), ('219', YOSPOS), ('22', Serious Hardware / Software Crap), ('181', The Football Funhouse), ('248', The Armchair Quarterback), ('175', The Ray Parlour), ('177', Punchsport Pagoda), ('122', Sports Argument Stadium), ('183', The Goon Doctor), ('244', The Fitness Log Cabin), ('179', You Look Like Shit), ('161', Goons With Spoons), ('167', Post Your Favorite), ('236', Cycle Asylum), ('91', Automotive Insanity), ('124', Pet Island), ('132', The Firing Range), ('90', The Crackhead Clubhouse), ('218', Goons in Platoons), ('51', Discussion), ('210', DIY & Hobbies), ('247', The Dorkroom), ('31', Creative Convention), ('133', The Film Dump), ('151', Cinema Discusso), ('182', The Book Barn), ('104', Musician's Lounge), ('150', No Music Discussion), ('130', The TV IV), ('144', Batman's Shameful Secret), ('27', ADTRW), ('215', Entertainment, Weakly), ('152', The Finer Arts), ('77', Feedback & Discussion), ('85', Coupons & Deals), ('61', SA-Mart), ('43', Goon Meets), ('180', Stop, Collaborate, and Listen), ('241', LAN: Your City Sucks - Regional ), ('188', Questions, Comments, Suggestions), ('153', The Community), ('264', Comedy Purgatory), ('115', FYAD Goldmine), ('204', Helldump Success Stories), ('222', LF Goldmine), ('229', YCS Goldmine), ('21', Comedy Goldmine), ('25', Comedy Gas Chamber), ('49', Archives), ('-1', Index)])
+
+In [40]: forums = ap.index.forums
+In [41]: the_pos = forums['219']
 ```
 
-the AwfulPy object has members `index` and `session`. the former is used to navigate the forum, the latter has the relevant methods to do so. `reply()` is a method of the `session` object.
-
-`listing` threadid: thread_title map provides a readable output of a section or forum. use the key from the listings to retrieve the `SAForum` object from the `forums` attribute. we can also walk down the `sections` map if you like hierarchy.
-
-to save time and battery life, `read()` will pull and parse the forums data. if `listings` is empty, call `read()`.
-
-Here we navigate the forum index, and select a forum.
-
+Hierarchical map
 
 ```python
-In [4]: ap.
-ap.index        ap.session      ap.session_bak  ap.username
+In [37]: ap.index.sections
+Out[37]: Index
 
-In [4]: ap.index.
-ap.index.base_url          ap.index.listings
-ap.index.content           ap.index.section_listings
-ap.index.forum_listings    ap.index.sections
-ap.index.forums            ap.index.session
+In [29]: ap.index.sections.forums
+Out[29]: [Main, Discussion, The Finer Arts, The Community, Archives]
 
-In [5]: pprint(ap.index.listings)
-{'155': "SA's Front Page Discussion",
- '214': 'E/N Bullshit',
- '1': 'GBS 1.2',
- '154': "Synthy's Snack Shack",
- '26': 'FYAD: Cherry blossom petal landed in the lunch',
- '48': 'Main',
+In [47]: ap.index.sections.forums[1]
+Out[47]: Discussion
 
-In [6]: the_pos = ap.index.forums['219']
+In [48]: ap.index.sections.forums[1].children
+Out[48]:
+[Games,
+ Inspect Your Gadgets,
+ Ask / Tell,
+ Debate & Discussion,
+ Serious Hardware / Software Crap,
+ Sports Argument Stadium,
+ You Look Like Shit,
+ Goons With Spoons,
+ Post Your Favorite,
+ Automotive Insanity,
+ Pet Island,
+ The Firing Range,
+ The Crackhead Clubhouse,
+ Goons in Platoons]
+
+In [50]: ap.index.sections.forums[1].children[4]
+Out[50]: Serious Hardware / Software Crap
+
+In [51]: ap.index.sections.forums[1].children[4].children
+Out[51]: [Haus of Tech Support, The Cavern of COBOL, YOSPOS]
+
+In [52]: ap.index.sections.forums[1].children[4].children[2]
+Out[52]: YOSPOS
+
+In [53]: the_pos = ap.index.sections.forums[1].children[4].children[2]
 ```
 
-### Navigating Forum
+
+### Browse Forum
+
+If forum.unread is True, call forum.read()
 
 ```python
-cat_thread = ap.index.forums['219'].threads['3136320']
+In [59]: the_pos
+Out[59]: YOSPOS
+
+In [60]: the_pos.read()
+
+In [63]: the_pos.
+the_pos.base_url  the_pos.name      the_pos.page      the_pos.parent    the_pos.session   the_pos.unread
+the_pos.id        the_pos.navi      the_pos.pages     the_pos.read      the_pos.threads   the_pos.url
+
+In [25]: the_pos.navi
+Out[25]: Page 1 of 11
+
+In [26]: the_pos.navi.
+the_pos.navi.page     the_pos.navi.parent   the_pos.navi.session
+the_pos.navi.pages    the_pos.navi.read     the_pos.navi.unread
+
+In [64]: pprint(the_pos.threads)
+{'3522839': Your Operating System is a Piece of Shit: THE RULES,
+ '3617332': it's the new pics thread,
+ '3606828': Games: never pay more than $35.65 for a computer jame, sage advice from Tim Schafer,
+ '3617700': CJS: no butt stuff,
+ '3486712': post the most worthless kickstarters and greatest investor rewards you got,
+ '3606857': Bitcoin: This is not funny. I feel violated.,
+ '3602746': Silicon Valley containment zone: Comedy Autopsy,
+ '3201527': Description: that darn feline.jpg,
+ '3620458': npm install hacker_news@2.0 --nolf,
+ '3607978': What the h*ck is happening to Microsoft?,
+ '3619802': the mac pro,
+ '3618779': we havent had a life hacks thread in a while so here's a life hack thread,
+ '3617481': 2014 year of linux on the desktop,
+ '3561097': Post your idiot spare time projects.,
+ '3263403': Post the most worthless thing you can find on wikipedia,
+ '3617986': Comptuer advertising: A hole, the entire content is the ad,
+ '3481275': The PL (Programming Language) thread: I'm glad Python is the current hipste,
+ '3620278': Security fuckup megathread v69 - nadim kobeissi is an idiot,
+ '3616234': [PIC] Post your YOSPOS Daily Setup,
+ '3619547': Facebook releases new Virtual Reality Farmville games,
+ '3620430': You would all fuck your computers if they had an appropriate orifice for it,
+ '3609208': YVCPOS II: George Lucas Jack-Me-Off Special edition,
+ '3619216': Youre new mozilla ceos for march 2014,
+ '3540185': YosPos Music Thread,
+ '3620450': I have an MBP and MPB,
+ '3606820': halp: i bad at comptuers,
+ '3620291': Public Apology,
+ '3571347': blackberry death pool 2013-2014,
+ '3616372': monitor chat: "i don't care what i see as long as light is coming out",
+ '3568120': YOSPOS fitness thread}
 ```
 
-call `read()` to pull and parse the forum's data.
+### Browse Thread
 
-`listings` provides a human readable index for the `threads` map of `SAThread`s
-
-Here we select a thread.
-
+If thread.unread is True, call thread.read()
 
 ```python
-In [7]: the_pos.read()
+In [26]: random_thread = the_pos.threads.popitem()[-1]
 
-In [8]: the_pos.
-the_pos.base_url   the_pos.listings   the_pos.pages      the_pos.session
-the_pos.content    the_pos.name       the_pos.parent     the_pos.subforums
-the_pos.id         the_pos.page       the_pos.read       the_pos.threads
+In [27]: random_thread
+Out[27]: monitor chat: "i don't care what i see as long as light is coming out"
 
-In [9]: the_pos.listings
-Out[13]: 
-{'3136320': 'the yospos serious questions that arent serious enough for SHSC megathread',
- '3201527': 'Description: that darn feline.jpg',
- '3263403': 'Post the most worthless thing you can find on wikipedia',
+In [28]: random_thread.read()
 
-In [10]: bad_thread = the_pos.threads['3136320']
+In [29]: random_thread.
+random_thread.base_url   random_thread.last_read  random_thread.pages      random_thread.session    random_thread.user_id
+random_thread.icon       random_thread.name       random_thread.parent     random_thread.title
+random_thread.id         random_thread.navi       random_thread.posts      random_thread.unread
+random_thread.lastpost   random_thread.page       random_thread.read       random_thread.url
 ```
 
-### Navigating thread
-
-```python 
-dont_fuck_with = [post for post in cat_thread if post.poster.name == 'Debt']
-```
-
-call `read()` to parse the thread's posts and op's metadata. 
-
-We can see the different attributes the `SAThread` object has after being read.
-
-Here we iterate over the `posts` map of `SAPost` objects.
-
+Basic stats
 
 ```python
-In [11]: bad_thread.read()
+In [44]: random_thread.page
+Out[44]: 1
 
-In [11]: bad_thread.
-bad_thread.          bad_thread.name      bad_thread.replies
-bad_thread.author    bad_thread.page      bad_thread.session
-bad_thread.base_url  bad_thread.pages     bad_thread.title
-bad_thread.content   bad_thread.poster    bad_thread.url
-bad_thread.icon      bad_thread.posts     bad_thread.views
-bad_thread.id        bad_thread.rating    
-bad_thread.lastpost  bad_thread.read      
+In [45]: random_thread.pages
+Out[45]: 8
 
+In [46]: random_thread.lastpost
+Out[46]: {'date': 'Mar 29, 2014', 'time': '00:50', 'user': 'pagancow'}
 
-In [12]: for post in bad_thread.posts.values():
-   ....:       print(post.poster.name + "'s post:")
-   ....:       print(post.body + '\n')
-   ....:     
-Jim Silly-Balls's post:
-if youre like me and i know you are sometimes you have a computer related question but dont want to venture into SHSC to ask it because you would rather ask your friends in the pos.  this is the thread fo dat shit
+In [47]: random_thread.icon
+Out[47]: '309'
 
-CRIP EATIN BREAD's post:
-it starts to shut down every two hours in march, and will expire in june 2010
+In [48]: random_thread.user_id
+Out[48]: '105961'
+
+In [49]: random_thread.title
+Out[49]: 'monitor chat: "i don\'t care what i see as long as light is coming out"'
 ```
 
-### Post and Poster objects
+Last read usage mixed in below
 
 ```python
-take_a_better_look_at = post.date, post.poster.reg_date
+In [31]: random_thread.last_read.
+random_thread.last_read.id              random_thread.last_read.session         random_thread.last_read.unread_pages
+random_thread.last_read.jump_to_new     random_thread.last_read.stop_tracking   random_thread.last_read.url_last_post
+random_thread.last_read.parent          random_thread.last_read.unread          random_thread.last_read.url_switch_off
+random_thread.last_read.read            random_thread.last_read.unread_count
+
+In [31]: random_thread.last_read.__dict__
+Out[31]:
+{'id': '3616372',
+ 'parent': monitor chat: "i don't care what i see as long as light is coming out",
+ 'session': <requests.sessions.Session at 0x7f7ab5ba3d10>,
+ 'unread': False,
+ 'unread_count': '256',
+ 'unread_pages': 6,
+ 'url_last_post': 'http://forums.somethingawful.com//showthread.php?threadid=3616372&goto=newpost',
+ 'url_switch_off': 'http://forums.somethingawful.com//showthread.php?action=resetseen&threadid=3616372'}
+
+In [27]: random_thread.page
+Out[27]: 1
+
+In [31]: random_thread.pages
+Out[31]: 189
+
+In [32]: random_thread.last_read.jump_to_new()
+
+In [33]: random_thread.page
+Out[33]: 97
+```
+
+```python
+In [41]: pprint(random_thread.posts)
+{'post426904662': graph's reply: post426904662,
+ 'post426904929': Ana5000's reply: post426904929,
+ 'post426904968': LUBE UP YOUR BUTT's reply: post426904968,
+ 'post426905046': A Wheezy Steampunk's reply: post426905046,
+ 'post426905093': ANIME MONSTROSITY's reply: post426905093,
+ 'post426905241': pagancow's reply: post426905241,
+ 'post426905254': pagancow's reply: post426905254,
+ 'post426905272': Ana5000's reply: post426905272,
+ 'post426905295': ANIME MONSTROSITY's reply: post426905295,
+ 'post426905300': Jonny 290's reply: post426905300,
+ 'post426905314': pagancow's reply: post426905314,
+ 'post426905329': pagancow's reply: post426905329,
+ 'post426905461': DaNzA's reply: post426905461,
+ 'post426905463': Shaggar's reply: post426905463,
+ 'post426905794': Internaut!'s reply: post426905794,
+ 'post426905971': pagancow's reply: post426905971,
+ 'post426906021': Lightbulb Out's reply: post426906021,
+ 'post426906054': RZA Encryption's reply: post426906054,
+ 'post426908555': The Management's reply: post426908555,
+ 'post426908579': The Management's reply: post426908579,
+ 'post426908731': Sock on a Fish's reply: post426908731,
+ 'post426908745': RZA Encryption's reply: post426908745,
+ 'post426909569': Sweevo's reply: post426909569,
+ 'post426909640': A Wheezy Steampunk's reply: post426909640,
+ 'post426909789': Phoenixan's reply: post426909789,
+ 'post426910559': pagancow's reply: post426910559,
+ 'post426910724': Greed is eternal's reply: post426910724,
+ 'post426911030': flakeloaf's reply: post426911030,
+ 'post426911731': Elder Postsman's reply: post426911731,
+ 'post426911753': url's reply: post426911753,
+ 'post426912467': infernal machines's reply: post426912467,
+ 'post426912931': pagancow's reply: post426912931,
+ 'post426913231': qirex's reply: post426913231,
+ 'post426914409': pagancow's reply: post426914409,
+ 'post426914831': infernal machines's reply: post426914831,
+ 'post426915496': qirex's reply: post426915496,
+ 'post426915522': Sock on a Fish's reply: post426915522,
+ 'post426915557': USSMICHELLEBACHMAN's reply: post426915557,
+ 'post426918694': pagancow's reply: post426918694,
+ 'post426918708': pagancow's reply: post426918708}
 
 ```
 
-if a post was generated from a `SAThread` that's been read, there is no reason to call `read()` if attributes are missing, you may call it, but it will pull info from the poster's profile url. best option is to just display what's been given to the object unless an individual poster needs to be inspected.
+### Posts and Posters
 
 ```python
-In [13]: post.
-post.body     post.id       post.poster   post.session  
-post.content  post.parent   post.read     post.unread   
+In [72]: bad_post = random_thread.posts.popitem()[-1]
 
-In [13]: post.poster.
-post.poster.avatar_url  post.poster.name        post.poster.session
-post.poster.content     post.poster.read        post.poster.title
-post.poster.id          post.poster.reg_date    post.poster.url
+In [74]: bad_post.body
+Out[74]: 'I.N.R.I posted:\r\ndont even bother asking then moron.\n\n\r\nkeep the curse words to yourself please, are you not in the usa or something'
 
-In [13]: post.poster.url
-Out[13]: 'http://forums.somethingawful.com/member.php?action=getinfo&userid=22993'
+In [75]: bad_post.id
+Out[75]: 'post421953760'
 
-In [14]: profile = post.poster.url
+In [76]: bad_post.poster
+Out[76]: vaginal culture
 ```
 
-### Posting
-The `SASession` object at `AwfulPy.session` holds methods that need to be invoked with your credentials.
-`reply()` lives here and so will `post_thread()`, `pms`, and `search()` eventually. 
-
-`reply()` requires an existing threadid to reply to and a message to be posted. an exception will be raised if it didn't work
-
-
 ```python
-In [15]: my_bad_post = "Dear Richard,"
-In [16]: thread_id = bad_thread.id
-In [17]: ap.session.reply(threadid, my_bad_post)
+In [59]: bad_poster = bad_post.poster
 
+In [60]: bad_poster
+Out[60]: echinopsis
 
+In [61]: bad_poster.id
+Out[61]: '52833'
+
+In [62]: bad_poster.name
+Out[62]: 'echinopsis'
+
+In [63]: bad_poster.url
+Out[63]: 'https://forums.somethingawful.com/member.php?action=getinfo&userid=52833'
 ```
 
 

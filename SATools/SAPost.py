@@ -6,8 +6,17 @@ class SAPost(SAObj):
     def __init__(self, parent, id, content=None, **properties):
         super(SAPost, self).__init__(parent, id, content, **properties)
         self.poster = None
-        self.body = None
+        self.body = ""
         self.read()
+
+    def __repr__(self):
+        if self.body and self.poster:
+            return self.poster.name + "'s reply: " + self.id
+        else:
+            return super(SAPost, self).__repr__()
+
+    def __str__(self):
+        return self.body
 
     def _parse_from_thread(self):
         user_id = self._content.td['class'].pop()[7:]

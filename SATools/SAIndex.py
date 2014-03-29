@@ -1,4 +1,5 @@
 from SATools.SAForum import SAForum
+from SATools.SASection import SASection
 
 from collections import OrderedDict as ordered
 
@@ -27,11 +28,12 @@ class SAIndex(object):
         self._json = request.json()
 
     def _get_sections(self):
-        section_obj = next(self.__gen_from_json())
-        self.sections = section_obj
+        section = next(self.__gen_from_json())
+        parent, _id, name, children = \
+            section.parent, section.id, section.name, section.children
 
-        self.sections._delete_extra()
-        self.sections.read = lambda *args, **kwargs: None
+        self.sections = SASection(parent, _id, name=name, children=children)
+        self._save(self.sections.id, self.sections)
 
     def __gen_from_json(self, json=None, parent=None):
         if json is None:

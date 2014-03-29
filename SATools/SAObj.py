@@ -136,6 +136,15 @@ class SAPageNavi(SAObj):
         self.page = 1
         self.pages = 1
 
+    def __repr__(self):
+        if self.parent.unread:
+            return "Navi: unread parent_obj"
+
+        return "Page " + str(self.page) + " of " + str(self.pages)
+
+    def __str__(self):
+        return self.__repr__()
+
     def read(self, pg=1):
         super(SAPageNavi, self).read(pg)
 

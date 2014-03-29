@@ -16,6 +16,8 @@ Usage
 =======
 ## SATools
 
+Scroll to the very bottom for instructions on how to post.
+
 ### Authenticating
 
 ```python
@@ -87,7 +89,7 @@ In [53]: the_pos = ap.index.sections.forums[1].children[4].children[2]
 ```
 
 
-### Browse Forum
+### Forums and Navigation
 
 If forum.unread is True, call forum.read()
 
@@ -141,7 +143,7 @@ In [64]: pprint(the_pos.threads)
  '3568120': YOSPOS fitness thread}
 ```
 
-### Browse Thread
+### Threads and LastRead
 
 If thread.unread is True, call thread.read()
 
@@ -288,6 +290,43 @@ Out[62]: 'echinopsis'
 
 In [63]: bad_poster.url
 Out[63]: 'https://forums.somethingawful.com/member.php?action=getinfo&userid=52833'
+```
+
+
+### Posting and Sessions
+
+```python
+In [11]: random_thread
+Out[11]: YOSPOS fitness thread
+
+In [12]: session = ap.session
+In [13]: post_body = "Wow"
+
+In [14]: session.reply(random_thread.id, post_body)
+
+In [15]: random_thread.page
+Out[15]: 1
+
+In [16]: random_thread.read(random_thread.pages)
+
+In [17]: random_thread.page
+Out[17]: 189
+
+In [19]: last_post = random_thread.posts.popitem(-1)
+In [23]: last_post
+Out[23]: salisbury shake's reply: post427594324
+
+In [24]: last_post.body
+Out[24]: 'Wow'
+
+In [25]: last_post.id
+Out[25]: 'post427594324'
+
+In [26]: last_post.poster
+Out[26]: salisbury shake
+
+In [30]: last_post.poster.id
+Out[30]: '182905'
 ```
 
 

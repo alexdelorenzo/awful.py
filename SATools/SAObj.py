@@ -99,8 +99,7 @@ class SAObj(object):
 
         if setup_callback:
             setup_callback(**kwargs)
-
-        self._delete_extra()
+            self._delete_extra()
 
 
 class SAListObj(SAObj):

@@ -37,9 +37,6 @@ class SASession(object):
         if not response.ok:
             raise Exception(("Unable to login", response.status_code, response.reason))
 
-    def post_thread(self, forumid, title, body, tag=None, poll=None):
-        raise NotImplementedError()
-
     def reply(self, id, body):
         url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
 
@@ -57,7 +54,11 @@ class SASession(object):
         if not response.ok:
             raise Exception(("Unable to reply", response.status_code, response.reason))
 
+    def post_thread(self, forumid, title, body, tag=None, poll=None):
+        raise NotImplementedError()
+
     def find_user_posts(self, user_id):
+        raise NotImplementedError()
         search = SASearch(query=user_id, session=self.session)
         search.search_userid(user_id)
         return search

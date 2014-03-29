@@ -30,6 +30,9 @@ class SAIndex(object):
         section_obj = next(self.__gen_from_json())
         self.sections = section_obj
 
+        self.sections._delete_extra()
+        self.sections.read = lambda *args, **kwargs: None
+
     def __gen_from_json(self, json=None, parent=None):
         if json is None:
             json = self._json

@@ -89,13 +89,14 @@ class SAObj(object):
 
     @staticmethod
     def _int_check(val):
+        """
+        Convert to an int if possible, None is acceptable, return val.
+        """
         try:
             val = int(val)
         except Exception as e:
             if val is None:
                 return val
-            elif type(e) in (ValueError, TypeError):
-                print('Should be an int or None >:(', e)
             else:
                 raise e
 
@@ -175,9 +176,6 @@ class SAPageNavi(SAObj):
             return "Navi: unread parent_obj"
 
         return "Page " + str(self.page) + " of " + str(self.pages)
-
-    def __str__(self):
-        return self.__repr__()
 
     def read(self, pg=1):
         super(SAPageNavi, self).read(pg)

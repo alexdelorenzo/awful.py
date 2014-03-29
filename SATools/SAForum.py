@@ -2,7 +2,6 @@ from SATools.SAThread import SAThread
 from SATools.SAObj import SAListObj
 
 from collections import OrderedDict as ordered
-import bs4
 
 
 class SAForum(SAListObj):

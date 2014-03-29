@@ -1,13 +1,14 @@
 from SATools.SAPoster import SAPoster
 from SATools.SASearch import SASearch
-import requests
+
+from requests import Session
 from bs4 import BeautifulSoup
 
 
 class SASession(object):
     def __init__(self, username, passwd):
         super(SASession, self).__init__()
-        self.session = requests.Session()
+        self.session = Session()
         self.username = username
         self.base_url = 'https://forums.somethingawful.com/'
         self.login(username, passwd)

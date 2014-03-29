@@ -1,5 +1,5 @@
 from SATools.SAObj import SAObj
-from bs4 import BeautifulSoup
+
 
 class SAPoster(SAObj):
     def __init__(self, parent, id=None, content=None, name=None, **properties):

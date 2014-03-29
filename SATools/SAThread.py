@@ -1,11 +1,9 @@
 from SATools.SAPost import SAPost
-from SATools.SAPoster import SAPoster
 from SATools.SAObj import SAObj, SAListObj
 
 from collections import OrderedDict as ordered
-from bs4 import BeautifulSoup
 from math import ceil, floor
-import re
+from re import compile
 
 
 class SAThread(SAListObj):
@@ -72,12 +70,12 @@ class SAThread(SAListObj):
     def _parse_lastpost(self, key, val, content):
         groups = 'time', 'date', 'user'
         regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-        matches = re.compile(regex).search(val).groups()
+        matches = compile(regex).search(val).groups()
         matches = dict(zip(groups, matches))
         setattr(self, key, matches)
 
     def _parse_replies(self, key, val, content):
-        pages = ceil(int(val) / 40)
+        pages = ceil(int(val) / 40.0)
         key = 'pages'
         setattr(self, key, pages)
 
@@ -125,7 +123,7 @@ class SALastRead(SAObj):
             last_post_url = self.parent.base_url + last_post_link['href']
             self.url_last_post = last_post_url
             self.unread_count = unread_count
-            self.unread_pages = floor(int(unread_count) / 40)
+            self.unread_pages = floor(int(unread_count) / 40.0)
 
 
     def read(self):

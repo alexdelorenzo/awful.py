@@ -29,9 +29,6 @@ class SAObj(object):
         else:
             return super(SAObj, self).__repr__()
 
-    def __str__(self):
-        return self.__repr__()
-
     def __getattr__(self, attr):
         """
         Monkey patch of the year, 2014.
@@ -91,13 +88,13 @@ class SAObj(object):
     def _int_check(val):
         """
         Convert to an int if possible, None is acceptable, return val.
+
+        I've been up for way too long because of jetlag so this is probably a bad idea.
         """
         try:
             val = int(val)
         except Exception as e:
-            if val is None:
-                return val
-            else:
+            if val is not None:
                 raise e
 
         return val
@@ -177,14 +174,6 @@ class SAPageNavi(SAObj):
 
         return "Page " + str(self.page) + " of " + str(self.pages)
 
-    def read(self, pg=1):
-        super(SAPageNavi, self).read(pg)
-
-        self.page = pg
-        self._parse_page_selector()
-        self._modify_parent()
-        self._delete_extra()
-
     def _modify_parent(self):
         self.parent.page = self.page
         self.parent.pages = self.pages
@@ -196,3 +185,11 @@ class SAPageNavi(SAObj):
             self.pages = page_selector[-1].text
         else:
             self.pages = 1
+
+    def read(self, pg=1):
+        super(SAPageNavi, self).read(pg)
+
+        self.page = pg
+        self._parse_page_selector()
+        self._modify_parent()
+        self._delete_extra()

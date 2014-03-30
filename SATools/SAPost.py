@@ -11,7 +11,7 @@ class SAPost(SAObj):
 
     def __repr__(self):
         if self.body and self.poster:
-            return self.poster.name + "'s reply: " + self.id
+            return self.poster.name + "'s reply: " + str(self.id)
         else:
             return super(SAPost, self).__repr__()
 

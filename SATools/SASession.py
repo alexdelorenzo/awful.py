@@ -38,8 +38,8 @@ class SASession(object):
         if not response.ok:
             raise Exception(("Unable to login", response.status_code, response.reason))
 
-    def reply(self, id, body):
-        url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(id)
+    def reply(self, _id, body):
+        url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(_id)
 
         response = self.session.get(url)
         bs = BeautifulSoup(response.content)
@@ -60,9 +60,6 @@ class SASession(object):
 
     def find_user_posts(self, user_id):
         raise NotImplementedError()
-        search = SASearch(query=user_id, session=self.session)
-        search.search_userid(user_id)
-        return search
 
     def search(self):
         raise NotImplementedError()

@@ -60,7 +60,7 @@ class SASearchNewStyle(SAListObj):
         super(SASearchNewStyle, self).__init__(name=query, session=session, **options)
         self.base_url = "http://forums.somethingawful.com/f/search"
         self.query = query
-        self.type = type
+        self.lihllllltype = type
         self.results = None
 
         self.options = \

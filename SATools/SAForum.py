@@ -12,7 +12,7 @@ class SAForum(SAListObj):
         self.base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self.base_url + '?forumid=' + str(id)
-        self.threads = {}
+        self.threads = ordered()
 
     def read(self, pg=1):
         super(SAForum, self).read(pg)
@@ -30,7 +30,7 @@ class SAForum(SAListObj):
             return False
 
     def _get_subforums(self):
-        for tr_subforum in self._content.select('tr.subforum'):
+        for tr_subforum in self._content.find_all('tr', 'subforum'):
             subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
             name = tr_subforum.a.text
 
@@ -45,13 +45,15 @@ class SAForum(SAListObj):
         return threads
 
     def _gen_threads(self):
-        thread_blocks = self._content.select('tr.thread')
+        thread_blocks = self._content.find_all('tr', 'thread')
 
         for tr_thread in thread_blocks:
-            thread_id = tr_thread['id'][6:]
+            thread_id = int(tr_thread['id'][6:])
 
             if thread_id in self.threads:
                 val = self.threads[thread_id]
+                val._fetch()
+
             else:
                 val = SAThread(self, thread_id, tr_thread)
 

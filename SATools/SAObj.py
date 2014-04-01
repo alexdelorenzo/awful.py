@@ -8,19 +8,19 @@ class SAObj(object):
 
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
         super(SAObj, self).__init__()
-
+        self._id = id
+        del id # sorry builtins' namespace :(
         self.parent = parent
         self.session = self.parent.session
-
-        self.id = id
         self._content = content
         self.name = name
         self.url = url
-        self._properties = properties
 
         self.unread = True
         self.base_url = None
 
+        self._properties = properties
+        self._substitutes = dict()
         self._dynamic_attr()
 
     def __repr__(self):
@@ -54,7 +54,7 @@ class SAObj(object):
 
         If unread, call this at the end of your overridden read()
         """
-        significant_false_vals = False, 0
+        significant_false_vals = False, 0, dict()
         delete_these = [attr for attr, val in self.__dict__.items()
                         if not val and val not in significant_false_vals]
 
@@ -68,6 +68,8 @@ class SAObj(object):
         If unread, call this at the end of your overridden read()
         """
         for name, attr in self._properties.items():
+            if name in self._substitutes:
+                name = self._substitutes[name]
             setattr(self, name, attr)
 
         del self._properties
@@ -119,15 +121,17 @@ class SAObj(object):
 
 
 class SAListObj(SAObj):
-    def __init__(self, *args, collection=None, **properties):
+    def __init__(self, *args, **properties):
         self.page = 1
         self.pages = 1
         self.navi = None
 
-        self._collection = collection
-        self.children = self._collection
+        self._collection = None
+        self._children = None
         self._page_keyword = 'pagenumber'
-
+        self._substitutes = \
+            {'collection': '_collection',
+             'children': '_children'}
         super(SAListObj, self).__init__(*args, **properties)
 
     def _setup_navi(self, pg=1):

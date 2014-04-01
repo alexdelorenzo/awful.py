@@ -41,7 +41,6 @@ class SAThread(SAListObj):
             text = td.text.strip()
             self._parsing_dispatch(td_class, text, td)
 
-
     def _get_posts(self):
         posts = ordered(self._parse_posts())
         return posts
@@ -102,6 +101,7 @@ class SALastRead(SAObj):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages
+
         self.url_last_post = None
         self.unread_pages = None
         self.unread_count = None

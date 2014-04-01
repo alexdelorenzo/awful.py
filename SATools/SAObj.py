@@ -8,7 +8,7 @@ class SAObj(object):
 
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
         super(SAObj, self).__init__()
-        self._id = id
+        self.id = id
         del id # sorry builtins' namespace :(
         self.parent = parent
         self.session = self.parent.session

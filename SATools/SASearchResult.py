@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 
 
 class SASearchResult(SAObj):
-	def __init__(self, id=None, name=None, content=None, parent=None, **properties):
-		super(SASearchResult, self).__init__(id=id, name=name, content=content, parent=parent, **properties)
+	def __init__(self, parent=None, _id=None, name=None, content=None, **properties):
+		super(SASearchResult, self).__init__(parent, _id, name=name, content=content, **properties)
 		self.session = self.parent.session
 		self.header = self.parent._table_header
 		self.forum = None
@@ -32,7 +32,7 @@ class SASearchResult(SAObj):
 		response = self.session.get(self.url)
 		bs_content = BeautifulSoup(response.text)
 		post_content = bs_content.find('table', id=post_id)
-		self.post = SAPost(post_id[4:], self.session, post_content)
+		self.post = SAPost(self, post_id[4:], post_content)
 
 	def _parse_content(self):
 		tds = self.content.find_all('td')

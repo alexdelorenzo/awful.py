@@ -41,6 +41,9 @@ class SAThread(SAListObj):
             text = td.text.strip()
             self._parsing_dispatch(td_class, text, td)
 
+        self._dynamic_attr()
+
+
     def _get_posts(self):
         posts = ordered(self._parse_posts())
         return posts
@@ -83,8 +86,9 @@ class SAThread(SAListObj):
         text = content.find('a', 'thread_title').text
         key = 'title'
         last_read = content.find('div', 'lastseen')
+        last_read = self._parse_lastseen(key, val, last_read)
 
-        setattr(self, 'last_read', self._parse_lastseen(key, val, last_read))
+        setattr(self, 'last_read', last_read)
         setattr(self, key, text)
 
     def _parse_lastseen(self, key, val, content):
@@ -114,11 +118,11 @@ class SALastRead(SAObj):
         self.url_switch_off = stop_tracking_url
 
         if last_post_link:
-            unread_count = last_post_link.text
+            unread_count = int(last_post_link.text)
             last_post_url = self.parent.base_url + last_post_link['href']
             self.url_last_post = last_post_url
             self.unread_count = unread_count
-            self.unread_pages = floor(int(unread_count) / 40.0)
+            self.unread_pages = int(floor(unread_count / 40.0))
 
     def read(self):
         super(SALastRead, self).read()
@@ -129,7 +133,8 @@ class SALastRead(SAObj):
 
     def jump_to_new(self):
         if self.parent.pages and self.unread_pages:
-            self.parent.read(int(self.parent.pages) - int(self.unread_pages))
+            unread_page = self.parent.pages - self.unread_pages
+            self.parent.read(unread_page)
 
     def stop_tracking(self):
         self.session.post(self.url_switch_off)

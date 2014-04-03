@@ -19,7 +19,7 @@ class SAForum(SAListObj):
         self.threads = self._get_threads(pg)
 
         if not self.subforums and self._has_subforums():
-            self.subforums = ordered(self._get_subforums())
+            self.subforums = ordered(self._gen_subforums())
 
         self._delete_extra()
 
@@ -29,7 +29,7 @@ class SAForum(SAListObj):
         else:
             return False
 
-    def _get_subforums(self):
+    def _gen_subforums(self):
         for tr_subforum in self._content.find_all('tr', 'subforum'):
             subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
             name = tr_subforum.a.text
@@ -49,12 +49,17 @@ class SAForum(SAListObj):
 
         for tr_thread in thread_blocks:
             thread_id = int(tr_thread['id'][6:])
-
-            if thread_id in self.threads:
-                val = self.threads[thread_id]
-                val._fetch()
-
-            else:
-                val = SAThread(self, thread_id, tr_thread)
+            val = self._thread_obj_persist(thread_id, tr_thread)
 
             yield val.id, val
+
+    def _thread_obj_persist(self, thread_id, tr_thread):
+        if thread_id in self.threads:
+            val = self.threads[thread_id]
+            val._content = tr_thread
+            val._parse_tr_thread()
+
+        else:
+            val = SAThread(self, thread_id, tr_thread)
+
+        return val

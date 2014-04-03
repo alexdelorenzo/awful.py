@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 
 
 class SASearch(SAListObj):
-    def __init__(self, query, type, session, **options):
-        super(SASearch, self).__init__(name=query, session=session, **options)
+    def __init__(self, parent, query, q_type=None, **options):
+        super(SASearch, self).__init__(parent, id=None, name=query, **options)
         self.base_url = "http://forums.somethingawful.com/search.php"
         self.query = query
         self.type = type

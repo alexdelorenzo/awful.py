@@ -67,6 +67,9 @@ class SAObj(object):
 
         If unread, call this at the end of your overridden read()
         """
+        if not self._properties:
+            return
+
         for name, attr in self._properties.items():
             if name in self._substitutes:
                 name = self._substitutes[name]

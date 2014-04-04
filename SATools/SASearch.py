@@ -18,18 +18,21 @@ class SASearch(SAListObj):
 
         for result in self.results:
             result.read()
+            result.get_post()
 
     def search_profile(self, sa_profile):
         self.search_userid(sa_profile.id)
 
     def search_userid(self, user_id):
-        params = {'action': 'do_search_posthistory', 'userid': user_id}
-        response = self.session.post(self.base_url, params)
+        params = {'action': 'do_search_posthistory', 'userid': str(user_id)}
+        param_str = '&'.join([key + '=' + val for key, val in params.items()])
+        url = self.base_url + '?' + param_str
+
+        response = self.session.post(url)
         response = self._jump(response)
 
         self._content = BeautifulSoup(response.text)
         self._parse_search_results()
-
 
     def _parse_search_results(self):
         table_rows = self._content.find('table', id='main_full').find_all('tr')

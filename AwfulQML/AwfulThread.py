@@ -93,8 +93,6 @@ class AwfulThreadModel(QAbstractListModel):
         self.last_page()
 
 
-
-
 class LastReadWrapper(QWrapper):
     def __init__(self, lr_obj, parent):
         super().__init__(lr_obj)
@@ -103,15 +101,21 @@ class LastReadWrapper(QWrapper):
 
     @pyqtProperty(str, constant=True)
     def lastpost(self):
-        return self.data.url_last_post
+        return str(self.data.url_last_post)
 
     @pyqtProperty(str, constant=True)
     def unread_pages(self):
-        return self.data.unread_pages
+        if self.data.unread_pages:
+            return str(self.data.unread_pages)
+        else:
+            return None
 
     @pyqtProperty(str, constant=True)
     def unread_count(self):
-        return self.data.unread_count
+        if self.data.unread_count:
+            return str(self.data.unread_count)
+        else:
+            return ""
 
     @pyqtProperty(str, constant=True)
     def lastread_off(self):
@@ -123,7 +127,8 @@ class LastReadWrapper(QWrapper):
 
     @QtCore.pyqtSlot()
     def jump(self):
-        self.parent.read_page(int(self.parent.data.pages) - int(self.data.unread_pages))
+        new_page = self.parent.data.pages - self.data.unread_pages
+        self.parent.read_page(new_page)
 
     @QtCore.pyqtSlot()
     def stop(self):

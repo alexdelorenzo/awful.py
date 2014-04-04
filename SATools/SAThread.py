@@ -41,7 +41,7 @@ class SAThread(SAListObj):
             text = td.text.strip()
             self._parsing_dispatch(td_class, text, td)
 
-        self._dynamic_attr()
+        #self._dynamic_attr()
 
 
     def _get_posts(self):

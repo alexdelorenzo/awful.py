@@ -17,8 +17,9 @@ class ForumModel(QAbstractListModel):
             threads = []
             for new_index, (thread_id, thread_obj) in enumerate(self.data.threads.items()):
                 for index, thread in enumerate(self.threads):
-                    if thread_id == thread.id:
-                        self.beginMoveRows(self, index, index, self, new_index)
+                    old_thread_found = thread_id == thread.id
+                    if False:
+                        self.beginMoveRows(index, index, self, new_index)
                         threads.append(thread)
                         self.endMoveRows()
                         break

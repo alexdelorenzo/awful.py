@@ -41,7 +41,7 @@ class SAPoster(SAObj):
         if self._content.img:
             self.avatar_url = self._content.img['src']
         if not self.name:
-            self.name = self._content.find('dt', 'author')
+            self.name = self._content.find('dt', 'author').text.strip()
 
         self.title = self._content.find('dd', 'title')
         self.reg_date = self._content.find('dd', 'registered')

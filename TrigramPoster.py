@@ -6,16 +6,11 @@ import nltk
 
 
 class TrigramPoster(SAPoster):
-    def __init__(self, id, session, **options):
-        super().__init__(id=id, session=session, **options)
-        raise NotImplementedError("Search is broken.")
-        self.search = SASearch(query=self.id,
-                               type='user',
-                               session=self.session)
-
+    def __init__(self, parent, id, **options):
+        super().__init__(parent, id, **options)
+        self.search = SASearch(self, query=self.id, type='user')
         self.search.search_profile(self)
         self.model = None
-
 
     def create_model(self, pgs=1, posts=None, start=1):
         if not posts:
@@ -23,7 +18,7 @@ class TrigramPoster(SAPoster):
 
         self.model = self._ngramify(self._tokenize(posts))
 
-    def _create_list_of_posts(self, start=1, pgs=1, time=.25):
+    def _create_list_of_posts(self, start=1, pgs=1, time=.05):
         pages = range(start, pgs + 1)
         posts = []
         for page in pages:

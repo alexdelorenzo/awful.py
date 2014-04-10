@@ -29,6 +29,12 @@ class SAObj(object):
         else:
             return super(SAObj, self).__repr__()
 
+    def __str__(self):
+        if self.name:
+            return self.__repr__()
+        else:
+            return super(SAObj, self).__str__()
+
     def __getattr__(self, attr):
         """
         Monkey patch of the year, 2014.
@@ -55,11 +61,13 @@ class SAObj(object):
         If unread, call this at the end of your overridden read()
         """
         significant_false_vals = False, 0, dict()
-        delete_these = [attr for attr, val in self.__dict__.items()
-                        if not val and val not in significant_false_vals]
 
-        for attr in delete_these:
-            delattr(self, attr)
+        for attr, val in self.__dict__.items():
+            is_falsey = not val
+            isnt_special = val not in significant_false_vals
+
+            if is_falsey and isnt_special:
+                delattr(self, attr)
 
     def _dynamic_attr(self):
         """
@@ -89,7 +97,6 @@ class SAObj(object):
 
         self._content = BeautifulSoup(response.content)
 
-    @staticmethod
     def _int_check(val):
         """
         Convert to an int if possible, None is acceptable, return val.

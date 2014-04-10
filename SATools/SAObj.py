@@ -15,12 +15,12 @@ class SAObj(object):
         self._content = content
         self.name = name
         self.url = url
+        self._properties = properties
 
         self.unread = True
         self.base_url = None
-
-        self._properties = properties
         self._substitutes = dict()
+
         self._dynamic_attr()
 
     def __repr__(self):
@@ -97,7 +97,7 @@ class SAObj(object):
 
         self._content = BeautifulSoup(response.content)
 
-    def _int_check(val):
+    def _int_check(self, val):
         """
         Convert to an int if possible, None is acceptable, return val.
 

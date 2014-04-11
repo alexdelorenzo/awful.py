@@ -45,7 +45,7 @@ class SAForum(SAListObj):
         return threads
 
     def _gen_threads(self):
-        thread_blocks = self._content.find_all('tr', 'thread')
+        thread_blocks = self._content.find_all('tr', 'thread', id=True)
 
         for tr_thread in thread_blocks:
             thread_id = int(tr_thread['id'][6:])

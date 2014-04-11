@@ -62,7 +62,7 @@ class SAObj(object):
         If unread, call this at the end of your overridden read()
         """
         significant_false_vals = False, 0, dict()
-        delete_these = [(attr, val) for attr, val in self.__dict__.items()]
+        delete_these = list(self.__dict__.items())
 
         for attr, val in delete_these:
             is_falsey = not val

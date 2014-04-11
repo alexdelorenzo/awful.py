@@ -20,6 +20,7 @@ class SAObj(object):
         self.unread = True
         self.base_url = None
         self._substitutes = dict()
+        self._reads = 0
 
         self._dynamic_attr()
 
@@ -61,8 +62,9 @@ class SAObj(object):
         If unread, call this at the end of your overridden read()
         """
         significant_false_vals = False, 0, dict()
+        delete_these = [(attr, val) for attr, val in self.__dict__.items()]
 
-        for attr, val in self.__dict__.items():
+        for attr, val in delete_these:
             is_falsey = not val
             isnt_special = val not in significant_false_vals
 
@@ -128,6 +130,8 @@ class SAObj(object):
         """
         if self.unread:
             self.unread = False
+
+        self._reads += 1
 
 
 class SAListObj(SAObj):
@@ -203,7 +207,7 @@ class SAPageNavi(SAObj):
     def read(self, pg=1):
         super(SAPageNavi, self).read(pg)
 
-        self.page = pg
+        self.page = pg if pg <= self.pages else self.pages
         self._parse_page_selector()
         self._modify_parent()
         self._delete_extra()

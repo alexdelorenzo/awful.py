@@ -17,7 +17,6 @@ class SAThread(SAListObj):
 
         self._set_parser_map()
         self._parse_tr_thread()
-        self._properties = properties
         self._dynamic_attr()
         self.name = self.title
 

@@ -48,7 +48,7 @@ class SAForum(SAListObj):
         thread_blocks = self._content.find_all('tr', 'thread', id=True)
 
         for tr_thread in thread_blocks:
-            thread_id = int(tr_thread['id'][6:])
+            thread_id = tr_thread['id'][6:]
             val = self._thread_obj_persist(thread_id, tr_thread)
 
             yield val.id, val

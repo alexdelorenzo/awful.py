@@ -14,11 +14,11 @@ class SAObj(object):
         self.session = self.parent.session
         self._content = content
         self.name = name
-        self.url = url
+        self.base_url = 'http://forums.somethingawful.com/'
+        self.url = url if url else self.base_url
         self._properties = properties
 
         self.unread = True
-        self.base_url = None
         self._substitutes = dict()
         self._reads = 0
 
@@ -64,12 +64,12 @@ class SAObj(object):
         significant_false_vals = False, 0, dict()
         delete_these = list(self.__dict__.items())
 
-        for attr, val in delete_these:
-            is_falsey = not val
-            isnt_special = val not in significant_false_vals
+        for name, val in delete_these:
+            is_falsy = not val
+            is_special = val in significant_false_vals
 
-            if is_falsey and isnt_special:
-                delattr(self, attr)
+            if is_falsy and not is_special:
+                delattr(self, name)
 
     def _dynamic_attr(self):
         """
@@ -80,10 +80,10 @@ class SAObj(object):
         if not self._properties:
             return
 
-        for name, attr in self._properties.items():
+        for name, val in self._properties.items():
             if name in self._substitutes:
                 name = self._substitutes[name]
-            setattr(self, name, attr)
+            setattr(self, name, val)
 
         del self._properties
 
@@ -107,11 +107,15 @@ class SAObj(object):
         """
         try:
             val = int(val)
-        except Exception as e:
+        except Exception as ex:
             if val is not None:
-                raise e
+                raise ex
 
         return val
+
+    def _propertyize(self, name, fget=None, fset=None, fdel=None):
+        attr = property(fget, fset, fdel)
+        setattr(self, name, attr)
 
     @property
     def id(self):
@@ -211,3 +215,19 @@ class SAPageNavi(SAObj):
         self._parse_page_selector()
         self._modify_parent()
         self._delete_extra()
+
+    @property
+    def page(self):
+        return self._page
+
+    @page.setter
+    def page(self, val):
+        self._page = self._int_check(val)
+
+    @property
+    def pages(self):
+        return self._pages
+
+    @pages.setter
+    def pages(self, val):
+        self._pages = self._int_check(val)

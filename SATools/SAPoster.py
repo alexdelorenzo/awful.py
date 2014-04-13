@@ -13,6 +13,8 @@ class SAPoster(SAObj):
         self.last_post = None
         self.contact_info = dict({})
 
+        self._delete_extra()
+
         if self.id:
             self.url = "https://forums.somethingawful.com/member.php?action=getinfo&userid=" + str(self.id)
 

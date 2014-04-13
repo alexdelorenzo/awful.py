@@ -14,6 +14,7 @@ class SAThread(SAListObj):
         self.posts = None
         self.last_read = None
         self._parser_map = None
+        self._regex = None
 
         self._set_parser_map()
         self._parse_tr_thread()
@@ -66,8 +67,12 @@ class SAThread(SAListObj):
 
     def _parse_lastpost(self, key, val, content):
         groups = 'time', 'date', 'user'
-        regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-        matches = compile(regex).search(val).groups()
+
+        if not self._regex:
+            regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
+            self._regex = compile(regex)
+
+        matches = self._regex.search(val).groups()
         matches = dict(zip(groups, matches))
         setattr(self, key, matches)
 

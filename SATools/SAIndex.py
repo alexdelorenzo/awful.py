@@ -32,7 +32,7 @@ class SAIndex(object):
         parent, _id, name, children = \
             section.parent, section.id, section.name, section.children
 
-        self.sections = SASection(parent, _id, name=name, children=children)
+        self.sections = SASection(parent, id=_id, name=name, children=children)
         self._save(self.sections.id, self.sections)
 
     def __gen_from_json(self, json=None, parent=None):
@@ -43,10 +43,10 @@ class SAIndex(object):
             parent = self
 
         children = json['children']
-        forum_id = json['forumid']
+        forum_id = json['forumid'] if json['forumid'] else None
         title = json['title'] if 'title' in json else 'Index'
 
-        parent = SAForum(parent, forum_id, name=title)
+        parent = SAForum(parent, id=forum_id, name=title)
         sa_children = []
 
         for child in children:

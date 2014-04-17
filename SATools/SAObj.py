@@ -1,4 +1,5 @@
 from SATools.SATypes import IntOrNone
+
 from bs4 import BeautifulSoup
 
 

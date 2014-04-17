@@ -1,5 +1,6 @@
 from SATools.SAPost import SAPost
 from SATools.SAObj import SAObj, SAListObj
+from SATools.SATypes import TriggerProperty as TrigProp
 
 from collections import OrderedDict as ordered
 from math import ceil, floor
@@ -7,12 +8,12 @@ from re import compile
 
 
 class SAThread(SAListObj):
+    posts = TrigProp(name='posts', trigger='read')
+
     def __init__(self, parent, id, tr_thread=None, **properties):
         super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + str(self.id)
-        self.posts = None
-        self.last_read = None
         self._parser_map = None
         self._regex = None
 
@@ -42,7 +43,6 @@ class SAThread(SAListObj):
             self._parsing_dispatch(td_class, text, td)
 
         #self._dynamic_attr()
-
 
     def _get_posts(self):
         posts = ordered(self._parse_posts())
@@ -105,15 +105,15 @@ class SAThread(SAListObj):
 
 
 class SALastRead(SAObj):
+    url_last_post = TrigProp(name='url_last_post', trigger='read')
+    unread_read_pages = TrigProp(name='unread_pages', trigger='read')
+    unread_count = TrigProp(name='unread_count', trigger='read')
+    url_switch_off = TrigProp(name='url_switch_off', trigger='read')
+
     def __init__(self, parent, id, content, name=None, **properties):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages
-
-        self.url_last_post = None
-        self.unread_pages = None
-        self.unread_count = None
-        self.url_switch_off = None
 
     def _parse_unread(self):
         close_link = self._content.a

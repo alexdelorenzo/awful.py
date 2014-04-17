@@ -17,15 +17,14 @@ class WeakRefDescriptor(object):
 class IntOrNone(WeakRefDescriptor):
     def __init__(self, value=None):
         super(IntOrNone, self).__init__(value)
-        self.value = IntOrNone._int_check(value)
-
+        self.value = IntOrNone.int_check(value)
 
     def __set__(self, instance, value):
-        value = IntOrNone._int_check(value)
+        value = IntOrNone.int_check(value)
         super(IntOrNone, self).__set__(instance, value)
 
     @staticmethod
-    def _int_check(value):
+    def int_check(value):
         try:
             value = int(value)
 
@@ -36,8 +35,36 @@ class IntOrNone(WeakRefDescriptor):
             if is_valid_error:
                 if value is not None:
                     value = None
+
             else:
                 raise ex
+
+        return value
+
+
+class TriggerProperty(WeakRefDescriptor):
+    def __init__(self, trigger, name=None, value=None, lim=0):
+        super(TriggerProperty, self).__init__(value)
+        self.trig_str = trigger
+        self.name = name
+        self.lim = lim
+        self.count = 0
+
+    def __get__(self, instance, owner):
+        self.count += 1
+        value = super(TriggerProperty, self).__get__(instance, owner)
+
+        is_falsy = not value
+        reached_access_lim = self.count >= self.lim
+        should_trigger = is_falsy and reached_access_lim
+
+        is_unread = instance.unread is True
+
+        if should_trigger and is_unread:
+            callback = getattr(instance, self.trig_str)
+            callback()
+
+            value = super(TriggerProperty, self).__get__(instance, owner)
 
         return value
 

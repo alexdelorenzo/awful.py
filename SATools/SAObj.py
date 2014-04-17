@@ -1,11 +1,10 @@
-from SATools.SATypes import IntOrNone
+from SATools.SATypes import IntOrNone, TriggerProperty
 
 from bs4 import BeautifulSoup
 
 
 class SAMagic(object):
     def __init__(self, parent, **properties):
-        #super(SAMagic, self).__init__()
         self.parent = parent
 
     def __repr__(self):
@@ -24,7 +23,7 @@ class SAMagic(object):
         """
         Monkey patch of the year, 2014.
 
-        See _delete_extra() for why this exists.
+        See SADynamic._delete_extra for why this exists.
         If I'm not being paid I'm going to have fun.
         """
         if attr not in self.__dict__:
@@ -36,7 +35,6 @@ class SAMagic(object):
 
 class SADynamic(object):
     def __init__(self, parent, **properties):
-        #super(SADynamic, self).__init__()
         self.parent = parent
         self._substitutes = dict()
         self._properties = properties
@@ -152,13 +150,10 @@ class SAObj(SAMagic, SADynamic):
 
 class SAListObj(SAObj):
     page = IntOrNone()
-    pages = IntOrNone()
+    pages = IntOrNone(1)
+    navi = TriggerProperty(name='navi', trigger='read')
 
     def __init__(self, *args, **properties):
-        self.page = 1
-        self.pages = 1
-        self.navi = None
-
         self._collection = None
         self._children = None
         self._page_keyword = 'pagenumber'
@@ -184,13 +179,10 @@ class SAListObj(SAObj):
 
 class SAPageNavi(SAObj):
     page = IntOrNone()
-    pages = IntOrNone()
+    pages = IntOrNone(1)
 
     def __init__(self, *args, **properties):
         super(SAPageNavi, self).__init__(*args, **properties)
-
-        self.page = 1
-        self.pages = 1
 
     def __repr__(self):
         if self.parent.unread:

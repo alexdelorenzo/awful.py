@@ -1,10 +1,13 @@
 from SATools.SAThread import SAThread
 from SATools.SAObj import SAListObj
+from SATools.SATypes import TriggerProperty as TrigProp
 
 from collections import OrderedDict as ordered
 
 
 class SAForum(SAListObj):
+    threads = TrigProp(trigger='read', name='threads')
+
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
         super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)

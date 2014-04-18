@@ -104,6 +104,7 @@ class SAThreadParser(SAParser):
         super(SAThreadParser, self).parse()
         self._parse_tr_thread()
         self._delete_extra()
+        self._parse_posts()
 
     def set_parser_map(self, parser_map=None):
         super(SAThreadParser, self).set_parser_map()

@@ -12,7 +12,6 @@ class SAForum(SAListObj):
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
         super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
-        print(parent, id, content, name, page, subforums)
         self.subforums = subforums
         self.base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
@@ -23,7 +22,6 @@ class SAForum(SAListObj):
 
     def read(self, pg=1):
         super(SAForum, self).read(pg)
-        print(self._index)
         if self._index:
             return
 

@@ -24,14 +24,13 @@ class SAThread(SAListObj):
     def read(self, page=1):
         super(SAThread, self).read(page)
 
-        if self.parser.unread:
-            self.parser.parse()
-
+        self.parser.parse()
         self._delete_extra()
 
     def _add_post(self, post_id, post_content):
         sa_post = SAPost(self, post_id, post_content)
         post_id = sa_post.id
+
         self.posts[post_id] = sa_post
 
     def _add_last_read(self, lr_content, lr=None):

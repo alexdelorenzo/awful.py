@@ -14,12 +14,13 @@ class SAThread(SAListObj):
         super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
         self.base_url = "http://forums.somethingawful.com/"
         self.url = self.base_url + '/showthread.php?threadid=' + str(self.id)
+        self.posts = ordered()
+
         self.parser = SAThreadParser(self, tr_thread=tr_thread)
-        self.parser.parse()
+        self.parser.parse_info()
+        self.name = self.title
 
         self._dynamic_attr()
-        self.name = self.title
-        self.posts = ordered()
 
     def read(self, page=1):
         super(SAThread, self).read(page)

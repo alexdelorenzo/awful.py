@@ -18,7 +18,8 @@ class SALastRead(SAObj):
 
     def __repr__(self):
         unread_posts = str(self.unread_count) + ' unread posts'
-        unread_pages = str(self.unread_pages + 1) + ' unread pages'
+        pages_count = self.unread_pages + 1 if self.unread_count else 0
+        unread_pages = str(pages_count) + ' unread pages'
         return ' '.join((unread_posts, 'in', unread_pages))
 
     def _parse_unread(self):

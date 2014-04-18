@@ -15,7 +15,7 @@ class BSWrapper(object):
 
     def wrap_parent_content(self):
         if not self._is_wrapped():
-            self.content = BeautifulSoup(self.parent._content)
+            self.content = BeautifulSoup(self.content)
 
     def _is_wrapped(self, content=None):
         if not content:
@@ -38,12 +38,15 @@ class BSWrapper(object):
 
 
 class SAParser(SAObj):
-    def __init__(self, parent, wrapper=BSWrapper, *args, **kwargs):
+    def __init__(self, parent, wrapper=BSWrapper, parser_map=None, *args, **kwargs):
         super(SAParser, self).__init__(parent, *args, **kwargs)
-        self.set_wrapper(wrapper)
-        self._delete_extra()
-        self._parser_map = dict()
         self.id = self.parent.id
+        self.wrapper = None
+        self._parser_map = None
+
+        self.set_wrapper(wrapper)
+        self.set_parser_map(parser_map)
+        self._delete_extra()
 
     def set_wrapper(self, wrapper=BSWrapper):
         self.wrapper = BSWrapper(self.parent)
@@ -51,8 +54,11 @@ class SAParser(SAObj):
         if self.parent._content:
             self.wrapper.wrap_parent_content()
 
-    def set_parser_map(self):
-        pass
+    def set_parser_map(self, parser_map=None):
+        if parser_map is None:
+            parser_map = dict()
+
+        self._parser_map = parser_map
 
     def dispatch(self, key, val=None, content=None):
         if key not in self._parser_map:
@@ -102,13 +108,21 @@ class SAThreadParser(SAParser):
 
     def parse(self):
         super(SAThreadParser, self).parse()
-        self._parse_tr_thread()
+        self.parse_info()
+        self.parse_posts()
         self._delete_extra()
-        self._parse_posts()
+
+    def parse_info(self):
+        self._parse_tr_thread()
+
+    def parse_posts(self):
+        posts_content = self.wrapper.content.find_all('table', 'post')
+
+        for post in posts_content:
+            post_id = post['id'][4:]
+            self.parent._add_post(post_id, post)
 
     def set_parser_map(self, parser_map=None):
-        super(SAThreadParser, self).set_parser_map()
-
         if not parser_map:
             parser_map = \
                 {'icon': self._parse_icon,
@@ -118,7 +132,7 @@ class SAThreadParser(SAParser):
                  'title': self._parse_title,
                  'title_sticky': self._parse_title}
 
-        self._parser_map = parser_map
+        super(SAThreadParser, self).set_parser_map(parser_map)
 
     def _parse_tr_thread(self):
         if not self.wrapper.content:
@@ -129,13 +143,6 @@ class SAThreadParser(SAParser):
             text = td.text.strip()
 
             self.dispatch(td_class, text, td)
-
-    def _parse_posts(self):
-        posts_content = self.wrapper.content.find_all('table', 'post')
-
-        for post in posts_content:
-            post_id = post['id'][4:]
-            self.parent._add_post(post_id, post)
 
     def _parse_icon(self, key, val, content):
         text = content.a['href'].split('posticon=').pop(-1)

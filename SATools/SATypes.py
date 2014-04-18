@@ -43,30 +43,40 @@ class IntOrNone(WeakRefDescriptor):
 
 
 class TriggerProperty(WeakRefDescriptor):
-    def __init__(self, trigger, name=None, value=None, lim=0):
+    def __init__(self, trigger, name=None, value=None, interval=[0, None]):
         super(TriggerProperty, self).__init__(value)
         self.trig_str = trigger
         self.name = name
-        self.lim = lim
-        self.count = 0
+        self.trig_count = 0
+
+        lower_lim, upper_lim = interval
+        self.lower_lim = lower_lim
+        self.upper_lim = upper_lim
 
     def __get__(self, instance, owner):
-        self.count += 1
+        self.trig_count += 1
         value = super(TriggerProperty, self).__get__(instance, owner)
+        will_trigger = self._will_trigger(value, instance)
 
-        is_falsy = not value
-        reached_access_lim = self.count >= self.lim
-        should_trigger = is_falsy and reached_access_lim
-
-        is_unread = instance.unread is True
-
-        if should_trigger and is_unread:
+        if will_trigger:
             callback = getattr(instance, self.trig_str)
             callback()
 
             value = super(TriggerProperty, self).__get__(instance, owner)
 
         return value
+
+    def _will_trigger(self, value, instance):
+        is_falsy = not value
+        reached_access_lim = self.trig_count >= self.lower_lim
+        trig_lim = self.upper_lim
+        below_trig_lim = self.trig_count <= trig_lim if trig_lim else True
+        within_limits = reached_access_lim and below_trig_lim
+        should_trigger = is_falsy and within_limits
+        is_unread = instance.unread is True
+        will_trigger = should_trigger and is_unread
+
+        return will_trigger
 
 
 class ConditionDescriptor(WeakRefDescriptor):

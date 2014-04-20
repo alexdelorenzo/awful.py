@@ -71,6 +71,45 @@ class SAParser(SAObj):
         self.read()
         self.wrapper.wrap_parent_content()
 
+    @property
+    def content(self):
+        return self.wrapper.content
+
+    @content.setter
+    def content(self, new_val):
+        self.wrapper.content = new_val
+
+
+class SANaviParser(SAParser):
+    def __init__(self, *args, **kwargs):
+        super(SANaviParser, self).__init__(*args, **kwargs)
+
+    def parse(self):
+        super(SANaviParser, self).parse()
+
+    @staticmethod
+    def parse_navi(parent):
+        wrapper = BSWrapper(parent)
+        navi_content = wrapper.content.find('div', 'pages')
+        return navi_content
+
+
+class SAPageNaviParser(SAParser):
+    def __init__(self, *args, **kwargs):
+        super(SAPageNaviParser, self).__init__(*args, **kwargs)
+
+    def parse(self):
+        super(SAPageNaviParser, self).parse()
+        self._parse_page_selector()
+
+    def _parse_page_selector(self):
+        page_selector = self.content.find_all('option')
+
+        if len(page_selector):
+            self.parent.pages = page_selector[-1].text
+        else:
+            self.parent.pages = 1
+
 
 class SAForumParser(SAParser):
     def __init__(self, *args, **kwargs):
@@ -94,7 +133,7 @@ class SAForumParser(SAParser):
                 self.parent.subforums[_id] = subforum
 
         else:
-            content = self.wrapper.content
+            content = self.content
             tr_subforums = content.find_all('tr', 'subforum')
 
             for tr_subforum in tr_subforums:
@@ -105,7 +144,7 @@ class SAForumParser(SAParser):
                 self.parent._add_subforum(subforum_id, name)
 
     def has_subforums(self):
-        content = self.wrapper.content
+        content = self.content
 
         if content.table:
             return content.table['id'] == 'subforums'
@@ -116,8 +155,8 @@ class SAForumParser(SAParser):
         if self.unread:
             self.parse()
 
-        self.wrapper.content = self.wrapper.content.find('div', id='content')
-        thread_blocks = self.wrapper.content.find_all('tr', 'thread', id=True)
+        self.content = self.content.find('div', id='content')
+        thread_blocks = self.content.find_all('tr', 'thread', id=True)
 
         for tr_thread in thread_blocks:
             thread_id = IntOrNone.int_check(tr_thread['id'][6:])
@@ -142,7 +181,7 @@ class SAThreadParser(SAParser):
         self._parse_tr_thread()
 
     def parse_posts(self):
-        posts_content = self.wrapper.content.find_all('table', 'post')
+        posts_content = self.content.find_all('table', 'post')
 
         for post in posts_content:
             post_id = post['id'][4:]
@@ -163,10 +202,10 @@ class SAThreadParser(SAParser):
         super(SAThreadParser, self).set_parser_map(parser_map)
 
     def _parse_tr_thread(self):
-        if not self.wrapper.content:
+        if not self.content:
             return
 
-        for td in self.wrapper.content.find_all('td'):
+        for td in self.content.find_all('td'):
             td_class = td['class'].pop()
             text = td.text.strip()
 

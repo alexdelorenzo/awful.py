@@ -72,18 +72,21 @@ class SADynamic(object):
 
         #del self._properties
 
-    def _dynamic_property(self, name, fget=None, fset=None, val=None):
+    def _dynamic_property(self, p_obj=None, name=None, fget=None, fset=None, val=None):
+        if p_obj is None:
+            p_obj = self
+
         new_name = '_' + name
-        setattr(self, new_name, val)
+        setattr(p_obj, new_name, val)
 
         if not fget:
-            fget = lambda self: getattr(self, new_name)
+            fget = lambda self: getattr(p_obj, new_name)
 
         if not fset:
-            fset = lambda self, new_val: setattr(self, new_name, new_val)
+            fset = lambda self, new_val: setattr(p_obj, new_name, new_val)
 
         prop_obj = property(fget, fset)
-        setattr(self.__class__, name, prop_obj)
+        setattr(p_obj.__class__, name, prop_obj)
 
     def _dynamic_property_read(self, name, val, condition=None):
         """
@@ -163,7 +166,9 @@ class SAListObj(SAObj):
 
     def _setup_navi(self, pg=1):
         if not self.navi:
-            navi = self._content.find('div', 'pages')
+            from SATools.SAParser import SANaviParser
+
+            navi = SANaviParser.parse_navi(self)
             self.navi = SAPageNavi(self, content=navi)
 
         self.navi.read(pg)
@@ -181,7 +186,9 @@ class SAPageNavi(SAObj):
     pages = IntOrNone(1)
 
     def __init__(self, *args, **properties):
+        from SATools.SAParser import SAPageNaviParser
         super(SAPageNavi, self).__init__(*args, **properties)
+        self.parser = SAPageNaviParser(self)
 
     def __repr__(self):
         if self.parent.unread:
@@ -193,18 +200,10 @@ class SAPageNavi(SAObj):
         self.parent.page = self.page
         self.parent.pages = self.pages
 
-    def _parse_page_selector(self):
-        page_selector = self._content.find_all('option')
-
-        if len(page_selector):
-            self.pages = page_selector[-1].text
-        else:
-            self.pages = 1
-
     def read(self, pg=1):
         super(SAPageNavi, self).read(pg)
 
         self.page = pg if pg <= self.pages else self.pages
-        self._parse_page_selector()
+        self.parser.parse()
         self._modify_parent()
         self._delete_extra()

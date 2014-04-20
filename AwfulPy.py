@@ -2,7 +2,7 @@ from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
 from SATools.SAObj import SAMagic
 
-import os, pickle, sys, time
+import os, pickle, sys
 
 
 class APSession(object):
@@ -47,14 +47,10 @@ class AwfulPy(APSession, SAMagic):
         super(AwfulPy, self).__init__(username, *args, **kwargs)
         self.index = SAIndex(self.session)
         self.name = "AwfulPy"
-        self.version = "v20140418"
+        self.version = "v20140419"
 
     def __repr__(self):
-        basic = self.name + ' ' + self.version + ': '
+        basic = self.name + ' ' + self.version + '.\n'
         acct = 'Logged in as ' + self.username
         since = ' since ' + self.session.logged_in_at
         return basic + acct + since
-
-    @property
-    def help(self):
-        return "Check out AwfulPy.index to start browsing :)"

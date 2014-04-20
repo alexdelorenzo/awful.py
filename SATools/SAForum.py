@@ -8,7 +8,7 @@ from collections import OrderedDict as ordered
 
 class SAForum(SAListObj):
     threads = TriggerProperty('read', 'threads')
-    subforums = TriggerProperty('read', 'threads')
+    subforums = TriggerProperty('read', 'subforums')
 
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
@@ -17,7 +17,6 @@ class SAForum(SAListObj):
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self.base_url + '?forumid=' + str(id)
         self.parser = SAForumParser(self)
-        self._index = self._is_index()
 
         self.threads = ordered()
         self.subforums = subforums if subforums else ordered()
@@ -28,15 +27,10 @@ class SAForum(SAListObj):
             return
 
         super(SAForum, self).read(pg)
+        self._threads_persist()
 
-        self._old_threads = self.threads
-        self.threads = ordered()
-        self.parser.parse()
-        self._old_threads = None
-
-        self._delete_extra()
-
-    def _is_index(self):
+    @property
+    def _index(self):
         index_ids = None, -1
         return self.id in index_ids
 
@@ -47,6 +41,14 @@ class SAForum(SAListObj):
     def _add_subforum(self, forum_id, forum_name):
         forum_obj = SAForum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
+
+    def _threads_persist(self):
+        self._old_threads = self.threads
+        self.threads = ordered()
+        self.parser.parse()
+        self._old_threads = None
+        self._delete_extra()
+
 
     def _thread_obj_persist(self, thread_id, tr_thread):
         if thread_id in self._old_threads:

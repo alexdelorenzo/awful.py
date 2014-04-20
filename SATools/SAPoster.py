@@ -1,4 +1,5 @@
 from SATools.SAObj import SAObj
+from SATools.SAParser import SAProfileParser
 
 
 class SAPoster(SAObj):
@@ -13,6 +14,7 @@ class SAPoster(SAObj):
         self.last_post = None
         self.contact_info = dict({})
 
+        self.parser = SAProfileParser(self)
         self._delete_extra()
 
         if self.id:
@@ -20,41 +22,5 @@ class SAPoster(SAObj):
 
     def read(self):
         super(SAPoster, self).read()
-
-        if self._content:
-            self._parse_tr()
-        else:
-            self._get_profile_from_url()
-
+        self.parser.parse()
         self._delete_extra()
-
-    def _get_profile_from_url(self):
-        self._fetch()
-        table = self._content.find('table', 'standard')
-        rows = table.find_all('tr')
-        pertinent_info = rows[1]
-
-        self._content = pertinent_info
-        self.read()
-
-    def _parse_tr(self):
-        if not self.id:
-            self.id = self._content.td['class'][-1]
-        if self._content.img:
-            self.avatar_url = self._content.img['src']
-        if not self.name:
-            self.name = self._content.find('dt', 'author').text.strip()
-
-        self.title = self._content.find('dd', 'title')
-        self.reg_date = self._content.find('dd', 'registered')
-
-        self._parse_contact_info()
-
-    def _parse_contact_info(self):
-        bs_contact = self._content.find('dl', 'contacts')
-        dts, dds = bs_contact.find_all('dt'), bs_contact.find_all('dd')
-
-        pairs = {dt['class'][-1]: dd.text.strip()
-                 for dt, dd in zip(dts, dds)}
-
-        self.contact_info = pairs

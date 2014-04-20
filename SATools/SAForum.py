@@ -22,15 +22,15 @@ class SAForum(SAListObj):
         self.subforums = subforums if subforums else ordered()
 
     def read(self, pg=1):
-        if self._index:
+        if self.is_index:
             self.unread = False
             return
 
         super(SAForum, self).read(pg)
-        self._threads_persist()
+        self._threads_persist(parse=True)
 
     @property
-    def _index(self):
+    def is_index(self):
         index_ids = None, -1
         return self.id in index_ids
 
@@ -42,16 +42,29 @@ class SAForum(SAListObj):
         forum_obj = SAForum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
 
-    def _threads_persist(self):
+    def _threads_persist(self, parse=True):
+        """
+        This monkey patch can be eliminated.
+        """
+
         self._old_threads = self.threads
         self.threads = ordered()
-        self.parser.parse()
+
+        if parse:
+            self.parser.parse()
+
         self._old_threads = None
         self._delete_extra()
 
-
     def _thread_obj_persist(self, thread_id, tr_thread):
-        if thread_id in self._old_threads:
+        threads_exist = self._old_threads
+
+        if threads_exist:
+            is_in_old = thread_id in threads_exist
+        else:
+            is_in_old = False
+
+        if is_in_old:
             val = self._old_threads[thread_id]
             val.parser.wrapper.content = tr_thread
             val.parser.parse_info()
@@ -60,3 +73,9 @@ class SAForum(SAListObj):
             val = SAThread(self, thread_id, tr_thread)
 
         return val
+
+    def _subforums_from_children(self):
+        if self.children and not self.subforums:
+            for subforum in self.children:
+                _id = subforum.id
+                self.subforums[_id] = subforum

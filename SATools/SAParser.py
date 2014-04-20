@@ -14,6 +14,9 @@ class BSWrapper(object):
         self._bs_wrappers = BeautifulSoup, element.Tag
 
     def wrap_parent_content(self):
+        if self.content is None:
+            return
+
         if not self._is_wrapped():
             self.content = BeautifulSoup(self.content)
 
@@ -44,6 +47,8 @@ class SAParser(SAObj):
         self.id = self.parent.id
         self.wrapper = None
         self._parser_map = None
+        self._regex_map = None
+        self._regex_strs = None
 
         self.set_wrapper(wrapper)
         self.set_parser_map(parser_map)
@@ -91,6 +96,7 @@ class SANaviParser(SAParser):
     def parse_navi(parent):
         wrapper = BSWrapper(parent)
         navi_content = wrapper.content.find('div', 'pages')
+
         return navi_content
 
 
@@ -117,20 +123,19 @@ class SAForumParser(SAParser):
 
     def parse(self):
         super(SAForumParser, self).parse()
-        if self.parent._index:
+
+        if self.parent.is_index:
             return
 
-        self.get_subforums()
-        self.get_threads()
+        self.parse_subforums()
+        self.parse_threads()
 
-    def get_subforums(self):
+    def parse_subforums(self):
         if not self.has_subforums():
             return
 
-        if self.children:
-            for subforum in self.children:
-                _id = subforum.id
-                self.parent.subforums[_id] = subforum
+        elif self.parent.children:
+            self.parent._subforums_from_children()
 
         else:
             content = self.content
@@ -143,15 +148,7 @@ class SAForumParser(SAParser):
 
                 self.parent._add_subforum(subforum_id, name)
 
-    def has_subforums(self):
-        content = self.content
-
-        if content.table:
-            return content.table['id'] == 'subforums'
-        else:
-            return False
-
-    def get_threads(self):
+    def parse_threads(self):
         if self.unread:
             self.parse()
 
@@ -162,11 +159,22 @@ class SAForumParser(SAParser):
             thread_id = IntOrNone.int_check(tr_thread['id'][6:])
             self.parent._add_thread(thread_id, tr_thread)
 
+    def has_subforums(self):
+        if self.children:
+            return True
+
+        content = self.content
+
+        if content.table:
+            return content.table['id'] == 'subforums'
+        else:
+            return False
 
 class SAThreadParser(SAParser):
     def __init__(self, parent, *args, **kwargs):
         super(SAThreadParser, self).__init__(parent, *args, **kwargs)
         self._regexes = dict()
+        self._regex_strs = dict()
 
         self.set_parser_map()
         self._dynamic_attr()
@@ -199,7 +207,15 @@ class SAThreadParser(SAParser):
                   'views': self._parse_views,
                   'rating': self._parse_rating}
 
+        if not self._regex_strs:
+            self._set_regex_map()
+
         super(SAThreadParser, self).set_parser_map(parser_map)
+
+    def _set_regex_map(self):
+        self._regex_strs = \
+            {'lastpost': "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)",
+             'rating': "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"}
 
     def _parse_tr_thread(self):
         if not self.content:
@@ -217,15 +233,7 @@ class SAThreadParser(SAParser):
 
     def _parse_lastpost(self, key, val, content):
         groups = 'time', 'date', 'user'
-
-        if key in self._regexes:
-            regex_c = self._regexes[key]
-        else:
-            regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-            regex_c = compile(regex)
-            self._regexes[key] = regex_c
-
-        matches = regex_c.search(val).groups()
+        matches = self._get_regex_matches(key, val)
         matches = dict(zip(groups, matches))
         setattr(self.parent, key, matches)
 
@@ -255,15 +263,11 @@ class SAThreadParser(SAParser):
 
         if img_tag:
             title_attr = img_tag['title'].strip()
-            votes_index = title_attr.index(' votes')
-            votes = int(title_attr[:votes_index])
 
-            avg_index = title_attr.index(' average')
-            dash_index = title_attr.index('- ') + 2
-            avg = float(title_attr[dash_index:avg_index])
-
-            stars = img_tag['src'].split('/').pop(-1).split('stars').pop(0)
-            stars = int(stars)
+            votes, avg = self._get_regex_matches(key, title_attr)
+            votes = int(votes)
+            avg = float(avg)
+            stars = round(avg)
 
             rating = {'votes': votes,
                       'avg': avg,
@@ -286,7 +290,78 @@ class SAThreadParser(SAParser):
         key = 'pages'
         setattr(self.parent, key, pages)
 
+    def _regex_lookup(self, key):
+        exists = key in self._regexes
+
+        if exists:
+            regex_c = self._regexes[key]
+
+        else:
+            regex_str = self._regex_strs[key]
+            regex_c = compile(regex_str)
+            self._regexes[key] = regex_c
+
+        return regex_c
+
+    def _get_regex_matches(self, key, string):
+        regex_c = self._regex_lookup(key)
+        matches = regex_c.search(string).groups()
+
+        return matches
 
 
+class SAProfileParser(SAParser):
+    def __init__(self, *args, **kwargs):
+        super(SAProfileParser, self).__init__(*args, **kwargs)
 
+    def _get_profile_from_url(self):
+        self.parent._fetch()
+        table = self.content.find('table', 'standard')
+        rows = table.find_all('tr')
+        pertinent_info = rows[1]
 
+        self.content = pertinent_info
+        self.parent.read()
+
+    def parse(self):
+        if self.content:
+            super(SAProfileParser, self).parse()
+            self._parse_tr()
+
+        else:
+            self._get_profile_from_url()
+
+    def _parse_tr(self):
+        if not self.parent.id:
+            self.parent.id = self.content.td['class'][-1]
+
+        if self.content.img:
+            self.parent.avatar_url = self.content.img['src']
+
+        if not self.parent.name:
+            self.parent.name = self.content.find('dt', 'author').text.strip()
+
+        self.parent.title = self.content.find('dd', 'title')
+        self.parent.reg_date = self.content.find('dd', 'registered').text.strip()
+
+        self._parse_contact_info()
+
+    def _parse_contact_info(self):
+        bs_contact = self.content.find('dl', 'contacts')
+        dts, dds = bs_contact.find_all('dt'), bs_contact.find_all('dd')
+
+        contact_info = dict()
+        bad_vals = 'pm', 'not set'
+
+        for dt, dd in zip(dts, dds):
+            service = dt['class'][-1]
+            handle = dd.text.strip()
+
+            good_service = service not in bad_vals
+            good_handle = handle not in bad_vals
+            good_pair = good_service and good_handle
+
+            if good_pair:
+                contact_info[service] = handle
+
+        self.parent.contact_info = contact_info

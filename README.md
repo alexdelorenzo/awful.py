@@ -3,7 +3,7 @@ AwfulPy
 
 #### SATools
 forums session, methods, and scraper. 
-works with python 2.7 and 3.3, probably everything in between as well. 
+works with python 2.7 and 3.4, probably everything in between as well.
 
 ##### AwfulQML
 preliminary gui to SATools. this is not ready for any kind of use. py3k only, qtquick controls from qt 5.2

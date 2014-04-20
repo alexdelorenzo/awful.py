@@ -12,6 +12,7 @@ class SASession(SAMagic):
     def __init__(self, username, passwd):
         super(SASession, self).__init__(None)
         self.session = Session()
+        self._set_user_agent()
         self.username = username
         self.base_url = 'https://forums.somethingawful.com/'
         self.login(username, passwd)
@@ -31,6 +32,10 @@ class SASession(SAMagic):
     def __setstate__(self, state):
         self.__dict__.update(state)
         self._set_profile()
+
+    def _set_user_agent(self):
+        ua = "Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:16.0.1) Gecko/20121011 Firefox/16.0.1"
+        self.session.headers['User-Agent'] = ua
 
     def _set_profile(self):
         self.profile = SAPoster(self, self.id, name=self.username)

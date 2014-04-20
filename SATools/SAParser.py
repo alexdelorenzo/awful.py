@@ -173,8 +173,8 @@ class SAThreadParser(SAParser):
 
     def parse(self):
         super(SAThreadParser, self).parse()
-        self.parse_info()
         self.parse_posts()
+        self.parse_info()
         self._delete_extra()
 
     def parse_info(self):

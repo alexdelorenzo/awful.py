@@ -19,7 +19,7 @@ class SAPost(SAObj):
         return self.body
 
     def _parse_from_thread(self):
-        user_id = self._content.td['class'][-1][7:]
+        user_id = self._content.ul.a['href'].split('userid=')[-1]
         user_name = self._content.dt.text
 
         content = self._content.find('td', 'userinfo')

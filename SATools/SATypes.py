@@ -2,12 +2,14 @@ from weakref import WeakKeyDictionary as wkdict
 
 
 class WeakRefDescriptor(object):
-    def __init__(self, value=None):
+    def __init__(self, *args, value=None, **kwargs):
         super(WeakRefDescriptor, self).__init__()
         self.value = value
         self.weak_ref = wkdict()
+        self.access_count = 0
 
     def __get__(self, instance, owner):
+        self.access_count += 1
         return self.weak_ref.get(instance, self.value)
 
     def __set__(self, instance, value):
@@ -46,20 +48,29 @@ class IntOrNone(WeakRefDescriptor):
         return value
 
 
-class TriggerProperty(WeakRefDescriptor):
-    def __init__(self, trigger, name=None, value=None,
-                 interval=[0, None], params=dict):
-        super(TriggerProperty, self).__init__(value)
-        self.trig_str = trigger
-        self.name = name
-        self.trig_count = 0
-
+class TriggerLimit(WeakRefDescriptor):
+    def __init__(self, *args, interval=[0, None], **kwargs):
+        super(TriggerLimit, self).__init__(*args, **kwargs)
         lower_lim, upper_lim = interval
         self.lower_lim = lower_lim
         self.upper_lim = upper_lim
 
+    def _within_limits(self, value, instance):
+        count, trig_lim = self.access_count, self.upper_lim
+        reached_access_lim = count >= self.lower_lim
+        below_trig_lim = count <= trig_lim if trig_lim else True
+        within_limits = reached_access_lim and below_trig_lim
+
+        return within_limits
+
+
+class TriggerProperty(TriggerLimit):
+    def __init__(self, trigger, *args, name=None, value=None, **kwargs):
+        super(TriggerProperty, self).__init__(value, *args, **kwargs)
+        self.trig_str = trigger
+        self.name = name
+
     def __get__(self, instance, owner):
-        self.trig_count += 1
         value = super(TriggerProperty, self).__get__(instance, owner)
         will_trigger = self._will_trigger(value, instance)
 
@@ -73,10 +84,7 @@ class TriggerProperty(WeakRefDescriptor):
 
     def _will_trigger(self, value, instance):
         is_falsy = not value
-        reached_access_lim = self.trig_count >= self.lower_lim
-        trig_lim = self.upper_lim
-        below_trig_lim = self.trig_count <= trig_lim if trig_lim else True
-        within_limits = reached_access_lim and below_trig_lim
+        within_limits = self._within_limits(value, instance)
         should_trigger = is_falsy and within_limits
         is_unread = instance.unread is True
         will_trigger = should_trigger and is_unread

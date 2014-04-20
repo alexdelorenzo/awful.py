@@ -1,16 +1,17 @@
 from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
-import os, pickle, sys
+from SATools.SAObj import SAMagic
 
-class AwfulPy(object):
-    def __init__(self, username, passwd=None, save_session=True):
-        py_version = str(sys.version_info.major)
+import os, pickle, sys, time
+
+
+class APSession(object):
+    def __init__(self, username, passwd=None, save_session=False, *args, **kwargs):
         self.username = username
         self.passwd = passwd
         self.session_bak = \
-            '.' + username.replace(' ', '_') + py_version + '.bak'
+            '.' + username.replace(' ', '_') + self._py_ver() + '.bak'
         self.session = self._load_session(save_session)
-        self.index = SAIndex(self.session)
 
         del passwd
         del self.passwd
@@ -37,10 +38,23 @@ class AwfulPy(object):
         with open(self.session_bak, 'wb') as session_file:
             pickle.dump(session, session_file)
 
+    def _py_ver(self):
+        return str(sys.version_info.major)
 
-def main():
-    pass
 
+class AwfulPy(APSession, SAMagic):
+    def __init__(self, username, *args, **kwargs):
+        super(AwfulPy, self).__init__(username, *args, **kwargs)
+        self.index = SAIndex(self.session)
+        self.name = "AwfulPy"
+        self.version = "v20140418"
 
-if __name__ == "__main__":
-    main()
+    def __repr__(self):
+        basic = self.name + ' ' + self.version + ': '
+        acct = 'Logged in as ' + self.username
+        since = ' since ' + self.session.logged_in_at
+        return basic + acct + since
+
+    @property
+    def help(self):
+        return "Check out AwfulPy.index to start browsing :)"

@@ -7,28 +7,32 @@ from collections import OrderedDict as ordered
 
 
 class SAForum(SAListObj):
-    threads = TriggerProperty(trigger='read', name='threads')
+    threads = TriggerProperty('read', 'threads')
+    subforums = TriggerProperty('read', 'threads')
 
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
         super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
-        self.subforums = subforums
         self.base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self.base_url + '?forumid=' + str(id)
-        self.threads = ordered()
         self.parser = SAForumParser(self)
         self._index = self._is_index()
 
+        self.threads = ordered()
+        self.subforums = subforums if subforums else ordered()
+
     def read(self, pg=1):
-        super(SAForum, self).read(pg)
         if self._index:
+            self.unread = False
             return
 
-        self.parser.get_threads()
+        super(SAForum, self).read(pg)
 
-        if not self.subforums and self._has_subforums():
-            self.subforums = ordered(self._gen_subforums())
+        self._old_threads = self.threads
+        self.threads = ordered()
+        self.parser.parse()
+        self._old_threads = None
 
         self._delete_extra()
 
@@ -36,30 +40,19 @@ class SAForum(SAListObj):
         index_ids = None, -1
         return self.id in index_ids
 
-    def _has_subforums(self):
-        if self._content.table:
-            return self._content.table['id'] == 'subforums'
-        else:
-            return False
-
     def _add_thread(self, thread_id, thread_content):
         sa_thread = self._thread_obj_persist(thread_id, thread_content)
         self.threads[sa_thread.id] = sa_thread
 
-    def _gen_subforums(self):
-        for tr_subforum in self._content.find_all('tr', 'subforum'):
-            subforum_id = tr_subforum.a['href'].split("forumid=")[-1]
-            name = tr_subforum.a.text
-
-            forum_obj = SAForum(self, subforum_id, name)
-
-            yield forum_obj.id, forum_obj
+    def _add_subforum(self, forum_id, forum_name):
+        forum_obj = SAForum(self, forum_id, forum_name)
+        self.subforums[forum_obj.id] = forum_obj
 
     def _thread_obj_persist(self, thread_id, tr_thread):
-        if thread_id in self.threads:
-            val = self.threads[thread_id]
-            val._content = tr_thread
-            val._parse_tr_thread()
+        if thread_id in self._old_threads:
+            val = self._old_threads[thread_id]
+            val.parser.wrapper.content = tr_thread
+            val.parser.parse_info()
 
         else:
             val = SAThread(self, thread_id, tr_thread)

@@ -1,11 +1,13 @@
 from SATools.SAForum import SAForum
 from SATools.SASection import SASection
+from SATools.SAObj import SADynamic, SAMagic
 
 from collections import OrderedDict as ordered
 
-class SAIndex(object):
+class SAIndex(SAMagic):
     def __init__(self, sa_session):
-        super(SAIndex, self).__init__()
+        super(SAIndex, self).__init__(sa_session)
+        self.name = "Forums' index"
 
         self.session = sa_session.session
         self.base_url = 'http://forums.somethingawful.com/'
@@ -16,6 +18,12 @@ class SAIndex(object):
 
         self._get_json()
         self._get_sections()
+
+    def __repr__(self):
+        forum_ct = str(len(self.forums)) + ' total forums'
+        repr_str = self.name + ' containing ' + forum_ct
+
+        return repr_str
 
     def _save(self, section_id, sa_section):
         self.forums[section_id] = sa_section

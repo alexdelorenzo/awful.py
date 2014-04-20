@@ -111,7 +111,6 @@ class SAObj(SAMagic, SADynamic):
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
         super(SAObj, self).__init__(parent, **properties)
         self.id = id
-        del id  # sorry builtins' namespace :(
         self.session = self.parent.session
         self._content = content
         self.name = name
@@ -151,7 +150,7 @@ class SAObj(SAMagic, SADynamic):
 class SAListObj(SAObj):
     page = IntOrNone()
     pages = IntOrNone(1)
-    navi = TriggerProperty(name='navi', trigger='read')
+    navi = TriggerProperty('read', 'navi')
 
     def __init__(self, *args, **properties):
         self._collection = None

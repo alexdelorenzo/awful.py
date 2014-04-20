@@ -25,6 +25,10 @@ class IntOrNone(WeakRefDescriptor):
 
     @staticmethod
     def int_check(value):
+        """
+        I blame jet lag and lack of sleep for this.
+        """
+
         try:
             value = int(value)
 
@@ -43,7 +47,8 @@ class IntOrNone(WeakRefDescriptor):
 
 
 class TriggerProperty(WeakRefDescriptor):
-    def __init__(self, trigger, name=None, value=None, interval=[0, None]):
+    def __init__(self, trigger, name=None, value=None,
+                 interval=[0, None], params=dict):
         super(TriggerProperty, self).__init__(value)
         self.trig_str = trigger
         self.name = name

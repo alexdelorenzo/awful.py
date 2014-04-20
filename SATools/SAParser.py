@@ -35,6 +35,7 @@ class BSWrapper(object):
     @content.setter
     def content(self, new_val):
         self.parent._content = new_val
+        self.wrap_parent_content()
 
 
 class SAParser(SAObj):
@@ -75,8 +76,33 @@ class SAForumParser(SAParser):
     def __init__(self, *args, **kwargs):
         super(SAForumParser, self).__init__(*args, **kwargs)
 
+    def parse(self):
+        super(SAForumParser, self).parse()
+        if self.parent._index:
+            return
+
+        self.get_subforums()
+        self.get_threads()
+
     def get_subforums(self):
-        pass
+        if not self.has_subforums():
+            return
+
+        if self.children:
+            for subforum in self.children:
+                _id = subforum.id
+                self.parent.subforums[_id] = subforum
+
+        else:
+            content = self.wrapper.content
+            tr_subforums = content.find_all('tr', 'subforum')
+
+            for tr_subforum in tr_subforums:
+                href = tr_subforum.a['href']
+                subforum_id = href.split("forumid=")[-1]
+                name = tr_subforum.a.text
+
+                self.parent._add_subforum(subforum_id, name)
 
     def has_subforums(self):
         content = self.wrapper.content
@@ -99,9 +125,9 @@ class SAForumParser(SAParser):
 
 
 class SAThreadParser(SAParser):
-    def __init__(self, parent, tr_thread=None, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         super(SAThreadParser, self).__init__(parent, *args, **kwargs)
-        self._regex = ""
+        self._regexes = dict()
 
         self.set_parser_map()
         self._dynamic_attr()
@@ -130,7 +156,9 @@ class SAThreadParser(SAParser):
                  'replies': self._parse_replies,
                  'author': self._parse_author,
                  'title': self._parse_title,
-                 'title_sticky': self._parse_title}
+                 'title_sticky': self._parse_title,
+                  'views': self._parse_views,
+                  'rating': self._parse_rating}
 
         super(SAThreadParser, self).set_parser_map(parser_map)
 
@@ -151,23 +179,57 @@ class SAThreadParser(SAParser):
     def _parse_lastpost(self, key, val, content):
         groups = 'time', 'date', 'user'
 
-        if not self._regex:
+        if key in self._regexes:
+            regex_c = self._regexes[key]
+        else:
             regex = "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)"
-            self._regex = compile(regex)
+            regex_c = compile(regex)
+            self._regexes[key] = regex_c
 
-        matches = self._regex.search(val).groups()
+        matches = regex_c.search(val).groups()
         matches = dict(zip(groups, matches))
         setattr(self.parent, key, matches)
 
-    def _parse_replies(self, key, val, content):
-        pages = ceil(int(val) / 40.0)
-        key = 'pages'
-        setattr(self.parent, key, pages)
-
     def _parse_author(self, key, val, content):
-        user_id = content.a['href'].split('id=')[-1]
-        key = 'user_id'
-        setattr(self.parent, key, user_id)
+        link = content.a
+        author = link.text.strip()
+        user_id = link['href'].split('id=')[-1]
+        self.parent._add_author(user_id, author)
+
+    def _parse_replies(self, key, val, content):
+        self._parse_pagecount(val)
+        link = content.a
+
+        if link:
+            replies_url = self.base_url + link['href']
+            replies_count = int(content.a.text.strip())
+            replies = {'url': replies_url,
+                       'count': replies_count}
+            setattr(self.parent, key, replies)
+
+    def _parse_views(self, key, val, content):
+        views = int(content.text.strip())
+        setattr(self.parent, key, views)
+
+    def _parse_rating(self, key, val, content):
+        img_tag = content.img
+
+        if img_tag:
+            title_attr = img_tag['title'].strip()
+            votes_index = title_attr.index(' votes')
+            votes = int(title_attr[:votes_index])
+
+            avg_index = title_attr.index(' average')
+            dash_index = title_attr.index('- ') + 2
+            avg = float(title_attr[dash_index:avg_index])
+
+            stars = img_tag['src'].split('/').pop(-1).split('stars').pop(0)
+            stars = int(stars)
+
+            rating = {'votes': votes,
+                      'avg': avg,
+                      'stars': stars}
+            setattr(self.parent, key, rating)
 
     def _parse_title(self, key, val, content):
         text = content.find('a', 'thread_title').text
@@ -179,3 +241,13 @@ class SAThreadParser(SAParser):
     def _parse_lastseen(self, content):
         last_read = content.find('div', 'lastseen')
         self.parent._add_last_read(last_read)
+
+    def _parse_pagecount(self, val):
+        pages = ceil(int(val) / 40.0)
+        key = 'pages'
+        setattr(self.parent, key, pages)
+
+
+
+
+

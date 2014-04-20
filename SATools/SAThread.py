@@ -2,6 +2,7 @@ from SATools.SAObj import SAListObj
 from SATools.SATypes import TriggerProperty
 from SATools.SAParser import SAThreadParser
 from SATools.SAPost import SAPost
+from SATools.SAPoster import SAPoster
 from SATools.SALastRead import SALastRead
 
 from collections import OrderedDict as ordered
@@ -16,13 +17,15 @@ class SAThread(SAListObj):
         self.url = self.base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = ordered()
 
-        self.parser = SAThreadParser(self, tr_thread=tr_thread)
+        self.parser = SAThreadParser(self)
         self.parser.parse_info()
         self.name = self.title
 
         self._dynamic_attr()
 
     def read(self, page=1):
+        self.posts = ordered()
+
         super(SAThread, self).read(page)
 
         self.parser.parse()
@@ -39,3 +42,7 @@ class SAThread(SAListObj):
             lr = SALastRead(self, self.id, lr_content)
 
         self.last_read = lr
+
+    def _add_author(self, user_id, name=None):
+        sa_poster = SAPoster(self, user_id, name=name)
+        self.author = sa_poster

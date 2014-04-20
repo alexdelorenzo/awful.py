@@ -1,13 +1,16 @@
 from SATools.SAPoster import SAPoster
 from SATools.SASearch import SASearch
+from SATools.SAObj import SADynamic, SAMagic, SAObj
 
 from requests import Session
 from bs4 import BeautifulSoup
 
+import time
 
-class SASession(object):
+
+class SASession(SAMagic):
     def __init__(self, username, passwd):
-        super(SASession, self).__init__()
+        super(SASession, self).__init__(None)
         self.session = Session()
         self.username = username
         self.base_url = 'https://forums.somethingawful.com/'
@@ -15,6 +18,9 @@ class SASession(object):
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
         self._set_profile()
+
+        self.logged_in_at = time.strftime('%x @ %X', time.localtime())
+        self.name = 'Session: login(), reply(), post_thread(), search(), etc'
 
     def __getstate__(self):
         if self.profile:
@@ -37,6 +43,8 @@ class SASession(object):
 
         if not response.ok:
             raise Exception(("Unable to login", response.status_code, response.reason))
+
+        self.logged_in_at = time.strftime('%x @ %X', time.localtime())
 
     def reply(self, _id, body):
         url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(_id)

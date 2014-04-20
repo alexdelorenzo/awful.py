@@ -39,7 +39,7 @@ class SAPoster(SAObj):
 
     def _parse_tr(self):
         if not self.id:
-            self.id = self._content.td['class'].pop()
+            self.id = self._content.td['class'][-1]
         if self._content.img:
             self.avatar_url = self._content.img['src']
         if not self.name:
@@ -54,7 +54,7 @@ class SAPoster(SAObj):
         bs_contact = self._content.find('dl', 'contacts')
         dts, dds = bs_contact.find_all('dt'), bs_contact.find_all('dd')
 
-        pairs = {dt['class'].pop(): dd.text.strip()
+        pairs = {dt['class'][-1]: dd.text.strip()
                  for dt, dd in zip(dts, dds)}
 
         self.contact_info = pairs

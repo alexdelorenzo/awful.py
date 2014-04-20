@@ -173,8 +173,8 @@ class SAThreadParser(SAParser):
 
     def parse(self):
         super(SAThreadParser, self).parse()
-        self.parse_posts()
         self.parse_info()
+        self.parse_posts()
         self._delete_extra()
 
     def parse_info(self):
@@ -206,7 +206,7 @@ class SAThreadParser(SAParser):
             return
 
         for td in self.content.find_all('td'):
-            td_class = td['class'].pop()
+            td_class = td['class'][-1]
             text = td.text.strip()
 
             self.dispatch(td_class, text, td)

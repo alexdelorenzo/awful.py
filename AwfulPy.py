@@ -1,6 +1,6 @@
+from SATools.SAObj.SAMagic import SAMagic
 from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
-from SATools.SAObj import SAMagic
 
 import os, pickle, sys
 

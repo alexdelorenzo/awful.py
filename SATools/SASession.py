@@ -1,6 +1,7 @@
+from SATools.SAObj.SAMagic import SAMagic
 from SATools.SAPoster import SAPoster
 from SATools.SASearch import SASearch
-from SATools.SAObj import SADynamic, SAMagic, SAObj
+from SATools.SAObj import SADynamic, SAObj
 
 from requests import Session
 from bs4 import BeautifulSoup

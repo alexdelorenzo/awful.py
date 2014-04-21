@@ -1,6 +1,6 @@
 from SATools.SAForum import SAForum
+from SATools.SAObj.SAMagic import SAMagic
 from SATools.SASection import SASection
-from SATools.SAObj import SADynamic, SAMagic
 
 from collections import OrderedDict as ordered
 

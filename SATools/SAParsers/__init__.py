@@ -1,2 +1,2 @@
-from SATools.SAObj import *
+from SATools.SAObjs import *
 from SATools.SAParsers import *

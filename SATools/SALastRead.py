@@ -1,4 +1,4 @@
-from SATools.SAObj import SAObj
+from SATools.SAObjs import SAObj
 from SATools.SATypes import TriggerProperty
 
 from math import floor

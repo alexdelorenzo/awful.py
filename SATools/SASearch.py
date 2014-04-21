@@ -1,4 +1,4 @@
-from SATools.SAObj import SAListObj
+from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SASearchResult import SASearchResult
 from bs4 import BeautifulSoup
 

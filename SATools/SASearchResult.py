@@ -1,4 +1,4 @@
-from SATools.SAObj import SAObj
+from SATools.SAObjs import SAObj
 from SATools.SAThread import SAThread
 from SATools.SAForum import SAForum
 from SATools.SAPoster import SAPoster

@@ -1,4 +1,4 @@
-from SATools.SAObj.SAMagic import SAMagic
+from SATools.SAObjs.SAMagic import SAMagic
 from SATools.SASession import SASession
 from SATools.SAIndex import SAIndex
 

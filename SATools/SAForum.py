@@ -1,5 +1,5 @@
+from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SAThread import SAThread
-from SATools.SAObj.SAObj import SAListObj
 from SATools.SATypes import TriggerProperty, IntOrNone
 from SATools.SAParsers.SAForumParser import SAForumParser
 

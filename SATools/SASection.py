@@ -1,4 +1,4 @@
-from SATools.SAObj import SAObj
+from SATools.SAObjs import SAObj
 
 class SASection(SAObj):
     def __init__(self, parent, id, name=None, children=dict()):

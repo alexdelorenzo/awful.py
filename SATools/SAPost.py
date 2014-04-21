@@ -1,5 +1,5 @@
 from SATools.SAPoster import SAPoster
-from SATools.SAObj import SAObj
+from SATools.SAObjs import SAObj
 from SATools.SAParsers.SAPostParser import SAPostParser
 
 

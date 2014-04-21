@@ -1,4 +1,4 @@
-from SATools.SAObj import SAListObj
+from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SATypes import TriggerProperty
 from SATools.SAPost import SAPost
 from SATools.SAPoster import SAPoster

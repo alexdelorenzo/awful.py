@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup, element
-from SATools.SAObj.SAMagic import SAMagic
-from SATools.SAObj.SAObj import SAObj
+from SATools.SAObjs.SAMagic import SAMagic
+from SATools.SAObjs.SAObj import SAObj
 
 from re import compile
 

@@ -47,7 +47,7 @@ class AwfulPy(APSession, SAMagic):
         super(AwfulPy, self).__init__(username, *args, **kwargs)
         self.index = SAIndex(self.session)
         self.name = "AwfulPy"
-        self.version = "v20140419"
+        self.version = "v20140421"
 
     def __repr__(self):
         basic = self.name + ' ' + self.version + '.\n'

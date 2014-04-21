@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 
 from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SASearches import SASearchResult
+from SATools.SAParsers.SASearchParser import SASearchParser
 
 
 class SASearch(SAListObj):
@@ -11,11 +12,12 @@ class SASearch(SAListObj):
         self.query = query
         self.type = type
         self.results = None
+        self.parser = SASearchParser(self)
 
     def read(self, pg=1):
         super(SASearch, self).read(pg)
 
-        self._parse_search_results()
+        self.parser.parse()
 
         for result in self.results:
             result.read()
@@ -32,19 +34,9 @@ class SASearch(SAListObj):
         response = self.session.post(url)
         response = self._jump(response)
 
-        self._content = BeautifulSoup(response.text)
+        self.parser.content = BeautifulSoup(response.text)
         self._parse_search_results()
 
-    def _parse_search_results(self):
-        table_rows = self._content.find('table', id='main_full').find_all('tr')
-        table_header = table_rows.pop(0).find_all('th')
-        self._table_header = [th.text.strip() for th in table_header]
-        self._table_header.insert(1, 'Snippet')
-
-        self._collection = [SASearchResult(parent=self, content=tr)
-                            for tr in table_rows]
-        self.results = self._collection
-        self.content = self._content
 
     def _jump(self, response, base_url=None):
         if not base_url:

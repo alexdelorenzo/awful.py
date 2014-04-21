@@ -1,11 +1,12 @@
-from collections import OrderedDict as ordered
-
+from SATools.SAParsers.SAThreadParser import SAThreadParser
 from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SAObjs.SADescriptors import TriggerProperty
+
 from SATools.SAPost import SAPost
 from SATools.SAPoster import SAPoster
 from SATools.SALastRead import SALastRead
-from SATools.SAParsers.SAThreadParser import SAThreadParser
+
+from collections import OrderedDict as ordered
 
 
 class SAThread(SAListObj):

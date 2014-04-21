@@ -4,6 +4,7 @@ from SATools.SASection import SASection
 
 from collections import OrderedDict as ordered
 
+
 class SAIndex(SAMagic):
     def __init__(self, sa_session):
         super(SAIndex, self).__init__(sa_session)

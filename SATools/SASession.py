@@ -1,10 +1,10 @@
-import time
+from SATools.SAObjs.SAMagic import SAMagic
+from SATools.SAPoster import SAPoster
 
 from requests import Session
 from bs4 import BeautifulSoup
 
-from SATools.SAObjs.SAMagic import SAMagic
-from SATools.SAPoster import SAPoster
+import time
 
 
 class SASession(SAMagic):

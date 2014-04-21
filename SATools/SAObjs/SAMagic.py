@@ -1,6 +1,3 @@
-__author__ = 'alex'
-
-
 class SAMagic(object):
     def __init__(self, parent, **properties):
         self.parent = parent

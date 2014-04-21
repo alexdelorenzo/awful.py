@@ -1,5 +1,6 @@
 from SATools.SAPoster import SAPoster
 from SATools.SAObj import SAObj
+from SATools.SAParser import SAPostParser
 
 
 class SAPost(SAObj):
@@ -7,6 +8,7 @@ class SAPost(SAObj):
         super(SAPost, self).__init__(parent, id, content, **properties)
         self.poster = None
         self.body = ""
+        self.parser = SAPostParser(self)
         self.read()
 
     def __repr__(self):
@@ -18,17 +20,10 @@ class SAPost(SAObj):
     def __str__(self):
         return self.body
 
-    def _parse_from_thread(self):
-        user_id = self._content.ul.a['href'].split('userid=')[-1]
-        user_name = self._content.dt.text
-
-        content = self._content.find('td', 'userinfo')
-        self.poster = SAPoster(self, user_id, content, name=user_name)
-
-        has_post = self._content.find('td', 'postbody')
-        self.body = has_post.text.strip() if has_post else ""
+    def _add_poster(self, user_id, name, content):
+        self.poster = SAPoster(self, user_id, content, name=name)
 
     def read(self):
         super(SAPost, self).read()
-        self._parse_from_thread()
+        self.parser.parse()
         self._delete_extra()

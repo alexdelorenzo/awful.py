@@ -1,4 +1,4 @@
-from SATools.SAObj import SAObj
+from SATools.SAObj import SAObj, SAMagic
 from SATools.SATypes import TriggerProperty, IntOrNone
 
 from collections import OrderedDict as ordered
@@ -41,14 +41,50 @@ class BSWrapper(object):
         self.wrap_parent_content()
 
 
+class RegexManagement(SAMagic):
+    def __init__(self, *args, **kwargs):
+        super(RegexManagement, self).__init__(*args, **kwargs)
+        self._regex_map = dict()
+        self._regex_strs = dict()
+
+    def set_regex_map(self, regex_map=None):
+        if not regex_map:
+            regex_map = dict()
+
+        self._regex_map = regex_map
+
+    def set_regex_strs(self, regex_str=None):
+        if not regex_str:
+            regex_str = dict()
+
+        self._regex_str = regex_str
+
+    def regex_lookup(self, key):
+        exists = key in self.regex_map
+
+        if exists:
+            regex_c = self.regex_map[key]
+
+        else:
+            regex_str = self.regex_strs[key]
+            regex_c = compile(regex_str)
+            self.regex_map[key] = regex_c
+
+        return regex_c
+
+    def regex_matches(self, key, string):
+        regex_c = self.regex_lookup(key)
+        matches = regex_c.search(string).groups()
+
+        return matches
+
+
 class SAParser(SAObj):
     def __init__(self, parent, wrapper=BSWrapper, parser_map=None, *args, **kwargs):
         super(SAParser, self).__init__(parent, *args, **kwargs)
         self.id = self.parent.id
         self.wrapper = None
         self._parser_map = None
-        self._regex_map = None
-        self._regex_strs = None
 
         self.set_wrapper(wrapper)
         self.set_parser_map(parser_map)
@@ -170,13 +206,11 @@ class SAForumParser(SAParser):
         else:
             return False
 
-class SAThreadParser(SAParser):
+class SAThreadParser(SAParser, RegexManagement):
     def __init__(self, parent, *args, **kwargs):
         super(SAThreadParser, self).__init__(parent, *args, **kwargs)
-        self._regexes = dict()
-        self._regex_strs = dict()
-
         self.set_parser_map()
+        self.set_regex_map()
         self._dynamic_attr()
 
     def parse(self):
@@ -207,15 +241,14 @@ class SAThreadParser(SAParser):
                   'views': self._parse_views,
                   'rating': self._parse_rating}
 
-        if not self._regex_strs:
-            self._set_regex_map()
-
         super(SAThreadParser, self).set_parser_map(parser_map)
 
-    def _set_regex_map(self):
-        self._regex_strs = \
+    def set_regex_map(self):
+        super(SAThreadParser, self).set_regex_map()
+        regex_strs = \
             {'lastpost': "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)",
              'rating': "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"}
+        self.set_regex_strs(regex_strs)
 
     def _parse_tr_thread(self):
         if not self.content:
@@ -233,7 +266,7 @@ class SAThreadParser(SAParser):
 
     def _parse_lastpost(self, key, val, content):
         groups = 'time', 'date', 'user'
-        matches = self._get_regex_matches(key, val)
+        matches = self.regex_matches(key, val)
         matches = dict(zip(groups, matches))
         setattr(self.parent, key, matches)
 
@@ -264,7 +297,7 @@ class SAThreadParser(SAParser):
         if img_tag:
             title_attr = img_tag['title'].strip()
 
-            votes, avg = self._get_regex_matches(key, title_attr)
+            votes, avg = self.regex_matches(key, title_attr)
             votes = int(votes)
             avg = float(avg)
             stars = round(avg)
@@ -290,25 +323,6 @@ class SAThreadParser(SAParser):
         key = 'pages'
         setattr(self.parent, key, pages)
 
-    def _regex_lookup(self, key):
-        exists = key in self._regexes
-
-        if exists:
-            regex_c = self._regexes[key]
-
-        else:
-            regex_str = self._regex_strs[key]
-            regex_c = compile(regex_str)
-            self._regexes[key] = regex_c
-
-        return regex_c
-
-    def _get_regex_matches(self, key, string):
-        regex_c = self._regex_lookup(key)
-        matches = regex_c.search(string).groups()
-
-        return matches
-
 
 class SAProfileParser(SAParser):
     def __init__(self, *args, **kwargs):
@@ -330,6 +344,7 @@ class SAProfileParser(SAParser):
 
         else:
             self._get_profile_from_url()
+            self._parse_contact_info()
 
     def _parse_tr(self):
         if not self.parent.id:
@@ -344,7 +359,6 @@ class SAProfileParser(SAParser):
         self.parent.title = self.content.find('dd', 'title')
         self.parent.reg_date = self.content.find('dd', 'registered').text.strip()
 
-        self._parse_contact_info()
 
     def _parse_contact_info(self):
         bs_contact = self.content.find('dl', 'contacts')
@@ -365,3 +379,20 @@ class SAProfileParser(SAParser):
                 contact_info[service] = handle
 
         self.parent.contact_info = contact_info
+
+
+class SAPostParser(SAParser):
+    def __init__(self, *args, **kwargs):
+        super(SAPostParser, self).__init__(*args, **kwargs)
+
+    def parse(self):
+        self._parse_from_thread()
+
+    def _parse_from_thread(self):
+        user_id = self.content.ul.a['href'].split('userid=')[-1]
+        user_name = self.content.dt.text
+        content = self.content.find('td', 'userinfo')
+        self.parent._add_poster(user_id, user_name, content)
+
+        has_post = self.content.find('td', 'postbody')
+        self.parent.body = has_post.text.strip() if has_post else ""

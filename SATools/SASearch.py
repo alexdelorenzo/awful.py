@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 class SASearch(SAListObj):
     def __init__(self, parent, query, q_type=None, **options):
         super(SASearch, self).__init__(parent, id=None, name=query, **options)
-        self.base_url = "http://forums.somethingawful.com/search.php"
+        self._base_url = "http://forums.somethingawful.com/search.php"
         self.query = query
         self.type = type
         self.results = None
@@ -26,7 +26,7 @@ class SASearch(SAListObj):
     def search_userid(self, user_id):
         params = {'action': 'do_search_posthistory', 'userid': str(user_id)}
         param_str = '&'.join([key + '=' + val for key, val in params.items()])
-        url = self.base_url + '?' + param_str
+        url = self._base_url + '?' + param_str
 
         response = self.session.post(url)
         response = self._jump(response)
@@ -47,7 +47,7 @@ class SASearch(SAListObj):
 
     def _jump(self, response, base_url=None):
         if not base_url:
-            base_url = self.base_url
+            base_url = self._base_url
 
         bs_content = BeautifulSoup(response.text)
         request_id = bs_content.head.meta['content'].lower()
@@ -61,7 +61,7 @@ class SASearch(SAListObj):
 class SASearchNewStyle(SAListObj):
     def __init__(self, query, type, session, **options):
         super(SASearchNewStyle, self).__init__(name=query, session=session, **options)
-        self.base_url = "http://forums.somethingawful.com/f/search"
+        self._base_url = "http://forums.somethingawful.com/f/search"
         self.query = query
         self.lihllllltype = type
         self.results = None
@@ -95,7 +95,7 @@ class SASearchNewStyle(SAListObj):
         self.search()
 
     def search(self):
-        url = self.base_url + '/submit'
+        url = self._base_url + '/submit'
         response = self.session.post(url, self.options)
         bs = BeautifulSoup(response.content)
         response = self._jump(response, url)
@@ -126,12 +126,12 @@ class SASearchNewStyle(SAListObj):
 
     def _jump(self, response, base_url=None):
         if not base_url:
-            base_url = self.base_url
+            base_url = self._base_url
 
         bs_content = BeautifulSoup(response.text)
         request_id = bs_content.head.meta['content'].lower()
         request_id = request_id.split('qid=').pop()
-        jump_url = self.base_url + request_id
+        jump_url = self._base_url + request_id
         self.url = jump_url
 
         return self.session.get(jump_url)

@@ -14,7 +14,7 @@ class SASession(SAMagic):
         self.session = Session()
         self._set_user_agent()
         self.username = username
-        self.base_url = 'https://forums.somethingawful.com/'
+        self._base_url = 'https://forums.somethingawful.com/'
         self.login(username, passwd)
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
@@ -41,7 +41,7 @@ class SASession(SAMagic):
         self.profile = SAPoster(self, self.id, name=self.username)
 
     def login(self, username, passwd):
-        login_url = self.base_url + 'account.php'
+        login_url = self._base_url + 'account.php'
         post_data = {'username': username, 'password': passwd, 'action': 'login'}
 
         response = self.session.post(login_url, post_data)

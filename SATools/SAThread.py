@@ -1,11 +1,14 @@
 from SATools.SAObj import SAListObj
 from SATools.SATypes import TriggerProperty
-from SATools.SAParser import SAThreadParser
 from SATools.SAPost import SAPost
 from SATools.SAPoster import SAPoster
 from SATools.SALastRead import SALastRead
 
+from SATools.SAParsers.SAThreadParser import SAThreadParser
+
+
 from collections import OrderedDict as ordered
+from math import ceil
 
 
 class SAThread(SAListObj):
@@ -13,8 +16,7 @@ class SAThread(SAListObj):
 
     def __init__(self, parent, id, tr_thread=None, **properties):
         super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
-        self.base_url = "http://forums.somethingawful.com/"
-        self.url = self.base_url + '/showthread.php?threadid=' + str(self.id)
+        self.url = self._base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = ordered()
 
         self.parser = SAThreadParser(self)

@@ -1,7 +1,7 @@
 from SATools.SAThread import SAThread
 from SATools.SAObj import SAListObj
 from SATools.SATypes import TriggerProperty, IntOrNone
-from SATools.SAParser import SAForumParser
+from SATools.SAParsers.SAForumParser import SAForumParser
 
 from collections import OrderedDict as ordered
 
@@ -13,9 +13,9 @@ class SAForum(SAListObj):
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
         super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
-        self.base_url = \
+        self._base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
-        self.url = self.base_url + '?forumid=' + str(id)
+        self.url = self._base_url + '?forumid=' + str(id)
         self.parser = SAForumParser(self)
 
         self.threads = ordered()

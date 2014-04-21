@@ -117,8 +117,8 @@ class SAObj(SAMagic, SADynamic):
         self.session = self.parent.session
         self._content = content
         self.name = name
-        self.base_url = 'http://forums.somethingawful.com/'
-        self.url = url if url else self.base_url
+        self._base_url = 'http://forums.somethingawful.com/'
+        self.url = url if url else self._base_url
 
         self.unread = True
         self._reads = 0
@@ -151,6 +151,8 @@ class SAObj(SAMagic, SADynamic):
 
 
 class SAListObj(SAObj):
+    from SATools.SAParsers.SANaviParsers import SANaviParser
+
     page = IntOrNone()
     pages = IntOrNone(1)
     navi = TriggerProperty('read', 'navi')
@@ -166,9 +168,8 @@ class SAListObj(SAObj):
 
     def _setup_navi(self, pg=1):
         if not self.navi:
-            from SATools.SAParser import SANaviParser
 
-            navi = SANaviParser.parse_navi(self)
+            navi = self.SANaviParser.parse_navi(self)
             self.navi = SAPageNavi(self, content=navi)
 
         self.navi.read(pg)
@@ -182,13 +183,14 @@ class SAListObj(SAObj):
 
 
 class SAPageNavi(SAObj):
+    from SATools.SAParsers.SANaviParsers import SAPageNaviParser
+
     page = IntOrNone()
     pages = IntOrNone(1)
 
     def __init__(self, *args, **properties):
-        from SATools.SAParser import SAPageNaviParser
         super(SAPageNavi, self).__init__(*args, **properties)
-        self.parser = SAPageNaviParser(self)
+        self.parser = self.SAPageNaviParser(self)
 
     def __repr__(self):
         if self.parent.unread:

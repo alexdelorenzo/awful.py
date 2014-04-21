@@ -10,7 +10,8 @@ class SAIndex(SAMagic):
         self.name = "Forums' index"
 
         self.session = sa_session.session
-        self.base_url = 'http://forums.somethingawful.com/'
+        self._base_url = 'http://forums.somethingawful.com/'
+        self.url = self._base_url
         self.forums = ordered()
         self.sections = None
         self._content = None
@@ -29,7 +30,7 @@ class SAIndex(SAMagic):
         self.forums[section_id] = sa_section
 
     def _get_json(self):
-        url = self.base_url + 'f/json/forumtree'
+        url = self._base_url + 'f/json/forumtree'
         request = self.session.get(url)
 
         self._content = request.content

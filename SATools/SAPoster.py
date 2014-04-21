@@ -1,5 +1,5 @@
 from SATools.SAObj import SAObj
-from SATools.SAParser import SAProfileParser
+from SATools.SAParsers.SAProfileParser import SAProfileParser
 
 
 class SAPoster(SAObj):
@@ -24,3 +24,5 @@ class SAPoster(SAObj):
         super(SAPoster, self).read()
         self.parser.parse()
         self._delete_extra()
+
+

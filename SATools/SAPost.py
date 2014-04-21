@@ -1,11 +1,12 @@
 from SATools.SAPoster import SAPoster
 from SATools.SAObj import SAObj
-from SATools.SAParser import SAPostParser
+from SATools.SAParsers.SAPostParser import SAPostParser
 
 
 class SAPost(SAObj):
     def __init__(self, parent, id, content=None, **properties):
         super(SAPost, self).__init__(parent, id, content, **properties)
+
         self.poster = None
         self.body = ""
         self.parser = SAPostParser(self)
@@ -13,9 +14,13 @@ class SAPost(SAObj):
 
     def __repr__(self):
         if self.body and self.poster:
-            return 'Reply #' + str(self.id) + ' by ' + self.poster.name
+            id, username = str(self.id), self.poster.name
+            info_str = 'Reply #' + id + ' by ' + username
+
         else:
-            return super(SAPost, self).__repr__()
+            info_str = super(SAPost, self).__repr__()
+
+        return info_str
 
     def __str__(self):
         return self.body
@@ -25,5 +30,8 @@ class SAPost(SAObj):
 
     def read(self):
         super(SAPost, self).read()
+
         self.parser.parse()
         self._delete_extra()
+
+

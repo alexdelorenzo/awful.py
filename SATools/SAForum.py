@@ -1,9 +1,9 @@
+from collections import OrderedDict as ordered
+
 from SATools.SAObjs.SAListObj import SAListObj
 from SATools.SAThread import SAThread
-from SATools.SATypes import TriggerProperty, IntOrNone
+from SATools.SAObjs.SADescriptors import TriggerProperty
 from SATools.SAParsers.SAForumParser import SAForumParser
-
-from collections import OrderedDict as ordered
 
 
 class SAForum(SAListObj):

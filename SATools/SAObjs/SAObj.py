@@ -1,8 +1,8 @@
+from bs4 import BeautifulSoup
+
 from SATools.SAObjs.SADynamic import SADynamic
 from SATools.SAObjs.SAMagic import SAMagic
-from SATools.SATypes import IntOrNone
-
-from bs4 import BeautifulSoup
+from SATools.SAObjs.SADescriptors import IntOrNone
 
 
 class SAObj(SAMagic, SADynamic):

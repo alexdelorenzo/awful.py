@@ -1,5 +1,5 @@
 from SATools import SAObj, IntOrNone
-from SATools.SATypes import TriggerProperty
+from SATools.SAObjs.SADescriptors import TriggerProperty
 from SATools.SAObjs.SAPageNavi import SAPageNavi
 from SATools.SAParsers.SANaviParsers import SANaviParser
 

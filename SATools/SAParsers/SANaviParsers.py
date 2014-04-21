@@ -1,4 +1,6 @@
-from SATools.SAParsers.SAParser import SAParser, BSWrapper
+from SATools.SAParsers.BSWrapper import BSWrapper
+from SATools.SAParsers.SAParser import SAParser
+
 
 class SANaviParser(SAParser):
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,7 @@
-from SATools.SAObjs import SAObj
-from SATools.SATypes import TriggerProperty
-
 from math import floor
+
+from SATools.SAObjs import SAObj
+from SATools.SAObjs.SADescriptors import TriggerProperty
 
 
 class SALastRead(SAObj):

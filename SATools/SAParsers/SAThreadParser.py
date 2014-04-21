@@ -1,9 +1,10 @@
-from SATools.SAParsers.SAParser import SAParser, RegexManagement
+from SATools.SAParsers.RegexManager import RegexManager
+from SATools.SAParsers.SAParser import SAParser
 
 from collections import OrderedDict as ordered
 from math import ceil
 
-class SAThreadParser(SAParser, RegexManagement):
+class SAThreadParser(SAParser, RegexManager):
     def __init__(self, parent, *args, **kwargs):
         super(SAThreadParser, self).__init__(parent, *args, **kwargs)
         self._dynamic_attr()

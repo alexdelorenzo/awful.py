@@ -1,5 +1,5 @@
 from SATools.SAParsers.SAParser import SAParser
-from SATools.SATypes import IntOrNone
+from SATools.SAObjs.SADescriptors import IntOrNone
 
 
 class SAForumParser(SAParser):

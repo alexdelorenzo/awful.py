@@ -1,8 +1,8 @@
-from SATools.SASearch import SASearch
-from SATools.SAPoster import SAPoster
-
 from time import sleep
+
+from SATools.SAPoster import SAPoster
 import nltk
+from SATools.SASearches import SASearch
 
 
 class TrigramPoster(SAPoster):

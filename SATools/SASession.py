@@ -1,13 +1,10 @@
-from SATools.SAObjs.SADynamic import SADynamic
-from SATools.SAObjs.SAMagic import SAMagic
-from SATools.SAPoster import SAPoster
-from SATools.SASearch import SASearch
-from SATools.SAObjs import SAObj
+import time
 
 from requests import Session
 from bs4 import BeautifulSoup
 
-import time
+from SATools.SAObjs.SAMagic import SAMagic
+from SATools.SAPoster import SAPoster
 
 
 class SASession(SAMagic):

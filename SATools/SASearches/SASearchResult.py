@@ -3,8 +3,8 @@ from SATools.SAThread import SAThread
 from SATools.SAForum import SAForum
 from SATools.SAPoster import SAPoster
 from SATools.SAPost import SAPost
-from bs4 import BeautifulSoup
 
+from bs4 import BeautifulSoup
 
 
 class SASearchResult(SAObj):

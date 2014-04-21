@@ -1,6 +1,7 @@
-from SATools.SAObjs.SAListObj import SAListObj
-from SATools.SASearchResult import SASearchResult
 from bs4 import BeautifulSoup
+
+from SATools.SAObjs.SAListObj import SAListObj
+from SATools.SASearches import SASearchResult
 
 
 class SASearch(SAListObj):

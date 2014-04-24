@@ -49,12 +49,15 @@ class IntOrNone(WeakRefDescriptor):
 
 
 class TriggerLimit(WeakRefDescriptor):
-    def __init__(self, *args, interval=[0, None], **kwargs):
+    def __init__(self, *args, interval=None, **kwargs):
+        if interval is None:
+            interval = [0, None]
+
         super(TriggerLimit, self).__init__(*args, **kwargs)
         lower_lim, upper_lim = interval
         self.lower_lim = lower_lim
         self.upper_lim = upper_lim
-
+        
     def _within_limits(self, value, instance):
         count, trig_lim = self.access_count, self.upper_lim
         reached_access_lim = count >= self.lower_lim
@@ -65,7 +68,7 @@ class TriggerLimit(WeakRefDescriptor):
 
 
 class TriggerProperty(TriggerLimit):
-    def __init__(self, trigger, *args, name=None, value=None, **kwargs):
+    def __init__(self, trigger, name=None, value=None, *args, **kwargs):
         super(TriggerProperty, self).__init__(value, *args, **kwargs)
         self.trig_str = trigger
         self.name = name
@@ -90,16 +93,3 @@ class TriggerProperty(TriggerLimit):
         will_trigger = should_trigger and is_unread
 
         return will_trigger
-
-
-class ConditionDescriptor(WeakRefDescriptor):
-    def __init__(self, value=None, conditional_cb=None):
-        super(ConditionDescriptor, self).__init__(value)
-
-        if not conditional_cb:
-            conditional_cb = []
-
-        self.conditional_cb = conditional_cb
-
-    def __get__(self, instance, owner):
-        pass

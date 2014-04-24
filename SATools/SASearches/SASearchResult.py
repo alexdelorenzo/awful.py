@@ -10,13 +10,13 @@ class SASearchResult(SAObj):
     def __init__(self, parent=None, id=None, name=None, content=None, **properties):
         super(SASearchResult, self).__init__(parent, id, name=name, content=content, **properties)
         self.header = self.parent._table_header
+        self.parser = SASearchResultParser(self)
         self.forum = None
         self.poster = None
         self.views = None
         self.date = None
         self.post = None
         self.thread = None
-        self.parser = SASearchResultParser(self)
 
     def read(self):
         self.parser.parse()

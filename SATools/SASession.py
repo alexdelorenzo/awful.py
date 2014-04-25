@@ -1,5 +1,6 @@
 from SATools.SAObjs.SAMagic import SAMagic
 from SATools.SAPoster import SAPoster
+from SATools.SAReply import SAReply
 
 from requests import Session
 from bs4 import BeautifulSoup
@@ -18,6 +19,7 @@ class SASession(SAMagic):
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
         self._set_profile()
+        self.replies = []
 
         self.logged_in_at = time.strftime('%x @ %X', time.localtime())
         self.name = 'Session: login(), reply(), post_thread(), search(), etc'
@@ -51,21 +53,9 @@ class SASession(SAMagic):
         self.logged_in_at = time.strftime('%x @ %X', time.localtime())
 
     def reply(self, _id, body):
-        url = "http://forums.somethingawful.com/newreply.php?action=newreply&threadid=" + str(_id)
-
-        response = self.session.get(url)
-        bs = BeautifulSoup(response.content)
-
-        inputs = {i['name']: i['value']
-                  for i in bs.find_all('input')
-                  if i.has_attr('value')}
-        inputs['message'] = str(body)
-        inputs.pop('preview')
-
-        response = self.session.post(url, inputs)
-
-        if not response.ok:
-            raise Exception(("Unable to reply", response.status_code, response.reason))
+        sa_reply = SAReply(self, id=_id, body=body)
+        sa_reply.reply()
+        self.replies.append(sa_reply)
 
     def post_thread(self, forumid, title, body, tag=None, poll=None):
         raise NotImplementedError()

@@ -13,7 +13,8 @@ class SAThread(SAListObj):
     posts = TriggerProperty('read', 'posts')
 
     def __init__(self, parent, id, tr_thread=None, **properties):
-        super(SAThread, self).__init__(parent, id, content=tr_thread, page=1, **properties)
+        super(SAThread, self).__init__(parent, id, content=tr_thread,
+                                       page=1, **properties)
         self.url = self._base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = ordered()
 

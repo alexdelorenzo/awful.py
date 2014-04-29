@@ -14,7 +14,7 @@ class SAParser(SAObj):
         self._delete_extra()
 
     def set_wrapper(self, wrapper=BSWrapper):
-        self.wrapper = BSWrapper(self.parent)
+        self.wrapper = wrapper(self.parent)
 
         if self.parent._content:
             self.wrapper.wrap_parent_content()

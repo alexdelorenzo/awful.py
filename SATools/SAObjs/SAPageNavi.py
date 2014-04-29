@@ -1,5 +1,5 @@
-from SATools.SAParsers.SANaviParsers import SAPageNaviParser
 from SATools import SAObj, IntOrNone
+from SATools.SAParsers.SAPageNaviParser import SAPageNaviParser
 
 
 class SAPageNavi(SAObj):

@@ -4,6 +4,7 @@ from SATools.SAParsers.SAParser import SAParser
 from collections import OrderedDict as ordered
 from math import ceil
 
+
 class SAThreadParser(SAParser, RegexManager):
     def __init__(self, parent, *args, **kwargs):
         super(SAThreadParser, self).__init__(parent, *args, **kwargs)
@@ -34,8 +35,8 @@ class SAThreadParser(SAParser, RegexManager):
                  'author': self._parse_author,
                  'title': self._parse_title,
                  'title_sticky': self._parse_title,
-                  'views': self._parse_views,
-                  'rating': self._parse_rating}
+                 'views': self._parse_views,
+                 'rating': self._parse_rating}
 
         super(SAThreadParser, self).set_parser_map(parser_map)
 
@@ -53,6 +54,7 @@ class SAThreadParser(SAParser, RegexManager):
             lastpost, rating = \
                 "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)", \
                 "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"
+
             regex_strs = \
                 {'lastpost': lastpost,
                  'rating': rating}

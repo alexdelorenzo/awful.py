@@ -1,7 +1,5 @@
 from bs4 import BeautifulSoup, element
 
-__author__ = 'alex'
-
 
 class BSWrapper(object):
     def __init__(self, parent, *args, **kwargs):

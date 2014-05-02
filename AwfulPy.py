@@ -18,7 +18,7 @@ class APSession(object):
 
     def _load_session(self, save_session=True):
         backup_exists = os.path.exists(self.session_bak)
-        session = None
+#        session = None
 
         if backup_exists:
             with open(self.session_bak, 'rb') as old_session:

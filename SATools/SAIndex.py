@@ -8,7 +8,7 @@ from collections import OrderedDict as ordered
 class SAIndex(SAMagic):
     def __init__(self, sa_session):
         super(SAIndex, self).__init__(sa_session)
-        self.name = "Forums' index"
+        self.name = "Forum index"
 
         self.session = sa_session.session
         self._base_url = 'http://forums.somethingawful.com/'

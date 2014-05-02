@@ -24,18 +24,14 @@ class SASession(SAMagic):
         self.logged_in_at = time.strftime('%x @ %X', time.localtime())
         self.name = 'Session: login(), reply(), post_thread(), search(), etc'
 
-    def __getstate__(self):
-        if self.profile:
-            del self.profile
-
-        return self.__dict__
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-        self._set_profile()
-
     def _set_user_agent(self):
-        ua = "Mozilla/5.0 (Windows NT 6.2; Win64; x64; rv:16.0.1) Gecko/20121011 Firefox/16.0.1"
+        identity = "Mozilla/5.0"
+        system = "(Windows NT 6.2; Win64; x64; rv:16.0.1)"
+        engine = "Gecko/20121011"
+        version = "Firefox/16.0.1"
+        strs = identity, system, engine, version
+        ua = ' '.join(strs)
+
         self.session.headers['User-Agent'] = ua
 
     def _set_profile(self):
@@ -43,7 +39,9 @@ class SASession(SAMagic):
 
     def login(self, username, passwd):
         login_url = self._base_url + 'account.php'
-        post_data = {'username': username, 'password': passwd, 'action': 'login'}
+        post_data = {'username': username,
+                     'password': passwd,
+                     'action': 'login'}
 
         response = self.session.post(login_url, post_data)
 

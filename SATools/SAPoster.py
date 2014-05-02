@@ -24,5 +24,3 @@ class SAPoster(SAObj):
         super(SAPoster, self).read()
         self.parser.parse()
         self._delete_extra()
-
-

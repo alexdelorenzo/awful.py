@@ -61,6 +61,7 @@ class SAForum(SAListObj):
 
         if threads_exist:
             is_in_old = thread_id in threads_exist
+
         else:
             is_in_old = False
 

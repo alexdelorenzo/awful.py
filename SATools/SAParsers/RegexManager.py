@@ -1,4 +1,4 @@
-from SATools import SAMagic
+from SATools.SAObjs.SAMagic import SAMagic
 
 from re import compile
 

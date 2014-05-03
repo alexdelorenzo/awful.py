@@ -10,6 +10,7 @@ class SAPost(SAObj):
         self.poster = None
         self.body = ""
         self.parser = SAPostParser(self)
+        self.date_posted = dict()
         self.read()
 
     def __repr__(self):

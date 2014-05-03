@@ -17,7 +17,11 @@ class SAThreadParser(SAParser, RegexManager):
         self._delete_extra()
 
     def parse_info(self):
-        self._parse_tr_thread()
+        if self.content:
+            self._parse_tr_thread()
+
+        else:
+            self._parse_from_url()
 
     def parse_posts(self):
         posts_content = self.content.find_all('table', 'post')
@@ -25,6 +29,24 @@ class SAThreadParser(SAParser, RegexManager):
         for post in posts_content:
             post_id = post['id'][4:]
             self.parent._add_post(post_id, post)
+
+    def _parse_from_url(self):
+        self.parent.read()
+        self._parse_first_post()
+        title = self.content.find('a', 'bclast').text.strip()
+        self.parent.title = title
+
+    def _parse_first_post(self, post_content=None):
+        if not post_content:
+            post_content = self.content.find('table', 'post')
+
+        post_id = post_content['id'][4:]
+
+        #TODO: pull this out into SAThread._add_first_post()
+        self.parent._add_post(post_id, post_content)
+        sa_post = self.parent.posts.popitem(0)[-1]
+        self.parent.poster = sa_post.poster
+
 
     def set_parser_map(self, parser_map=None):
         if not parser_map:

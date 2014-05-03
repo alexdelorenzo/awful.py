@@ -1,5 +1,8 @@
-class SAMagic(object):
-    def __init__(self, parent, **properties):
+from SATools.SAObjs.SABase import SABase
+
+class SAMagic(SABase):
+    def __init__(self, parent, *args, **properties):
+        super(SAMagic, self).__init__(parent, *args, **properties)
         self.parent = parent
 
     def __repr__(self):
@@ -27,7 +30,9 @@ class SAMagic(object):
 
         if is_protected:
             is_magic = self._is_magic(attr)
-            lets_not_break_python = is_protected or is_magic
+            is_private = self._is_private(attr)
+
+            lets_not_break_python = is_private or is_magic
 
             if lets_not_break_python:
                 return super(SAMagic, self).__getattribute__(attr)
@@ -37,19 +42,3 @@ class SAMagic(object):
 
     def __setattr__(self, key, value):
         super(SAMagic, self).__setattr__(key, value)
-
-    def _is_magic(self, string, dunder='__'):
-        first_two_dunder = self._is_protected(string)
-
-        if not first_two_dunder:
-            return first_two_dunder
-
-        last_two_dunder = string[-2:] == dunder
-        is_magic = first_two_dunder and last_two_dunder
-
-        return is_magic
-
-    def _is_protected(self, string, dunder='__'):
-        first_two_dunder = string[:2] == dunder
-
-        return first_two_dunder

@@ -1,7 +1,6 @@
 from SATools.SAObjs import SAObj
 from SATools.SAObjs.SADescriptors import TriggerProperty
-
-from math import floor
+from SATools.SAParsers.SALastReadParser import SALastReadParser
 
 
 class SALastRead(SAObj):
@@ -14,6 +13,11 @@ class SALastRead(SAObj):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages
+        self.unread_count = 0
+        self.unread_pages = 0
+        self.parser = SALastReadParser(self)
+        self._base_url = self.parent._base_url
+
         self._delete_extra()
 
     def __repr__(self):
@@ -22,24 +26,11 @@ class SALastRead(SAObj):
         unread_pages = str(pages_count) + ' unread pages'
         return ' '.join((unread_posts, 'in', unread_pages))
 
-    def _parse_unread(self):
-        close_link = self._content.a
-        stop_tracking_url = self.parent._base_url + close_link['href']
-        last_post_link = self._content.find('a', 'count')
-        self.url_switch_off = stop_tracking_url
-
-        if last_post_link:
-            unread_count = int(last_post_link.text)
-            last_post_url = self.parent._base_url + last_post_link['href']
-            self.url_last_post = last_post_url
-            self.unread_count = unread_count
-            self.unread_pages = int(floor(unread_count / 40.0))
-
     def read(self, pg=1):
         super(SALastRead, self).read(pg)
         self.page = self.parent.page
         self.pages = self.parent.pages
-        self._parse_unread()
+        self.parser.parse()
         self._delete_extra()
 
     def jump_to_new(self):

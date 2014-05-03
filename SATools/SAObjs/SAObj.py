@@ -8,7 +8,6 @@ from SATools.SAObjs.SADescriptors import IntOrNone
 class SAObj(SAMagic, SADynamic):
     id = IntOrNone()
 
-
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
         super(SAObj, self).__init__(parent, **properties)
         self.id = id

@@ -26,6 +26,14 @@ class SAListObj(SAObj):
         self.navi.read(pg)
 
     def read(self, pg=1):
+        negative_index = pg < 0
+
+        if negative_index:
+            if not self.pages:
+                self.read()
+
+            pg = self.pages + (pg + 1)
+
         super(SAListObj, self).read(pg)
 
         url = self.url + '&' + self._page_keyword + '=' + str(pg)

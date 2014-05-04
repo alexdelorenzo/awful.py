@@ -2,7 +2,7 @@ from SATools.SAParsers.SAParser import SAParser
 
 
 class SAReplyParser(SAParser):
-    def __init__(self, *args, id=None, reply=None, **kwargs):
+    def __init__(self, id=None, reply=None, *args, **kwargs):
         super(SAReplyParser, self).__init__(*args, id=id, **kwargs)
         self.body = reply
         self.id = id

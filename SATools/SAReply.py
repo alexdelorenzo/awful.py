@@ -3,7 +3,7 @@ from SATools.SAParsers.SAReplyParser import SAReplyParser
 
 
 class SAReply(SAObj):
-    def __init__(self, *args, id, body="", **kwargs):
+    def __init__(self, id, body="", *args, **kwargs):
         super(SAReply, self).__init__(*args, id=id, **kwargs)
         self.body = body
         self.profile = self.parent.profile

@@ -2,7 +2,7 @@ from weakref import WeakKeyDictionary as wkdict
 
 
 class WeakRefDescriptor(object):
-    def __init__(self, *args, value=None, **kwargs):
+    def __init__(self, value=None, *args, **kwargs):
         super(WeakRefDescriptor, self).__init__()
         self.value = value
         self.weak_ref = wkdict()
@@ -42,7 +42,7 @@ class IntOrNone(WeakRefDescriptor):
 
 
 class TriggerLimit(WeakRefDescriptor):
-    def __init__(self, *args, interval=None, **kwargs):
+    def __init__(self, interval=None, *args, **kwargs):
         if interval is None:
             interval = [0, None]
 

@@ -17,7 +17,7 @@ class WeakRefDescriptor(object):
 
 
 class IntOrNone(WeakRefDescriptor):
-    def __init__(self, value=None):
+    def __init__(self, value=None, *args, **kwargs):
         super(IntOrNone, self).__init__(value)
         self.value = IntOrNone.int_check(value)
 
@@ -34,16 +34,9 @@ class IntOrNone(WeakRefDescriptor):
         try:
             value = int(value)
 
-        except Exception as ex:
-            valid_errors = TypeError, ValueError
-            is_valid_error = type(ex) in valid_errors
-
-            if is_valid_error:
-                if value is not None:
-                    value = None
-
-            else:
-                raise ex
+        except (TypeError, ValueError) as error:
+            if value is not None:
+                value = None
 
         return value
 
@@ -93,3 +86,8 @@ class TriggerProperty(TriggerLimit):
         will_trigger = should_trigger and is_unread
 
         return will_trigger
+
+
+class IntOrNoneTrigger(TriggerProperty, IntOrNone):
+    def __init__(self, trigger=None, initial=None, value=None, name=None, *args, **kwargs):
+        pass

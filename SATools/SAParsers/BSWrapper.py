@@ -6,6 +6,7 @@ class BSWrapper(object):
         super(BSWrapper, self).__init__()
         self.parent = parent
         self._bs_wrappers = BeautifulSoup, element.Tag
+        self.wrap_parent_content()
 
     def wrap_parent_content(self):
         if self.content is None:

@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-
 from SATools.SAObjs.SADynamic import SADynamic
 from SATools.SAObjs.SAMagic import SAMagic
 from SATools.SAObjs.SADescriptors import IntOrNone
@@ -32,7 +30,7 @@ class SAObj(SAMagic, SADynamic):
             raise Exception(("There was an error with your request ",
                              url, response.status_code, response.reason))
 
-        self._content = BeautifulSoup(response.content)
+        self._content = response.content
 
     def read(self, pg=1):
         """

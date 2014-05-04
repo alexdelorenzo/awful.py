@@ -20,8 +20,8 @@ class SAListObj(SAObj):
 
     def _setup_navi(self, pg=1):
         if not self.navi:
-            navi = SANaviParser.parse_navi(self)
-            self.navi = SAPageNavi(self, content=navi)
+            navi_content = SANaviParser.parse_navi(self)
+            self.navi = SAPageNavi(self, content=navi_content)
 
         self.navi.read(pg)
 

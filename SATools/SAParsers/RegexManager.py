@@ -1,9 +1,9 @@
-from SATools.SAObjs.SAMagic import SAMagic
+from SATools.SAObjs.SAMagic import SABase
 
 from re import compile
 
 
-class RegexManager(SAMagic):
+class RegexManager(SABase):
     def __init__(self, *args, regex_map=None, regex_strs=None, **kwargs):
         super(RegexManager, self).__init__(*args, **kwargs)
         self.regex_map = dict()

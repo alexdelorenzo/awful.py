@@ -1,11 +1,16 @@
-class SADynamic(object):
-    def __init__(self, parent, **properties):
+from SATools.SAObjs.SABase import SABase
+
+
+class SADynamic(SABase):
+    def __init__(self, parent, *args, **properties):
+        super(SADynamic, self).__init__(parent, *args, **properties)
         self.parent = parent
+
         self._substitutes = dict()
-        self._properties = properties
+        self._properties = dict()
         self._dynamic_attr()
 
-    def _delete_extra(self):
+    def _delete_extra(self, delete_protected=True):
         """
         Second runner up.
 
@@ -17,8 +22,11 @@ class SADynamic(object):
         for name, val in delete_these:
             is_falsy = not val
             is_special = val in significant_false_vals
+            is_protected = self._is_protected(name)
+            is_protected = False if delete_protected else is_protected
+            isnt_special = not is_special and not is_protected
 
-            if is_falsy and not is_special:
+            if is_falsy and isnt_special:
                 delattr(self, name)
 
     def _dynamic_attr(self):

@@ -39,11 +39,14 @@ class SASession(SAMagic):
 
     def login(self, username, passwd):
         login_url = self._base_url + 'account.php'
-        post_data = {'username': username,
-                     'password': passwd,
-                     'action': 'login'}
 
-        response = self.session.post(login_url, post_data)
+        post_data = {'action': 'loginform'}
+        form_data = {'username': username,
+                     'password': passwd,
+                     'action': 'login',
+                     'next': '/'}
+
+        response = self.session.post(login_url, params=post_data, data=form_data)
 
         if not response.ok:
             raise Exception(("Unable to login", response.status_code, response.reason))
@@ -55,7 +58,7 @@ class SASession(SAMagic):
         sa_reply.reply()
         self.replies.append(sa_reply)
 
-    def post_thread(self, forumid, title, body, tag=None, poll=None):
+    def post_thread(self, forum_id, title, body, tag=None, poll=None):
         raise NotImplementedError()
 
     def find_user_posts(self, user_id):

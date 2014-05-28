@@ -32,11 +32,16 @@ class SAThread(SAListObj):
         self.parser.parse()
         self._delete_extra()
 
-    def _add_post(self, post_id, post_content):
+    def _add_post(self, post_id, post_content, is_op=False):
         sa_post = SAPost(self, post_id, post_content)
         post_id = sa_post.id
 
         self.posts[post_id] = sa_post
+
+        if is_op:
+            poster = sa_post.poster
+            self.author = poster
+
 
     def _add_last_read(self, lr_content, lr=None):
         if lr_content:

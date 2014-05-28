@@ -1,5 +1,5 @@
-from SATools import SAObj, IntOrNone
-from SATools.SAObjs.SADescriptors import TriggerProperty
+from SATools.SAObjs.SAObj import SAObj
+from SATools.SAObjs.SADescriptors import TriggerProperty, IntOrNone
 from SATools.SAObjs.SAPageNavi import SAPageNavi
 from SATools.SAParsers.SANaviParser import SANaviParser
 
@@ -25,7 +25,13 @@ class SAListObj(SAObj):
 
         self.navi.read(pg)
 
-    def read(self, pg=1):
+    def _index_to_pg(self, pg):
+        """
+        Translates pg param to conform to a positive pg number.
+
+        Handles negative page numbers to act like negative indices in lists.
+        """
+
         negative_index = pg < 0
 
         if negative_index:
@@ -33,6 +39,11 @@ class SAListObj(SAObj):
                 self.read()
 
             pg = self.pages + (pg + 1)
+
+        return pg
+
+    def read(self, pg=1):
+        pg = self._index_to_pg(pg)
 
         super(SAListObj, self).read(pg)
 

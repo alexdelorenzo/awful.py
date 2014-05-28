@@ -1,5 +1,5 @@
 from SATools.SAPoster import SAPoster
-from SATools.SAObjs import SAObj
+from SATools.SAObjs.SAObj import SAObj
 from SATools.SAParsers.SAPostParser import SAPostParser
 
 
@@ -27,7 +27,7 @@ class SAPost(SAObj):
         return self.body
 
     def _add_poster(self, user_id, name, content):
-        self.poster = SAPoster(self, user_id, content, name=name)
+        self.poster = SAPoster(self, id=user_id, content=content, name=name)
 
     def read(self):
         super(SAPost, self).read()

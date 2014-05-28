@@ -45,12 +45,6 @@ class SAThreadParser(SAParser, RegexManager):
 
         super(SAThreadParser, self).set_parser_map(parser_map)
 
-    def set_regex_map(self, regex_map=None):
-        if regex_map is None:
-            regex_map = dict()
-
-        super(SAThreadParser, self).set_regex_map(regex_map)
-
     def set_regex_strs(self, regex_strs=None):
         dicts = dict, ordered
         is_dict = isinstance(regex_strs, dicts)
@@ -77,11 +71,7 @@ class SAThreadParser(SAParser, RegexManager):
             post_content = self.content.find('table', 'post')
 
         post_id = post_content['id'][4:]
-
-        #TODO: pull this out into SAThread._add_first_post()
-        self.parent._add_post(post_id, post_content)
-        sa_post = self.parent.posts.popitem(0)[-1]
-        self.parent.poster = sa_post.poster
+        self.parent._add_post(post_id, post_content, is_op=True)
 
     def _parse_tr_thread(self):
         if not self.content:
@@ -114,14 +104,18 @@ class SAThreadParser(SAParser, RegexManager):
 
     def _parse_replies(self, key, val, content):
         self._parse_page_count(val)
-        link = content.a
 
-        if link:
-            replies_url = self._base_url + link['href']
-            replies_count = int(content.a.text.strip())
-            replies = {'url': replies_url,
-                       'count': replies_count}
-            setattr(self.parent, key, replies)
+        reply_count = int(content.text.strip())
+        setattr(self.parent, key, reply_count)
+
+        # link = content.a
+        #
+        # if link:
+        #     replies_url = self._base_url + link['href']
+        #     replies_count = int(content.a.text.strip())
+        #     replies = {'url': replies_url,
+        #                'count': replies_count}
+        #     setattr(self.parent, key, replies)
 
     def _parse_views(self, key, val, content):
         views = int(content.text.strip())

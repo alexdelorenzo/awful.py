@@ -34,7 +34,7 @@ class SAObj(SAMagic, SADynamic):
 
     def read(self, pg=1):
         """
-        You need to call _dynamic_attr() and _delete_extra() for full
+        Call _dynamic_attr() and _delete_extra() for full
         sa_obj interop.
 
         If unread, call them at the end of your overridden read()

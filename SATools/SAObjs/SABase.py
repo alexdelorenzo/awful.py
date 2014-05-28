@@ -1,5 +1,5 @@
 class SABase(object):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent=None, *args, **kwargs):
         self.parent = parent
 
     @staticmethod

@@ -166,7 +166,6 @@ If forum.unread is True, call forum.read()
 In [59]: the_pos
 Out[59]: YOSPOS
 
-In [60]: the_pos.read()
 
 In [63]: the_pos.
 the_pos.base_url  the_pos.name      the_pos.page      the_pos.parent    the_pos.session   the_pos.unread

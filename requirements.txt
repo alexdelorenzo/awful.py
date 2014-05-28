@@ -1,6 +1,7 @@
 BeautifulSoup4
 requests
 PyQt5
+kivy
 
 #PyQt4
 #PyKde4

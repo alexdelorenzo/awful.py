@@ -1,4 +1,5 @@
-from SATools import SAObj, IntOrNone
+from SATools.SAObjs.SAObj import SAObj
+from SATools.SAObjs.SADescriptors import IntOrNone
 from SATools.SAParsers.SAPageNaviParser import SAPageNaviParser
 
 
@@ -8,6 +9,7 @@ class SAPageNavi(SAObj):
 
     def __init__(self, *args, **properties):
         super(SAPageNavi, self).__init__(*args, **properties)
+        self._from_parent()
         self.parser = SAPageNaviParser(self)
 
     def __repr__(self):
@@ -19,6 +21,10 @@ class SAPageNavi(SAObj):
     def _modify_parent(self):
         self.parent.page = self.page
         self.parent.pages = self.pages
+
+    def _from_parent(self):
+        self.page = self.parent.page
+        self.pages = self.parent.pages
 
     def read(self, pg=1):
         super(SAPageNavi, self).read(pg)

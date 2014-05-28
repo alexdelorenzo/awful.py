@@ -14,7 +14,11 @@ class SAPostParser(SAParser):
         self._parse_post_body()
 
     def _parse_user_info(self):
-        user_id = self.content.td['class'][-1].split('userid=')[-1]
+        user_str = self.content.td['class'][-1].split('userid=')[-1]
+        prefix = 'userid-'
+        index = len(prefix)
+
+        user_id = user_str[index:]
         user_name = self.content.dt.text
         info_content = self.content.find('td', 'userinfo')
 

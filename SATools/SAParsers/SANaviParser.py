@@ -1,4 +1,4 @@
-from SATools.SAParsers.BSWrapper import BSWrapper
+from SATools.SAParsers.ParserTools.BSWrapper import BSWrapper
 from SATools.SAParsers.SAParser import SAParser
 
 

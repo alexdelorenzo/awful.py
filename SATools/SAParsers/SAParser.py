@@ -1,6 +1,6 @@
 from SATools.SAObjs.SAObj import SAObj
-from SATools.SAParsers.BSWrapper import BSWrapper
-from SATools.SAParsers.ParserDispatch import ParserDispatch
+from SATools.SAParsers.ParserTools.ParserDispatch import ParserDispatch
+from SATools.SAParsers.ParserTools.BSWrapper import BSWrapper
 
 
 class SAParser(SAObj, ParserDispatch):

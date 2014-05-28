@@ -1,4 +1,4 @@
-from SATools.SAParsers.RegexManager import RegexManager
+from SATools.SAParsers.ParserTools.RegexManager import RegexManager
 from SATools.SAParsers.SAParser import SAParser
 
 from collections import OrderedDict as ordered

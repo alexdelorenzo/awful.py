@@ -43,10 +43,6 @@ class SAForum(SAListObj):
         self.subforums[forum_obj.id] = forum_obj
 
     def _threads_persist(self, parse=True):
-        """
-        This monkey patch can be eliminated.
-        """
-
         self._old_threads = self.threads
         self.threads = ordered()
 

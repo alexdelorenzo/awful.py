@@ -1,5 +1,5 @@
 from SATools.SAPoster import SAPoster
-from SATools.SAObjs.SAObj import SAObj
+from SATools.base.sa_obj import SAObj
 from SATools.SAParsers.SAPostParser import SAPostParser
 
 
@@ -9,8 +9,8 @@ class SAPost(SAObj):
 
         self.poster = None
         self.body = ""
-        self.parser = SAPostParser(self)
         self.date_posted = dict()
+        self.parser = SAPostParser(self)
         self.read()
 
     def __repr__(self):
@@ -29,10 +29,15 @@ class SAPost(SAObj):
     def _add_poster(self, user_id, name, content):
         self.poster = SAPoster(self, id=user_id, content=content, name=name)
 
+    def _set_results(self):
+        self._add_poster(*self.parser.user_info)
+        self.body = self.parser.body
+
     def read(self):
         super(SAPost, self).read()
 
         self.parser.parse()
+        self._set_results()
         self._delete_extra()
 
 

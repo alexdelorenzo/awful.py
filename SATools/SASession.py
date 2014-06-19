@@ -1,4 +1,4 @@
-from SATools.SAObjs.SAMagic import SAMagic
+from SATools.base.SAMagic import SAMagic
 from SATools.SAPoster import SAPoster
 from SATools.SAReply import SAReply
 

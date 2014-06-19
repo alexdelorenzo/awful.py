@@ -1,6 +1,6 @@
 from SATools.SAParsers.SAThreadParser import SAThreadParser
-from SATools.SAObjs.SAListObj import SAListObj
-from SATools.SAObjs.SADescriptors import TriggerProperty
+from SATools.base.SAListObj import SAListObj
+from SATools.base.SADescriptors import TriggerProperty
 
 from SATools.SAPost import SAPost
 from SATools.SAPoster import SAPoster
@@ -30,7 +30,18 @@ class SAThread(SAListObj):
         super(SAThread, self).read(page)
 
         self.parser.parse()
+        self._set_results()
         self._delete_extra()
+
+    def _set_results(self):
+        post_gen = self.parser.post_gen
+
+        for post_info in post_gen:
+            self._add_post(*post_info)
+
+        for name in self.parser.parser_map.keys():
+            attr = getattr(self.parser, name)
+            setattr(self, name, attr)
 
     def _add_post(self, post_id, post_content, is_op=False):
         sa_post = SAPost(self, post_id, post_content)
@@ -41,7 +52,6 @@ class SAThread(SAListObj):
         if is_op:
             poster = sa_post.poster
             self.author = poster
-
 
     def _add_last_read(self, lr_content, lr=None):
         if lr_content:

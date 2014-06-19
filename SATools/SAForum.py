@@ -1,6 +1,6 @@
-from SATools.SAObjs.SAListObj import SAListObj
+from SATools.base.SAListObj import SAListObj
 from SATools.SAThread import SAThread
-from SATools.SAObjs.SADescriptors import TriggerProperty
+from SATools.base.SADescriptors import TriggerProperty
 from SATools.SAParsers.SAForumParser import SAForumParser
 
 from collections import OrderedDict as ordered
@@ -41,6 +41,9 @@ class SAForum(SAListObj):
     def _add_subforum(self, forum_id, forum_name):
         forum_obj = SAForum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
+
+    def _set_results(self):
+        pass
 
     def _threads_persist(self, parse=True):
         """

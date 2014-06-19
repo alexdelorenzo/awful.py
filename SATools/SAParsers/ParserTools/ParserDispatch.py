@@ -1,4 +1,4 @@
-from SATools.SAObjs.SABase import SABase
+from SATools.base.SABase import SABase
 
 
 class ParserDispatch(SABase):

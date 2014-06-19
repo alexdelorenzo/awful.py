@@ -13,7 +13,11 @@ class BSWrapper(object):
             return
 
         if not self._is_wrapped():
-            self.content = BeautifulSoup(self.content)
+            try:
+                self.content = BeautifulSoup(self.content, 'lxml')
+
+            except:
+                self.content = BeautifulSoup(self.content)
 
     def _is_wrapped(self, content=None):
         if not content:
@@ -21,11 +25,7 @@ class BSWrapper(object):
 
         content_type = type(content)
 
-        if content_type in self._bs_wrappers:
-            return True
-
-        else:
-            return False
+        return content_type in self._bs_wrappers
 
     @property
     def content(self):

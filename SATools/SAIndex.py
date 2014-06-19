@@ -1,5 +1,5 @@
 from SATools.SAForum import SAForum
-from SATools.SAObjs.SAMagic import SAMagic
+from SATools.base.SAMagic import SAMagic
 from SATools.SASection import SASection
 
 from collections import OrderedDict as ordered

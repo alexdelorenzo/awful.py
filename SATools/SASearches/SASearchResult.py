@@ -1,5 +1,5 @@
 from SATools.SAParsers.SASearchResultParser import SASearchResultParser
-from SATools.SAObjs import SAObj
+from SATools.base import SAObj
 from SATools.SAThread import SAThread
 from SATools.SAForum import SAForum
 from SATools.SAPoster import SAPoster

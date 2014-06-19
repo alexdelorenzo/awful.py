@@ -1,5 +1,5 @@
-from SATools.SAObjs.SAObj import SAObj
-from SATools.SAObjs.SADescriptors import TriggerProperty
+from SATools.base.sa_obj import SAObj
+from SATools.base.SADescriptors import TriggerProperty
 from SATools.SAParsers.SALastReadParser import SALastReadParser
 
 

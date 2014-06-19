@@ -1,4 +1,4 @@
-from SATools.SAObjs.SAObj import SAObj
+from SATools.base.sa_obj import SAObj
 from SATools.SAParsers.SAReplyParser import SAReplyParser
 
 

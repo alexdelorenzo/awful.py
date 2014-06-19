@@ -1,4 +1,4 @@
 from SATools import *
-from SATools.SAObjs.SAObj import *
+from SATools.base.sa_obj import *
 
 from . import *

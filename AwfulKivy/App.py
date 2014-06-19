@@ -2,7 +2,7 @@ import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from AwfulPy import AwfulPy
+from awful import AwfulPy
 
 class AwfulKivyApp(App):
     def build(self):

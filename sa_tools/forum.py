@@ -46,9 +46,7 @@ class SAForum(SAListObj):
         pass
 
     def _threads_persist(self, parse=True):
-        """
-        This monkey patch can be eliminated.
-        """
+        # TODO: make this more generalized
 
         self._old_threads = self.threads
         self.threads = ordered()

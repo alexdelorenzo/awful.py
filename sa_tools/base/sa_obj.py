@@ -35,6 +35,18 @@ class SAObj(SAMagic, SADynamic):
 
         self._content = response.content
 
+    def _apply_parsed_results(self, condition_map=None):
+        if not condition_map:
+            condition_map = dict()
+
+        results = self.parser.results
+
+        for key, val in results.items():
+            if key in condition_map:
+                condition_map[key](val)
+
+            setattr(self, key, val)
+
     def read(self, pg=1):
         """
         Call _dynamic_attr() and _delete_extra() for full

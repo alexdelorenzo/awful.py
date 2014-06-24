@@ -18,6 +18,8 @@ class SAThreadParser(SAParser, RegexManager):
 
         self._delete_extra()
 
+        return self.results
+
     def parse_info(self):
         if self.content:
             self._parse_tr_thread()
@@ -71,17 +73,22 @@ class SAThreadParser(SAParser, RegexManager):
             post_content = self.content.find('table', 'post')
 
         post_id = post_content['id'][4:]
-        self.parent._add_post(post_id, post_content, is_op=True)
+        result = post_id, post_content, True
+
+        self.results['op'] = result
 
     def _parse_tr_thread(self, content=None):
         if not self.content:
             return
 
         tds = self.content.find_all('td')
-        attr_val_gen = ((td['class'][-1], td.text.strip(), td)
-                         for td in tds)
+        gen_name_content = ((td['class'][-1], td.text.strip(), td)
+                            for td in tds)
+        gen_key_val = (self.dispatch(*attr_val)
+                       for attr_val in gen_name_content)
+        #self.results += dict(gen_key_val)
 
-        for td in self.content.find_all('td'):
+        for td in tds:
             td_class = td['class'][-1]
             text = td.text.strip()
 
@@ -90,27 +97,31 @@ class SAThreadParser(SAParser, RegexManager):
     def _parse_icon(self, key, val, content):
         text = content.a['href'].split('posticon=')[-1]
 
-        setattr(self.parent, key, text)
+        self.results[key] = text
 
     def _parse_last_post(self, key, val, content):
         groups = 'time', 'date', 'user'
         matches = self.regex_matches(key, val)
         matches = dict(zip(groups, matches))
 
-        setattr(self.parent, key, matches)
+        self.results[key] = matches
+        return key, matches
 
     def _parse_author(self, key, val, content):
         link = content.a
         author = link.text.strip()
         user_id = link['href'].split('id=')[-1]
-
-        self.parent._add_author(user_id, author)
+        result = user_id, author
+        self.results[key] = result
+        return key, result
 
     def _parse_replies(self, key, val, content):
         self._parse_page_count(val)
 
         reply_count = int(content.text.strip())
-        setattr(self.parent, key, reply_count)
+
+        self.results[key] = reply_count
+        return key, reply_count
 
         # link = content.a
         #
@@ -124,7 +135,8 @@ class SAThreadParser(SAParser, RegexManager):
     def _parse_views(self, key, val, content):
         views = int(content.text.strip())
 
-        setattr(self, key, views)
+        self.results[key] = views
+        return key, views
 
     def _parse_rating(self, key, val, content):
         img_tag = content.img
@@ -141,21 +153,30 @@ class SAThreadParser(SAParser, RegexManager):
                       'avg': avg,
                       'stars': stars}
 
-            setattr(self, key, rating)
+            self.results[key] = rating
+
+        else:
+            rating = {}
+
+        return key, rating
 
     def _parse_title(self, key, val, content):
         text = content.find('a', 'thread_title').text
         key = 'title'
 
-        self._parse_last_seen(content)
-        setattr(self, key, text)
+        self.results[key] = text
+        self.results['name'] = text
+        return key, text
 
     def _parse_last_seen(self, content):
         last_read = content.find('div', 'lastseen')
-        self.parent._add_last_read(last_read)
+        key = 'last_read'
+
+        self.results[key] = last_read
+        return key, last_read
 
     def _parse_page_count(self, val):
         pages = ceil(int(val) / 40.0)
         key = 'pages'
 
-        setattr(self, key, pages)
+        self.results[key] = pages

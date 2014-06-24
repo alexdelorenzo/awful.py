@@ -9,6 +9,8 @@ class SAParser(SAObj, ParserDispatch):
         self.id = self.parent.id
         self.wrapper = None
         self.set_wrapper(wrapper)
+        self.results = dict()
+
         self._delete_extra()
 
     def set_wrapper(self, wrapper=BSWrapper):

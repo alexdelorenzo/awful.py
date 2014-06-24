@@ -364,7 +364,7 @@ In [14]: session.reply(random_thread.id, post_body)
 In [15]: random_thread.page
 Out[15]: 1
 
-In [16]: random_thread.read(random_thread.pages)
+In [16]: random_thread.read(-1)
 
 In [17]: random_thread.page
 Out[17]: 189

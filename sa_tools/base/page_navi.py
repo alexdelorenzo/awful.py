@@ -1,16 +1,16 @@
 from sa_tools.base.sa_obj import SAObj
 from sa_tools.base.descriptors import IntOrNone
-from sa_tools.parsers.page_navi import SAPageNaviParser
+from sa_tools.parsers.page_navi import PageNaviParser
 
 
-class SAPageNavi(SAObj):
+class PageNavi(SAObj):
     page = IntOrNone()
     pages = IntOrNone(1)
 
     def __init__(self, *args, **properties):
-        super(SAPageNavi, self).__init__(*args, **properties)
+        super(PageNavi, self).__init__(*args, **properties)
         self._from_parent()
-        self.parser = SAPageNaviParser(self)
+        self.parser = PageNaviParser(self)
 
     def __repr__(self):
         if self.parent.unread:
@@ -27,7 +27,7 @@ class SAPageNavi(SAObj):
         self.pages = self.parent.pages
 
     def read(self, pg=1):
-        super(SAPageNavi, self).read(pg)
+        super(PageNavi, self).read(pg)
 
         self.page = pg if pg <= self.pages else self.pages
         self.parser.parse()

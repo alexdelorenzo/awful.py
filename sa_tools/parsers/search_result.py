@@ -1,11 +1,11 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 from bs4 import BeautifulSoup
 
 
-class SASearchResultParser(SAParser):
+class SearchResultParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SASearchResultParser, self).__init__(*args, **kwargs)
+        super(SearchResultParser, self).__init__(*args, **kwargs)
 
     def get_post(self):
         if self.parent.unread:
@@ -19,7 +19,7 @@ class SASearchResultParser(SAParser):
         self._add_post(post_id, post_content)
 
     def parse(self):
-        super(SASearchResultParser, self).parse()
+        super(SearchResultParser, self).parse()
         self.get_post()
         self._parse_content()
 

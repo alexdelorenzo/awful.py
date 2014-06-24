@@ -1,9 +1,9 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 
-class SAReplyParser(SAParser):
+class ReplyParser(Parser):
     def __init__(self, id=None, reply=None, *args, **kwargs):
-        super(SAReplyParser, self).__init__(*args, id=id, **kwargs)
+        super(ReplyParser, self).__init__(*args, id=id, **kwargs)
         self.body = reply
         self.id = id
         self._base_url = "http://forums.somethingawful.com/newreply.php?action=newreply&"
@@ -13,7 +13,7 @@ class SAReplyParser(SAParser):
         self.body = reply
 
     def parse(self, reply=None):
-        super(SAReplyParser, self).parse()
+        super(ReplyParser, self).parse()
         self._fetch()
         self._parse_inputs()
         self.reply()

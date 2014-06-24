@@ -1,13 +1,13 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 
 
-class SAPageNaviParser(SAParser):
+class PageNaviParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SAPageNaviParser, self).__init__(*args, **kwargs)
+        super(PageNaviParser, self).__init__(*args, **kwargs)
 
     def parse(self):
-        super(SAPageNaviParser, self).parse()
+        super(PageNaviParser, self).parse()
         self._parse_page_selector()
 
     def _parse_page_selector(self):

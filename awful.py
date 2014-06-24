@@ -1,6 +1,6 @@
-from sa_tools.base.magic import SAMagic
+from sa_tools.base.magic import MagicMixin
 from sa_tools.session import SASession
-from sa_tools.index import SAIndex
+from sa_tools.index import Index
 
 import os, pickle, sys
 
@@ -44,10 +44,10 @@ class APSession(object):
         return str(sys.version_info.major)
 
 
-class AwfulPy(APSession, SAMagic):
+class AwfulPy(APSession, MagicMixin):
     def __init__(self, username, *args, **kwargs):
         super(AwfulPy, self).__init__(username, *args, **kwargs)
-        self.index = SAIndex(self.session)
+        self.index = Index(self.session)
         self.name = "AwfulPy"
         self.version = "v20140421"
 

@@ -1,13 +1,13 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 from sa_tools.search.search_result import SASearchResult
 
 
-class SASearchParser(SAParser):
+class SearchParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SASearchParser, self).__init__(*args, **kwargs)
+        super(SearchParser, self).__init__(*args, **kwargs)
 
     def parse(self):
-        super(SASearchParser, self).parse()
+        super(SearchParser, self).parse()
         self._parse_search_results()
 
     def _parse_search_results(self):

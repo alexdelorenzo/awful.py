@@ -1,9 +1,9 @@
-from sa_tools.base.dynamic import SADynamic
-from sa_tools.base.magic import SAMagic
+from sa_tools.base.dynamic import DynamicMixin
+from sa_tools.base.magic import MagicMixin
 from sa_tools.base.descriptors import IntOrNone
 
 
-class SAObj(SAMagic, SADynamic):
+class SAObj(MagicMixin, DynamicMixin):
     id = IntOrNone()
 
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):

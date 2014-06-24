@@ -1,15 +1,15 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 from sa_tools.base.sa_obj import SAObj
 
 
-class SAPostParser(SAParser):
+class PostParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SAPostParser, self).__init__(*args, **kwargs)
+        super(PostParser, self).__init__(*args, **kwargs)
         self.user_info = None
         self.body = None
 
     def parse(self):
-        super(SAPostParser, self).parse()
+        super(PostParser, self).parse()
         self.user_info = self.parse_user_info(content=self.content)
         self.body = self.parse_post_body(content=self.content)
 

@@ -1,22 +1,22 @@
-from sa_tools.base.list_obj import SAListObj
-from sa_tools.thread import SAThread
+from sa_tools.base.list_obj import SACollection
+from sa_tools.thread import Thread
 from sa_tools.base.descriptors import TriggerProperty
-from sa_tools.parsers.forum import SAForumParser
+from sa_tools.parsers.forum import ForumParser
 
 from collections import OrderedDict as ordered
 
 
-class SAForum(SAListObj):
+class Forum(SACollection):
     threads = TriggerProperty('read', 'threads')
     subforums = TriggerProperty('read', 'subforums')
 
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
-        super(SAForum, self).__init__(parent, id, content, name, page=page, **properties)
+        super(Forum, self).__init__(parent, id, content, name, page=page, **properties)
         self._base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self._base_url + '?forumid=' + str(id)
-        self.parser = SAForumParser(self)
+        self.parser = ForumParser(self)
 
         self.threads = ordered()
         self.subforums = subforums if subforums else ordered()
@@ -26,7 +26,7 @@ class SAForum(SAListObj):
             self.unread = False
             return
 
-        super(SAForum, self).read(pg)
+        super(Forum, self).read(pg)
         self._threads_persist(parse=True)
 
     @property
@@ -39,7 +39,7 @@ class SAForum(SAListObj):
         self.threads[sa_thread.id] = sa_thread
 
     def _add_subforum(self, forum_id, forum_name):
-        forum_obj = SAForum(self, forum_id, forum_name)
+        forum_obj = Forum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
 
     def _set_results(self):
@@ -72,7 +72,7 @@ class SAForum(SAListObj):
             val.parser.parse_info()
 
         else:
-            val = SAThread(self, thread_id, tr_thread)
+            val = Thread(self, thread_id, tr_thread)
 
         return val
 

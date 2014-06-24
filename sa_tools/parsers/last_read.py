@@ -1,14 +1,14 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 from math import floor
 
 
-class SALastReadParser(SAParser):
+class LastReadParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SALastReadParser, self).__init__(*args, **kwargs)
+        super(LastReadParser, self).__init__(*args, **kwargs)
 
     def parse(self):
-        super(SALastReadParser, self).parse()
+        super(LastReadParser, self).parse()
         self._parse_unread()
 
     def _parse_unread(self):

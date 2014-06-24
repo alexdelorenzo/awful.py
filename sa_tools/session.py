@@ -1,6 +1,6 @@
-from sa_tools.base.magic import SAMagic
-from sa_tools.poster import SAPoster
-from sa_tools.reply import SAReply
+from sa_tools.base.magic import MagicMixin
+from sa_tools.poster import Poster
+from sa_tools.reply import Reply
 
 from requests import Session
 from bs4 import BeautifulSoup
@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import time
 
 
-class SASession(SAMagic):
+class SASession(MagicMixin):
     def __init__(self, username, passwd):
         super(SASession, self).__init__(None)
         self.session = Session()
@@ -35,7 +35,7 @@ class SASession(SAMagic):
         self.session.headers['User-Agent'] = ua
 
     def _set_profile(self):
-        self.profile = SAPoster(self, self.id, name=self.username)
+        self.profile = Poster(self, self.id, name=self.username)
 
     def login(self, username, passwd):
         login_url = self._base_url + 'account.php'
@@ -54,7 +54,7 @@ class SASession(SAMagic):
         self.logged_in_at = time.strftime('%x @ %X', time.localtime())
 
     def reply(self, _id, body):
-        sa_reply = SAReply(self, id=_id, body=body)
+        sa_reply = Reply(self, id=_id, body=body)
         sa_reply.reply()
         self.replies.append(sa_reply)
 

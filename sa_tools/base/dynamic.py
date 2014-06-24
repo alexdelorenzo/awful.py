@@ -1,9 +1,9 @@
 from sa_tools.base.base import SABase
 
 
-class SADynamic(SABase):
+class DynamicMixin(SABase):
     def __init__(self, parent, *args, **properties):
-        super(SADynamic, self).__init__(parent, *args, **properties)
+        super(DynamicMixin, self).__init__(parent, *args, **properties)
         self.parent = parent
 
         self._substitutes = dict()

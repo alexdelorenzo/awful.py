@@ -3,9 +3,9 @@ from sa_tools.parsers.tools.parser_dispatch import ParserDispatch
 from sa_tools.parsers.tools.bs_wrapper import BSWrapper
 
 
-class SAParser(SAObj, ParserDispatch):
+class Parser(SAObj, ParserDispatch):
     def __init__(self, parent, wrapper=BSWrapper, parser_map=None, *args, **kwargs):
-        super(SAParser, self).__init__(parent, *args, parser_map=parser_map, **kwargs)
+        super(Parser, self).__init__(parent, *args, parser_map=parser_map, **kwargs)
         self.id = self.parent.id
         self.wrapper = None
         self.set_wrapper(wrapper)

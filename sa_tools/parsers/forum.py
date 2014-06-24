@@ -1,13 +1,13 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 from sa_tools.base.descriptors import IntOrNone
 
 
-class SAForumParser(SAParser):
+class ForumParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SAForumParser, self).__init__(*args, **kwargs)
+        super(ForumParser, self).__init__(*args, **kwargs)
 
     def parse(self):
-        super(SAForumParser, self).parse()
+        super(ForumParser, self).parse()
 
         if self.parent.is_index:
             return

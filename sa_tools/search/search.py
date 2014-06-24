@@ -1,18 +1,18 @@
 from bs4 import BeautifulSoup
 
-from sa_tools.base.list_obj import SAListObj
+from sa_tools.base.list_obj import SACollection
 from sa_tools.search import search_result
-from sa_tools.parsers.search import SASearchParser
+from sa_tools.parsers.search import SearchParser
 
 
-class SASearch(SAListObj):
+class SASearch(SACollection):
     def __init__(self, parent, query, q_type=None, **options):
         super(SASearch, self).__init__(parent, id=None, name=query, **options)
         self._base_url = "http://forums.somethingawful.com/search.php"
         self.query = query
         self.type = type
         self.results = None
-        self.parser = SASearchParser(self)
+        self.parser = SearchParser(self)
 
     def read(self, pg=1):
         super(SASearch, self).read(pg)
@@ -51,7 +51,7 @@ class SASearch(SAListObj):
         return self.session.get(jump_url)
 
 
-class SASearchNewStyle(SAListObj):
+class SASearchNewStyle(SACollection):
     def __init__(self, query, type, session, **options):
         super(SASearchNewStyle, self).__init__(name=query, session=session, **options)
         self._base_url = "http://forums.somethingawful.com/f/search"

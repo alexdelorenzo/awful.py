@@ -1,18 +1,18 @@
 from sa_tools.parsers.tools.regex_manager import RegexManager
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 from collections import OrderedDict as ordered
 from math import ceil
 
 
-class SAThreadParser(SAParser, RegexManager):
+class ThreadParser(Parser, RegexManager):
     def __init__(self, parent, *args, **kwargs):
-        super(SAThreadParser, self).__init__(parent, *args, **kwargs)
+        super(ThreadParser, self).__init__(parent, *args, **kwargs)
         self._dynamic_attr()
         self.post_gen = None
 
     def parse(self):
-        super(SAThreadParser, self).parse()
+        super(ThreadParser, self).parse()
         self.parse_info()
         self.post_gen = self.parse_posts(self.content)
 
@@ -45,7 +45,7 @@ class SAThreadParser(SAParser, RegexManager):
                  'views': self._parse_views,
                  'rating': self._parse_rating}
 
-        super(SAThreadParser, self).set_parser_map(parser_map)
+        super(ThreadParser, self).set_parser_map(parser_map)
 
     def set_regex_strs(self, regex_strs=None):
         dicts = dict, ordered
@@ -60,7 +60,7 @@ class SAThreadParser(SAParser, RegexManager):
                 {'lastpost': lastpost,
                  'rating': rating}
 
-        super(SAThreadParser, self).set_regex_strs(regex_strs)
+        super(ThreadParser, self).set_regex_strs(regex_strs)
 
     def _parse_from_url(self):
         self.parent.read()

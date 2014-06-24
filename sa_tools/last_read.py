@@ -1,9 +1,9 @@
 from sa_tools.base.sa_obj import SAObj
 from sa_tools.base.descriptors import TriggerProperty
-from sa_tools.parsers.last_read import SALastReadParser
+from sa_tools.parsers.last_read import LastReadParser
 
 
-class SALastRead(SAObj):
+class LastRead(SAObj):
     url_last_post = TriggerProperty('read', 'url_last_post')
     url_switch_off = TriggerProperty('read', 'url_switch_off')
 
@@ -11,12 +11,12 @@ class SALastRead(SAObj):
     unread_count = TriggerProperty('read', 'unread_count')
 
     def __init__(self, parent, id, content, name=None, **properties):
-        super(SALastRead, self).__init__(parent, id, content, name, **properties)
+        super(LastRead, self).__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages
         self.unread_count = 0
         self.unread_pages = 0
-        self.parser = SALastReadParser(self)
+        self.parser = LastReadParser(self)
         self._base_url = self.parent._base_url
 
         self._delete_extra()
@@ -28,7 +28,7 @@ class SALastRead(SAObj):
         return ' '.join((unread_posts, 'in', unread_pages))
 
     def read(self, pg=1):
-        super(SALastRead, self).read(pg)
+        super(LastRead, self).read(pg)
         self.page = self.parent.page
         self.pages = self.parent.pages
         self.parser.parse()

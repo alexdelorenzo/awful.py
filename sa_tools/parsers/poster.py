@@ -1,13 +1,13 @@
-from sa_tools.parsers.parser import SAParser
+from sa_tools.parsers.parser import Parser
 
 
-class SAProfileParser(SAParser):
+class ProfileParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SAProfileParser, self).__init__(*args, **kwargs)
+        super(ProfileParser, self).__init__(*args, **kwargs)
 
     def parse(self):
         if self.content:
-            super(SAProfileParser, self).parse()
+            super(ProfileParser, self).parse()
             self._parse_tr()
 
         else:

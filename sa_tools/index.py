@@ -1,13 +1,13 @@
-from sa_tools.forum import SAForum
-from sa_tools.base.magic import SAMagic
+from sa_tools.forum import Forum
+from sa_tools.base.magic import MagicMixin
 from sa_tools.section import SASection
 
 from collections import OrderedDict as ordered
 
 
-class SAIndex(SAMagic):
+class Index(MagicMixin):
     def __init__(self, sa_session):
-        super(SAIndex, self).__init__(sa_session)
+        super(Index, self).__init__(sa_session)
         self.name = "Forum index"
 
         self.session = sa_session.session
@@ -56,7 +56,7 @@ class SAIndex(SAMagic):
         forum_id = json['forumid'] if json['forumid'] else None
         title = json['title'] if 'title' in json else 'Index'
 
-        parent = SAForum(parent, id=forum_id, name=title)
+        parent = Forum(parent, id=forum_id, name=title)
         sa_children = []
 
         for child in children:

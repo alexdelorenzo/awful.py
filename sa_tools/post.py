@@ -18,10 +18,10 @@ class SAPost(SAObj):
             id, username = str(self.id), self.poster.name
             info_str = 'Reply #' + id + ' by ' + username
 
-        else:
-            info_str = super(SAPost, self).__repr__()
+            return info_str
 
-        return info_str
+        else:
+            return super(SAPost, self).__repr__()
 
     def __str__(self):
         return self.body

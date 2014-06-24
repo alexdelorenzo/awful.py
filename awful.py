@@ -9,22 +9,19 @@ class APSession(object):
     def __init__(self, username, passwd=None, save_session=False, *args, **kwargs):
         self.username = username
         self.passwd = passwd
-        self.session_bak = \
+        self._session_bak = \
             '.' + username.replace(' ', '_') + self._py_ver() + '.bak'
-        self.session = self._load_session(save_session)
+        self.session = self._get_session(save_session=save_session)
 
         del passwd
         del self.passwd
 
-    def _load_session(self, save_session=True):
-        backup_exists = os.path.exists(self.session_bak)
+    def _get_session(self, save_session=True):
+        backup_exists = os.path.exists(self._session_bak)
 #        session = None
 
         if backup_exists:
-            with open(self.session_bak, 'rb') as old_session:
-                print("Loading from backup: " + self.session_bak)
-                session = pickle.load(old_session)
-                print("Finished loading from backup.")
+            session = self._load_session()
 
         else:
             session = SASession(self.username, self.passwd)
@@ -34,8 +31,13 @@ class APSession(object):
 
         return session
 
+    def _load_session(self):
+        with open(self._session_bak, 'rb') as old_session:
+            print("Loading from backup: " + self._session_bak)
+            session = pickle.load(old_session)
+
     def _save_session(self, session):
-        with open(self.session_bak, 'wb') as session_file:
+        with open(self._session_bak, 'wb') as session_file:
             pickle.dump(session, session_file)
 
     def _py_ver(self):

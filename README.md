@@ -1,38 +1,28 @@
-AwfulPy
+awful.py
 =======
 
-#### SATools
-forums session, methods, and scraper. 
+#### sa_tools
+session, parsers and classes for forums, threads, posts, etc
 works with python 2.7 and 3.4, probably everything in between as well.
 
-##### AwfulQML
-preliminary gui to SATools. this is not ready for any kind of use. py3k only, qtquick controls from qt 5.2
+##### awful_qml
+py3k only, qtquick controls from qt 5.2, bad and broken.
 
 ![screenshot](http://i.imgur.com/R6odHSE.png "screenshot_of_app")
 
-don't get this banned. thanks.
 
 Usage
 =======
-## SATools
+## sa_tools
 
 Scroll to the very bottom for instructions on how to post.
 
 ### Authenticating
 
 ```python
-from AwfulPy import AwfulPy
-ap = AwfulPy('username', 'passwd')
-```
-
-Pass `save_session=False` if you'd rather not save cookies to disk. If your session is saved you only need to pass your username to AwfulPy
-
-```python
-In [1]: from AwfulPy import AwfulPy
-In [2]: username, passwd, not_paranoid = 'your_username', 'your_passwd', False
-In [3]: ap = AwfulPy(username, passwd, save_session=not_paranoid)
-Loading from backup: .salisbury shake_sa.bak
-
+In [1]: from awful import AwfulPy
+In [2]: ap = AwfulPy(username='username', passwd='passwd', save_session=False)
+Loading from backup: .username_sa.bak
 ```
 
 ### Browse Sections
@@ -160,7 +150,7 @@ In [53]: the_pos = ap.index.sections.forums[1].children[4].children[2]
 
 ### Forums and Navigation
 
-If forum.unread is True, call forum.read()
+If forum.unread is True, call forum.read(). Attribute access will trigger read() implicitly.
 
 ```python
 In [59]: the_pos
@@ -213,7 +203,7 @@ In [64]: pprint(the_pos.threads)
 
 ### Threads and LastRead
 
-If thread.unread is True, call thread.read()
+If thread.unread is True, call thread.read(). Attribute access will call read() implicitly.
 
 ```python
 In [26]: random_thread = the_pos.threads.popitem()[-1]

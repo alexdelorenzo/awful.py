@@ -5,9 +5,10 @@ from sa_tools.parsers.last_read import SALastReadParser
 
 class SALastRead(SAObj):
     url_last_post = TriggerProperty('read', 'url_last_post')
+    url_switch_off = TriggerProperty('read', 'url_switch_off')
+
     unread_pages = TriggerProperty('read', 'unread_pages')
     unread_count = TriggerProperty('read', 'unread_count')
-    url_switch_off = TriggerProperty('read', 'url_switch_off')
 
     def __init__(self, parent, id, content, name=None, **properties):
         super(SALastRead, self).__init__(parent, id, content, name, **properties)

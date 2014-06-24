@@ -1,5 +1,5 @@
 from unittest import TestCase
-from Tests.TestObjs.login_details import username, password
+from tests.TestObjs.login_details import username, password
 
 
 class SATest(TestCase):

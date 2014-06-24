@@ -1,1 +1,1 @@
-from AwfulPy import AwfulPy
+from awful import AwfulPy

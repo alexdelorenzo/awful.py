@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from sa_tools.base.list_obj import SACollection
+from sa_tools.base.sa_collection import SACollection
 from sa_tools.search import search_result
 from sa_tools.parsers.search import SearchParser
 
@@ -77,7 +77,7 @@ class SASearchNewStyle(SACollection):
                 self.options[name] = option
 
     def read(self, pg=1):
-        super().read(pg)
+        super(SASearch, self).read(pg)
 
         for result in self.results:
             result.read()

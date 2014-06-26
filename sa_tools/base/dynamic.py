@@ -1,7 +1,7 @@
-from sa_tools.base.base import SABase
+from sa_tools.base.base import Base
 
 
-class DynamicMixin(SABase):
+class DynamicMixin(Base):
     def __init__(self, parent, *args, **properties):
         super(DynamicMixin, self).__init__(parent, *args, **properties)
         self.parent = parent

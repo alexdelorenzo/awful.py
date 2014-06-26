@@ -19,9 +19,7 @@ class SASession(MagicMixin):
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
         self._set_profile()
-        self.replies = []
 
-        self.logged_in_at = time.strftime('%x @ %X', time.localtime())
         self.name = 'Session: login(), reply(), post_thread(), search(), etc'
 
     def _set_user_agent(self):
@@ -56,7 +54,6 @@ class SASession(MagicMixin):
     def reply(self, _id, body):
         sa_reply = Reply(self, id=_id, body=body)
         sa_reply.reply()
-        self.replies.append(sa_reply)
 
     def post_thread(self, forum_id, title, body, tag=None, poll=None):
         raise NotImplementedError()

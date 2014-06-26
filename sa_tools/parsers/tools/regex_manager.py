@@ -1,9 +1,9 @@
-from sa_tools.base.magic import SABase
+from sa_tools.base.magic import Base
 
 from re import compile
 
 
-class RegexManager(SABase):
+class RegexManager(Base):
     def __init__(self, parent, regex_map=None, regex_strs=None, *args, **kwargs):
         super(RegexManager, self).__init__(parent, *args, **kwargs)
         self.regex_map = dict()

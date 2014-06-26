@@ -5,6 +5,7 @@ from sa_tools.base.descriptors import IntOrNone
 
 class SAObj(MagicMixin, DynamicMixin):
     id = IntOrNone()
+    _base_url = 'http://forums.somethingawful.com/'
 
     def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
         super(SAObj, self).__init__(parent, **properties)
@@ -12,7 +13,6 @@ class SAObj(MagicMixin, DynamicMixin):
         self.session = self.parent.session
         self._content = content
         self.name = name
-        self._base_url = 'http://forums.somethingawful.com/'
         self.url = url if url else self._base_url
 
         self.unread = True

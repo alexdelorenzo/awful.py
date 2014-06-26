@@ -1,4 +1,4 @@
-from sa_tools.base.list_obj import SACollection
+from sa_tools.base.sa_collection import SACollection
 from sa_tools.thread import Thread
 from sa_tools.base.descriptors import TriggerProperty
 from sa_tools.parsers.forum import ForumParser

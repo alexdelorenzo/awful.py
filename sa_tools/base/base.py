@@ -1,4 +1,4 @@
-class SABase(object):
+class Base(object):
     def __init__(self, parent=None, *args, **kwargs):
         self.parent = parent
 
@@ -11,7 +11,7 @@ class SABase(object):
 
     @staticmethod
     def _is_magic(string, dunder='__'):
-        first_two_dunder = SABase._is_protected(string)
+        first_two_dunder = Base._is_protected(string)
 
         if not first_two_dunder:
             return first_two_dunder

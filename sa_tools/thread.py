@@ -1,14 +1,12 @@
-from sa_tools.parsers.thread import ThreadParser
-from sa_tools.base.list_obj import SACollection
+from sa_tools.base.sa_collection import SACollection
 from sa_tools.base.descriptors import TriggerProperty
+from sa_tools.parsers.thread import ThreadParser
 
 from sa_tools.post import Post
 from sa_tools.poster import Poster
 from sa_tools.last_read import LastRead
 
 from collections import OrderedDict as ordered
-
-from fn import _
 
 
 class Thread(SACollection):

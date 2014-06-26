@@ -1,6 +1,6 @@
-from sa_tools.base.base import SABase
+from sa_tools.base.base import Base
 
-class MagicMixin(SABase):
+class MagicMixin(Base):
     def __init__(self, parent, *args, **properties):
         super(MagicMixin, self).__init__(parent, *args, **properties)
         self.parent = parent

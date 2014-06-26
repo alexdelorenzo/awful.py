@@ -1,7 +1,7 @@
-from sa_tools.base.base import SABase
+from sa_tools.base.base import Base
 
 
-class SACache(SABase):
+class Cache(Base):
     def __init__(self, *args, **kwargs):
-        super(SACache, self).__init__(*args, **kwargs)
+        super(Cache, self).__init__(*args, **kwargs)
 

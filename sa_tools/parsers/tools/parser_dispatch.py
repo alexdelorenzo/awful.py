@@ -1,7 +1,7 @@
-from sa_tools.base.base import SABase
+from sa_tools.base.base import Base
 
 
-class ParserDispatch(SABase):
+class ParserDispatch(Base):
     def __init__(self, parent, parser_map=None, **kwargs):
         super(ParserDispatch, self).__init__(parent, **kwargs)
         self.parser_map = None

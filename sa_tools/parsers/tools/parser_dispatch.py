@@ -1,20 +1,31 @@
 from sa_tools.base.base import Base
+from bs4 import Tag
 
 
 class ParserDispatch(Base):
-    def __init__(self, parent, parser_map=None, **kwargs):
+    def __init__(self, parent: Base, parser_map: dict=None, **kwargs):
         super(ParserDispatch, self).__init__(parent, **kwargs)
         self.parser_map = None
         self.set_parser_map(parser_map)
 
-    def set_parser_map(self, parser_map=None):
-        if parser_map is None:
-            parser_map = dict()
+    def set_parser_map(self, parser_map: dict=None):
+        return set_parser_map(self, parser_map)
 
-        self.parser_map = parser_map
+    def dispatch(self, key, val=None, content: Tag=None, *args, **kwargs):
+        return dispatch(self, key, val, content, *args, **kwargs)
 
-    def dispatch(self, key, val=None, content=None):
-        if key not in self.parser_map:
-            return
 
-        self.parser_map[key](key, val, content)
+def set_parser_map(dispatcher: ParserDispatch, parser_map: dict=None) -> None:
+    if parser_map is None:
+        parser_map = dict()
+
+    setattr(dispatcher, 'parser_map', parser_map)
+
+
+def dispatch(dispatcher: ParserDispatch, key, val, content: Tag, *args, **kwargs):
+    if key not in dispatcher.parser_map:
+        return None
+
+    result = dispatcher.parser_map[key](key, val, content, *args, **kwargs)
+
+    return result

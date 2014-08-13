@@ -49,15 +49,15 @@ class SAObj(MagicMixin, DynamicMixin):
 
         self._reads += 1
 
-    def _apply_attr_dict(self, results, condition_map=None):
-        return apply_parsed_results(self, results, condition_map)
+    def _apply_key_vals(self, results, condition_map=None):
+        return apply_key_vals(self, results, condition_map)
 
 
-def apply_parsed_results(parent, results, condition_map=None):
-    if not condition_map:
+def apply_key_vals(parent, results, condition_map=None):
+    if condition_map is None:
         condition_map = dict()
 
-    for key, val in results.items():
+    for key, val in results:
         if key in condition_map:
             condition_map[key](val)
 

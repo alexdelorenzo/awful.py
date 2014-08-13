@@ -35,17 +35,7 @@ class SAObj(MagicMixin, DynamicMixin):
 
         self._content = response.content
 
-    def _apply_parsed_results(self, condition_map=None):
-        if not condition_map:
-            condition_map = dict()
 
-        results = self.parser.results
-
-        for key, val in results.items():
-            if key in condition_map:
-                condition_map[key](val)
-
-            setattr(self, key, val)
 
     def read(self, pg=1):
         """
@@ -58,3 +48,17 @@ class SAObj(MagicMixin, DynamicMixin):
             self.unread = False
 
         self._reads += 1
+
+    def _apply_attr_dict(self, results, condition_map=None):
+        return apply_parsed_results(self, results, condition_map)
+
+
+def apply_parsed_results(parent, results, condition_map=None):
+    if not condition_map:
+        condition_map = dict()
+
+    for key, val in results.items():
+        if key in condition_map:
+            condition_map[key](val)
+
+        setattr(parent, key, val)

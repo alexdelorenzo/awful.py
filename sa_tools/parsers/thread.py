@@ -67,6 +67,7 @@ class ThreadParser(Parser, RegexManager):
         self._parse_first_post()
         title = self.content.find('a', 'bclast').text.strip()
         self.parent.title = title
+        self.results['title'] = title
 
     def _parse_first_post(self, post_content=None):
         if not post_content:

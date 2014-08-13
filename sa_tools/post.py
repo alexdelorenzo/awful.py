@@ -16,7 +16,7 @@ class Post(SAObj):
     def __repr__(self):
         if self.body and self.poster:
             id, username = str(self.id), self.poster.name
-            info_str = 'Reply #' + id + ' by ' + username
+            info_str = 'Post by ' + username
 
             return info_str
 

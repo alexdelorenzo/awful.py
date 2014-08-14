@@ -26,7 +26,7 @@ class PageNavi(SAObj):
         self.page = self.parent.page
         self.pages = self.parent.pages
 
-    def read(self, pg=1):
+    def read(self, pg: int=1):
         super(PageNavi, self).read(pg)
 
         self.page = pg if pg <= self.pages else self.pages

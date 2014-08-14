@@ -8,7 +8,7 @@ class ForumParser(Parser):
     def __init__(self, *args, **kwargs):
         super(ForumParser, self).__init__(*args, **kwargs)
 
-    def parse(self):
+    def parse(self) -> (iter, iter):
         super(ForumParser, self).parse()
 
         if self.parent.is_index:
@@ -24,7 +24,7 @@ class ForumParser(Parser):
         return subforums_gen, threads_gen
 
 
-def parse_subforums(content: Tag):
+def parse_subforums(content: Tag) -> (str, str):
     tr_subforums = content.find_all('tr', 'subforum')
 
     for tr_subforum in tr_subforums:
@@ -35,7 +35,7 @@ def parse_subforums(content: Tag):
         yield subforum_id, name
 
 
-def parse_threads(content: Tag):
+def parse_threads(content: Tag) -> (int, Tag):
     content = content.find('div', id='content')
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
@@ -44,7 +44,7 @@ def parse_threads(content: Tag):
         yield thread_id, tr_thread
 
 
-def has_subforums(content: Tag):
+def has_subforums(content: Tag) -> bool:
     if content.table:
         return content.table['id'] == 'subforums'
 

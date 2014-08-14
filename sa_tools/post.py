@@ -30,13 +30,11 @@ class Post(SAObj):
         self.poster = Poster(self, id=user_id, content=content, name=name)
 
     def _set_results(self):
-        self._add_poster(*self.parser.user_info)
-        self.body = self.parser.body
+        self._apply_key_vals(self.parser.parse(self.content))
 
     def read(self):
         super(Post, self).read()
 
-        self.parser.parse()
         self._set_results()
         self._delete_extra()
 

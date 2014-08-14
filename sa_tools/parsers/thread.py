@@ -1,8 +1,11 @@
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
+#from sa_tools.last_read import LastRead
 
 from collections import OrderedDict as ordered
 from math import ceil
+
+from bs4 import Tag
 
 
 class ThreadParser(Parser, RegexManager):
@@ -10,13 +13,16 @@ class ThreadParser(Parser, RegexManager):
         super(ThreadParser, self).__init__(parent, *args, **kwargs)
         self._dynamic_attr()
 
-    def parse(self):
+    def parse(self) -> (iter, iter):
         super(ThreadParser, self).parse()
         self._delete_extra()
         info_gen = self.parse_info()
         post_gen = gen_posts(self.content)
 
         return info_gen, post_gen
+
+    def gen_posts(self):
+        return gen_posts(self.content)
 
     def parse_info(self):
         if self.content:
@@ -25,7 +31,7 @@ class ThreadParser(Parser, RegexManager):
         else:
             return self._parse_from_url()
 
-    def set_parser_map(self, parser_map=None):
+    def set_parser_map(self, parser_map=None) -> None:
         if not parser_map:
             parser_map = \
                 {'icon': parse_icon,
@@ -39,7 +45,7 @@ class ThreadParser(Parser, RegexManager):
 
         super(ThreadParser, self).set_parser_map(parser_map)
 
-    def set_regex_strs(self, regex_strs=None):
+    def set_regex_strs(self, regex_strs=None) -> None:
         dicts = dict, ordered
         is_dict = isinstance(regex_strs, dicts)
 
@@ -51,45 +57,48 @@ class ThreadParser(Parser, RegexManager):
         super(ThreadParser, self).set_regex_strs(regex_strs)
 
     def _parse_from_url(self):
-        #self.parent.read()
         yield parse_first_post(self.content)
         yield 'title', self.content.find('a', 'bclast').text.strip()
 
-    def gen_info(self, content=None):
-        if not self.content:
-            return
+    def gen_info(self, content=None) -> tuple:
+        if not content:
+            if not self.content:
+                return
+
+            content = self.content
 
         need_regex = 'rating', 'lastpost'
-        tds = self.content.find_all('td')
+        tds = content.find_all('td')
 
         for td in tds:
             td_class = td['class'][-1]
             text = td.text.strip()
 
             if td_class in need_regex:
-                pair = self.dispatch(td_class, text, td, self.regex_matches)
+                info_pair = self.dispatch(td_class, text, td, self.regex_matches)
 
             else:
-                pair = self.dispatch(td_class, text, td)
+                info_pair = self.dispatch(td_class, text, td)
 
-            if pair:
-                yield pair
+            if info_pair:
+                yield info_pair
 
                 if td_class == 'replies':
                     yield parse_page_count(text)
 
                 elif td_class == 'title':
-                    yield 'name', pair[-1]
+                    yield 'name', info_pair[-1]
+
+        yield parse_last_seen(content)
 
 
-def gen_posts(content):
+def gen_posts(content: Tag) -> (str, Tag):
     posts_content = content.find_all('table', 'post')
-    post_gen = ((post['id'][4:], post) for post in posts_content)
 
-    return post_gen
+    return ((post['id'][4:], post) for post in posts_content)
 
 
-def parse_first_post(content):
+def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):
     post_content = content.find('table', 'post')
 
     post_id = post_content['id'][4:]
@@ -98,13 +107,14 @@ def parse_first_post(content):
     return 'op', result
 
 
-def parse_icon(key, val, content):
+def parse_icon(key: str, val: str, content: Tag) -> (str, str):
     text = content.a['href'].split('posticon=')[-1]
 
     return key, text
 
 
-def parse_last_post(key, val, content, regex_matches):
+def parse_last_post(key: str, val: str, content: Tag, regex_matches) -> (str, dict):
+    #TODO: use the groups() method
     groups = 'time', 'date', 'user'
     matches = regex_matches(key, val)
     matches = dict(zip(groups, matches))
@@ -112,7 +122,7 @@ def parse_last_post(key, val, content, regex_matches):
     return key, matches
 
 
-def parse_author(key, val, content):
+def parse_author(key: str, val, content: Tag) -> (str, (str, str)):
     link = content.a
     author = link.text.strip()
     user_id = link['href'].split('id=')[-1]
@@ -121,36 +131,35 @@ def parse_author(key, val, content):
     return key, result
 
 
-def parse_page_count(val):
+def parse_page_count(val: str) -> (str, int):
     pages = ceil(int(val) / 40.0)
     key = 'pages'
 
     return key, pages
 
 
-def parse_last_seen(content):
+def parse_last_seen(content: Tag) -> (str, Tag):
     last_read = content.find('div', 'lastseen')
     key = 'last_read'
 
     return key, last_read
 
 
-def parse_title(key, val, content):
+def parse_title(key: str, val: str, content: Tag) -> (str, str):
     text = content.find('a', 'thread_title').text
     key = 'title'
 
     return key, text
 
 
-def parse_rating(key, val, content, regex_matches):
+def parse_rating(key: str, val, content: Tag, regex_matches) -> (str, dict):
     img_tag = content.img
 
     if img_tag:
         title_attr = img_tag['title'].strip()
 
         votes, avg = regex_matches(key, title_attr)
-        votes = int(votes)
-        avg = float(avg)
+        votes, avg = int(votes), float(avg)
         stars = round(avg)
 
         rating = {'votes': votes,
@@ -163,14 +172,14 @@ def parse_rating(key, val, content, regex_matches):
     return key, rating
 
 
-def parse_views(key, val, content):
+def parse_views(key: str, val, content: Tag) -> (str, int):
     views = int(content.text.strip())
 
     return key, views
 
 
-def parse_replies(key, val, content):
+def parse_replies(key: str, val, content: Tag) -> (str, int):
     parse_page_count(val)
     reply_count = int(content.text.strip())
 
-    return  key, reply_count
+    return key, reply_count

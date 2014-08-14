@@ -2,12 +2,14 @@ from sa_tools.base.dynamic import DynamicMixin
 from sa_tools.base.magic import MagicMixin
 from sa_tools.base.descriptors import IntOrNone
 
+from bs4 import Tag
+
 
 class SAObj(MagicMixin, DynamicMixin):
     id = IntOrNone()
     _base_url = 'http://forums.somethingawful.com/'
 
-    def __init__(self, parent, id=None, content=None, name=None, url=None, **properties):
+    def __init__(self, parent, id: int=None, content: Tag=None, name: str=None, url: str=None, **properties: dict):
         super(SAObj, self).__init__(parent, **properties)
         self.id = id
         self.session = self.parent.session
@@ -20,7 +22,7 @@ class SAObj(MagicMixin, DynamicMixin):
 
         self._dynamic_attr()
 
-    def _fetch(self, url=None, params=None):
+    def _fetch(self, url: str=None, params: dict=None) -> None:
         if not url:
             url = self.url
 
@@ -35,9 +37,7 @@ class SAObj(MagicMixin, DynamicMixin):
 
         self._content = response.content
 
-
-
-    def read(self, pg=1):
+    def read(self, pg: int=1) -> None:
         """
         Call _dynamic_attr() and _delete_extra() for full
         sa_obj interop.
@@ -49,11 +49,11 @@ class SAObj(MagicMixin, DynamicMixin):
 
         self._reads += 1
 
-    def _apply_key_vals(self, results, condition_map=None):
-        return apply_key_vals(self, results, condition_map)
+    def _apply_key_vals(self, results, condition_map: dict=None) -> None:
+        apply_key_vals(self, results, condition_map)
 
 
-def apply_key_vals(parent, results, condition_map=None):
+def apply_key_vals(parent, results: iter, condition_map: dict=None) -> None:
     if condition_map is None:
         condition_map = dict()
 

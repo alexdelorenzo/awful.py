@@ -3,14 +3,14 @@ class Base(object):
         self.parent = parent
 
     @staticmethod
-    def _is_protected(string):
+    def _is_protected(string: str) -> bool:
         under = '_'
         first_under = string[0] == under
 
         return first_under
 
     @staticmethod
-    def _is_magic(string, dunder='__'):
+    def _is_magic(string: str, dunder: str='__') -> bool:
         first_two_dunder = Base._is_protected(string)
 
         if not first_two_dunder:
@@ -22,7 +22,7 @@ class Base(object):
         return is_magic
 
     @staticmethod
-    def _is_private(string, dunder='__'):
+    def _is_private(string: str, dunder: str='__') -> bool:
         first_two_dunder = string[:2] == dunder
 
         return first_two_dunder

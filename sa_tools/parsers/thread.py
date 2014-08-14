@@ -44,13 +44,9 @@ class ThreadParser(Parser, RegexManager):
         is_dict = isinstance(regex_strs, dicts)
 
         if not is_dict:
-            lastpost, rating = \
-                "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)", \
-                "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"
-
             regex_strs = \
-                {'lastpost': lastpost,
-                 'rating': rating}
+                {'lastpost': "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)",
+                 'rating': "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"}
 
         super(ThreadParser, self).set_regex_strs(regex_strs)
 

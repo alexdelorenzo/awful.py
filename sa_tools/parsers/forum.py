@@ -1,6 +1,8 @@
 from sa_tools.parsers.parser import Parser
 from sa_tools.base.descriptors import IntOrNone
 
+from bs4 import Tag
+
 
 class ForumParser(Parser):
     def __init__(self, *args, **kwargs):
@@ -12,46 +14,39 @@ class ForumParser(Parser):
         if self.parent.is_index:
             return
 
-        self.parse_subforums()
-        self.parse_threads()
-
-    def parse_subforums(self):
-        if not self.has_subforums():
-            return
-
-        elif self.parent.children:
+        if self.parent.children:
             self.parent._subforums_from_children()
 
-        else:
-            content = self.content
-            tr_subforums = content.find_all('tr', 'subforum')
+        subforums_gen = \
+            parse_subforums(self.content) if has_subforums(self.content) else None
+        threads_gen = parse_threads(self.content)
 
-            for tr_subforum in tr_subforums:
-                href = tr_subforum.a['href']
-                subforum_id = href.split("forumid=")[-1]
-                name = tr_subforum.a.text
+        return subforums_gen, threads_gen
 
-                self.parent._add_subforum(subforum_id, name)
 
-    def parse_threads(self):
-        if self.unread:
-            self.parse()
+def parse_subforums(content: Tag):
+    tr_subforums = content.find_all('tr', 'subforum')
 
-        self.content = self.content.find('div', id='content')
-        thread_blocks = self.content.find_all('tr', 'thread', id=True)
+    for tr_subforum in tr_subforums:
+        href = tr_subforum.a['href']
+        subforum_id = href.split("forumid=")[-1]
+        name = tr_subforum.a.text
 
-        for tr_thread in thread_blocks:
-            thread_id = IntOrNone.int_check(tr_thread['id'][6:])
-            self.parent._add_thread(thread_id, tr_thread)
+        yield subforum_id, name
 
-    def has_subforums(self):
-        if self.children:
-            return True
 
-        content = self.content
+def parse_threads(content: Tag):
+    content = content.find('div', id='content')
+    thread_blocks = content.find_all('tr', 'thread', id=True)
 
-        if content.table:
-            return content.table['id'] == 'subforums'
+    for tr_thread in thread_blocks:
+        thread_id = IntOrNone.int_check(tr_thread['id'][6:])
+        yield thread_id, tr_thread
 
-        else:
-            return False
+
+def has_subforums(content: Tag):
+    if content.table:
+        return content.table['id'] == 'subforums'
+
+    else:
+        return False

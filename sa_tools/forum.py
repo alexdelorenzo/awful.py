@@ -4,6 +4,7 @@ from sa_tools.base.descriptors import TriggerProperty
 from sa_tools.parsers.forum import ForumParser
 
 from collections import OrderedDict as ordered
+from itertools import chain
 
 
 class Forum(SACollection):
@@ -28,6 +29,13 @@ class Forum(SACollection):
 
         super(Forum, self).read(pg)
         self._threads_persist(parse=True)
+        subforum_gen, thread_gen = self.parser.parse()
+
+        if subforum_gen:
+            self._add_subforums(subforum_gen)
+
+        self._add_threads(thread_gen)
+
 
     @property
     def is_index(self):
@@ -37,6 +45,14 @@ class Forum(SACollection):
     def _add_thread(self, thread_id, thread_content):
         sa_thread = self._thread_obj_persist(thread_id, thread_content)
         self.threads[sa_thread.id] = sa_thread
+
+    def _add_threads(self, threads_gen):
+        for thread_id, content in threads_gen:
+            self._add_thread(thread_id, content)
+
+    def _add_subforums(self, subforums_gen):
+        for subforum_id, name in subforums_gen:
+            self._add_subforum(subforum_id, name)
 
     def _add_subforum(self, forum_id, forum_name):
         forum_obj = Forum(self, forum_id, forum_name)

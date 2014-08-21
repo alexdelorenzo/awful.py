@@ -67,26 +67,6 @@ class TriggerProperty(WeakRefDescriptor):
         return will_trigger
 
 
-#
-# class TriggerLimit(object):
-#     def __init__(self, interval=None, *args, **kwargs):
-#         if interval is None:
-#             interval = [0, None]
-#
-#         super(TriggerLimit, self).__init__(*args, **kwargs)
-#         lower_lim, upper_lim = interval
-#         self.lower_lim = lower_lim
-#         self.upper_lim = upper_lim
-#
-#     def _within_limits(self, value, instance):
-#         count, trig_lim = self.access_count, self.upper_lim
-#         reached_access_lim = count >= self.lower_lim
-#         below_trig_lim = count <= trig_lim if trig_lim else True
-#         within_limits = reached_access_lim and below_trig_lim
-#
-#         return within_limits
-
-
 class IntOrNoneTrigger(TriggerProperty, IntOrNone):
     def __init__(self, trigger=None, initial=None, value=None, name=None, *args, **kwargs):
         pass

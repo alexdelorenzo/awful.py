@@ -1,5 +1,6 @@
 from sa_tools.base.base import Base
 
+# This literally does nothi
 
 class DynamicMixin(Base):
     def __init__(self, parent, *args, **properties):
@@ -13,8 +14,6 @@ class DynamicMixin(Base):
     def _delete_extra(self, delete_protected=True):
         """
         Second runner up.
-
-        If unread, call this at the end of your overridden read()
         """
         significant_false_vals = False, 0, dict()
         delete_these = list(self.__dict__.items())
@@ -32,8 +31,6 @@ class DynamicMixin(Base):
     def _dynamic_attr(self):
         """
         Consolation prize.
-
-        If unread, call this at the end of your overridden read()
         """
         if not self._properties:
             return
@@ -63,7 +60,7 @@ class DynamicMixin(Base):
 
     def _dynamic_property_read(self, name, val, condition=None):
         """
-        This'll get refactored out in a much saner way.
+        Evidence of an atrophied brain.
         """
         new_name = '_' + name
 

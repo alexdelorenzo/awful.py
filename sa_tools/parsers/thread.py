@@ -11,7 +11,6 @@ from bs4 import Tag
 class ThreadParser(Parser, RegexManager):
     def __init__(self, parent, *args, **kwargs):
         super(ThreadParser, self).__init__(parent, *args, **kwargs)
-        self._dynamic_attr()
 
     def parse(self) -> (iter, iter):
         super(ThreadParser, self).parse()

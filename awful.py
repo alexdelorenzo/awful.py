@@ -2,11 +2,13 @@ from sa_tools.base.magic import MagicMixin
 from sa_tools.session import SASession
 from sa_tools.index import Index
 
-import os, pickle, sys
+import os
+import pickle
+import sys
 
 
 class APSession(object):
-    def __init__(self, username, passwd=None, save_session=False, *args, **kwargs):
+    def __init__(self, username: str, passwd: str=None, save_session: bool=False, *args, **kwargs):
         self.username = username
         self.passwd = passwd
         self._session_bak = \
@@ -16,7 +18,7 @@ class APSession(object):
         del passwd
         del self.passwd
 
-    def _get_session(self, save_session=True):
+    def _get_session(self, save_session: bool=True) -> SASession:
         backup_exists = os.path.exists(self._session_bak)
 #        session = None
 
@@ -31,16 +33,16 @@ class APSession(object):
 
         return session
 
-    def _load_session(self):
+    def _load_session(self) -> None:
         with open(self._session_bak, 'rb') as old_session:
             print("Loading from backup: " + self._session_bak)
             session = pickle.load(old_session)
 
-    def _save_session(self, session):
+    def _save_session(self, session: SASession) -> None:
         with open(self._session_bak, 'wb') as session_file:
             pickle.dump(session, session_file)
 
-    def _py_ver(self):
+    def _py_ver(self) -> str:
         return str(sys.version_info.major)
 
 
@@ -48,11 +50,11 @@ class AwfulPy(APSession, MagicMixin):
     def __init__(self, username, *args, **kwargs):
         super(AwfulPy, self).__init__(username, *args, **kwargs)
         self.index = Index(self.session)
-        self.name = "AwfulPy"
-        self.version = "v20140421"
+        self.name = "awful.py"
+        self.version = "v0.2014.08.21"
 
     def __repr__(self):
-        basic = self.name + ' ' + self.version + '.\n'
+        info = '[' + self.name + ' ' + self.version + '] '
         acct = 'Logged in as ' + self.username
-        since = ' since ' + self.session.logged_in_at
-        return basic + acct + since
+        login_time = ' on ' + self.session.logged_in_at
+        return info + acct + login_time

@@ -21,8 +21,6 @@ class Thread(SACollection):
         self._parse_info()
         self.name = self.title
 
-        self._dynamic_attr()
-
     def read(self, page=1):
         self.posts = ordered()
 
@@ -53,7 +51,7 @@ class Thread(SACollection):
     def _apply_parsed_results(self, results):
         condition_map = {'author': expand(self._add_author),
                          'last_read': self._add_last_read}
-        super(Thread, self)._apply_key_vals(results, condition_map=condition_map)
+        self._apply_key_vals(results, condition_map=condition_map)
 
     def _parse_info(self):
         info_gen = self.parser.parse_info()
@@ -68,5 +66,5 @@ class Thread(SACollection):
 
 def expand(func):
     def new(arg):
-        func(*arg)
+        return func(*arg)
     return new

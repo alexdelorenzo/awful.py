@@ -29,13 +29,13 @@ class Forum(SACollection):
 
         super(Forum, self).read(pg)
         self._threads_persist(parse=True)
-        subforum_gen, thread_gen = self.parser.parse()
+        info_gen, subforum_gen, thread_gen = self.parser.parse(self._content)
 
         if subforum_gen:
             self._add_subforums(subforum_gen)
 
         self._add_threads(thread_gen)
-
+        self._apply_key_vals(info_gen)
 
     @property
     def is_index(self):
@@ -58,17 +58,14 @@ class Forum(SACollection):
         forum_obj = Forum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
 
-    def _set_results(self):
-        pass
-
     def _threads_persist(self, parse=True):
-        # TODO: make this more generalized
+        # TODO: get rid of this shit
 
         self._old_threads = self.threads
         self.threads = ordered()
 
         if parse:
-            self.parser.parse()
+            self.parser.parse(self._content)
 
         self._old_threads = None
         self._delete_extra()

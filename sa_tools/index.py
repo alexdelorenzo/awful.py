@@ -6,7 +6,7 @@ from collections import OrderedDict as ordered
 
 
 class Index(MagicMixin):
-    def __init__(self, sa_session):
+    def __init__(self, sa_session, *args, **kwargs):
         super(Index, self).__init__(sa_session)
         self.name = "Forum index"
 

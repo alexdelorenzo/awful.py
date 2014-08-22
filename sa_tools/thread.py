@@ -18,14 +18,14 @@ class Thread(SACollection):
         self.url = self._base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = ordered()
         self.parser = ThreadParser(self)
-        self._parse_info()
+        self._apply_info()
         self.name = self.title
 
     def read(self, page=1):
         self.posts = ordered()
 
         super(Thread, self).read(page)
-        self._parse_posts()
+        self._add_posts()
         self._delete_extra()
 
     def _add_post(self, post_id, post_content, is_op=False):
@@ -53,11 +53,11 @@ class Thread(SACollection):
                          'last_read': self._add_last_read}
         self._apply_key_vals(results, condition_map=condition_map)
 
-    def _parse_info(self):
+    def _apply_info(self):
         info_gen = self.parser.parse_info()
         self._apply_parsed_results(info_gen)
 
-    def _parse_posts(self):
+    def _add_posts(self):
         post_gen = self.parser.gen_posts()
 
         for post_info in post_gen:

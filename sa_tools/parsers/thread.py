@@ -144,7 +144,7 @@ def parse_last_seen(content: Tag) -> (str, Tag):
     return key, last_read
 
 
-def parse_title(key: str, val: str, content: Tag) -> (str, str):
+def parse_title(key: str, val, content: Tag) -> (str, str):
     text = content.find('a', 'thread_title').text
     key = 'title'
 

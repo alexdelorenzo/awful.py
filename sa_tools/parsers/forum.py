@@ -2,14 +2,13 @@ from sa_tools.parsers.parser import Parser
 from sa_tools.base.descriptors import IntOrNone
 from sa_tools.session import SASession, Session
 
-from requests import Session
 from bs4 import Tag, BeautifulSoup
-from functools import singledispatch
+from functools import singledispatch, lru_cache
 
 
 class ForumParser(Parser):
     forum_ids = \
-        dict([(1, 'gbs'),
+        dict(((1, 'gbs'),
              (26, 'fyad'),
              (268, 'byob'),
              (44, 'games'),
@@ -41,13 +40,14 @@ class ForumParser(Parser):
              (241, 'citysucks'),
              (188, 'qcs'),
              (21, 'goldmine'),
-             (25, 'gas')])
+             (25, 'gas')))
 
     def __init__(self, *args, **kwargs):
         super(ForumParser, self).__init__(*args, **kwargs)
+        self.wrapper.wrap_parent_content()
 
     def parse(self, content: Tag) -> (iter, iter, iter):
-        super(ForumParser, self).parse()
+        content = super(ForumParser, self).parse(content)
 
         if self.parent.is_index:
             return
@@ -64,6 +64,7 @@ class ForumParser(Parser):
 
 
 def parse_subforums(content: Tag) -> (str, str):
+    print('subforums', type(content))
     tr_subforums = content.find_all('tr', 'subforum')
 
     for tr_subforum in tr_subforums:
@@ -75,6 +76,7 @@ def parse_subforums(content: Tag) -> (str, str):
 
 
 def parse_threads(content: Tag) -> (int, Tag):
+    print('threads ', type(content))
     content = content.find('div', id='content')
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
@@ -84,14 +86,12 @@ def parse_threads(content: Tag) -> (int, Tag):
         yield thread_id, tr_thread
 
 
-def parse_info(forum_id, forum_dict) -> (str, str):
+def parse_info(forum_id: int, forum_dict: dict) -> (str, str):
     yield 'icon_url', forum_icon(forum_id, forum_dict)
 
 
 def get_icon_map(session: Session) -> (int, str):
-    index = session.get("http://forums.somethingawful.com")
-    bs_index = BeautifulSoup(index.content)
-    forums = bs_index.find_all('tr', 'forum')
+    forums = get_index(session).find_all('tr', 'forum')
 
     for forum in forums:
         forum_id = int(forum.a['href'].split('=')[-1])
@@ -101,11 +101,19 @@ def get_icon_map(session: Session) -> (int, str):
 
 
 def has_subforums(content: Tag) -> bool:
+    print(type(content))
     if content.table:
         return content.table['id'] == 'subforums'
 
     else:
         return False
+
+
+@lru_cache(maxsize=None)
+def get_index(session: Session) -> Tag:
+    index = session.get("http://forums.somethingawful.com")
+
+    return BeautifulSoup(index.content)
 
 
 def forum_icon(forum_id: int, forum_dict: dict, session: Session=None) -> str or None:

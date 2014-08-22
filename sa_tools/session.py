@@ -9,7 +9,7 @@ import time
 
 
 class SASession(MagicMixin):
-    def __init__(self, username, passwd):
+    def __init__(self, username: str, passwd: str):
         super(SASession, self).__init__(None)
         self.session = Session()
         self._set_user_agent()
@@ -35,7 +35,7 @@ class SASession(MagicMixin):
     def _set_profile(self):
         self.profile = Poster(self, self.id, name=self.username)
 
-    def login(self, username, passwd):
+    def login(self, username: str, passwd: str):
         login_url = self._base_url + 'account.php'
 
         post_data = {'action': 'loginform'}
@@ -51,7 +51,7 @@ class SASession(MagicMixin):
 
         self.logged_in_at = time.strftime('%x @ %X', time.localtime())
 
-    def reply(self, _id, body):
+    def reply(self, _id: int, body: str):
         sa_reply = Reply(self, id=_id, body=body)
         sa_reply.reply()
 

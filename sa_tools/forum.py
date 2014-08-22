@@ -1,10 +1,9 @@
 from sa_tools.base.sa_collection import SACollection
-from sa_tools.thread import Thread
 from sa_tools.base.descriptors import TriggerProperty
 from sa_tools.parsers.forum import ForumParser
+from sa_tools.thread import Thread
 
 from collections import OrderedDict as ordered
-from itertools import chain
 
 
 class Forum(SACollection):
@@ -18,7 +17,6 @@ class Forum(SACollection):
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self._base_url + '?forumid=' + str(id)
         self.parser = ForumParser(self)
-
         self.threads = ordered()
         self.subforums = subforums if subforums else ordered()
 
@@ -28,7 +26,7 @@ class Forum(SACollection):
             return
 
         super(Forum, self).read(pg)
-        self._threads_persist(parse=True)
+
         info_gen, subforum_gen, thread_gen = self.parser.parse(self._content)
 
         if subforum_gen:
@@ -43,7 +41,8 @@ class Forum(SACollection):
         return self.id in index_ids
 
     def _add_thread(self, thread_id, thread_content):
-        sa_thread = self._thread_obj_persist(thread_id, thread_content)
+        #sa_thread = self._thread_obj_persist(thread_id, thread_content)
+        sa_thread = Thread(self, thread_id, thread_content)
         self.threads[sa_thread.id] = sa_thread
 
     def _add_threads(self, threads_gen):
@@ -58,39 +57,40 @@ class Forum(SACollection):
         forum_obj = Forum(self, forum_id, forum_name)
         self.subforums[forum_obj.id] = forum_obj
 
-    def _threads_persist(self, parse=True):
-        # TODO: get rid of this shit
-
-        self._old_threads = self.threads
-        self.threads = ordered()
-
-        if parse:
-            self.parser.parse(self._content)
-
-        self._old_threads = None
-        self._delete_extra()
-
-    def _thread_obj_persist(self, thread_id, tr_thread):
-        threads_exist = self._old_threads
-
-        if threads_exist:
-            is_in_old = thread_id in threads_exist
-
-        else:
-            is_in_old = False
-
-        if is_in_old:
-            val = self._old_threads[thread_id]
-            val.parser.wrapper.content = tr_thread
-            val.parser.parse_info()
-
-        else:
-            val = Thread(self, thread_id, tr_thread)
-
-        return val
-
     def _subforums_from_children(self):
         if self.children and not self.subforums:
             for subforum in self.children:
                 _id = subforum.id
                 self.subforums[_id] = subforum
+
+    # def _threads_persist(self, parse=True):
+    #     # TODO: get rid of this shit
+    #
+    #     self._old_threads = self.threads
+    #     self.threads = ordered()
+    #
+    #     if parse:
+    #         self.parser.parse(self._content)
+    #
+    #     self._old_threads = None
+    #     self._delete_extra()
+    #
+    # def _thread_obj_persist(self, thread_id, tr_thread):
+    #     #TODO: seriously get rid of it
+    #     threads_exist = self._old_threads
+    #
+    #     if threads_exist:
+    #         is_in_old = thread_id in threads_exist
+    #
+    #     else:
+    #         is_in_old = False
+    #
+    #     if is_in_old:
+    #         val = self._old_threads[thread_id]
+    #         val.parser.wrapper.content = tr_thread
+    #         val.parser.parse_info()
+    #
+    #     else:
+    #         val = Thread(self, thread_id, tr_thread)
+    #
+    #     return val

@@ -20,7 +20,7 @@ class SAObj(MagicMixin, DynamicMixin):
         self.unread = True
         self._reads = 0
 
-        self._dynamic_attr()
+        #self._dynamic_attr()
 
     def _fetch(self, url: str=None, params: dict=None) -> None:
         if not url:

@@ -39,7 +39,7 @@ class Cache(Base):
              (25, 'gas')])
 
     def __init__(self, *args, **kwargs):
-        super(Cache, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @lru_cache(maxsize=512)
     def get(self, *args, **kwargs):

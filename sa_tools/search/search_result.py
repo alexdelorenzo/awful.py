@@ -8,7 +8,7 @@ from sa_tools.post import Post
 
 class SASearchResult(SAObj):
     def __init__(self, parent=None, id=None, name=None, content=None, **properties):
-        super(SASearchResult, self).__init__(parent, id, name=name, content=content, **properties)
+        super().__init__(parent, id, name=name, content=content, **properties)
         self.header = self.parent._table_header
         self.parser = SearchResultParser(self)
         self.forum = None

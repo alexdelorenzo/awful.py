@@ -5,10 +5,10 @@ from sa_tools.parsers.parser import Parser
 
 class NaviParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(NaviParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def parse(self):
-        super(NaviParser, self).parse()
+        super().parse()
 
     @staticmethod
     def parse_navi(parent):

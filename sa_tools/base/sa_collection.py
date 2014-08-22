@@ -16,16 +16,16 @@ class SACollection(SAObj):
         self._substitutes = \
             {'collection': '_collection',
              'children': '_children'}
-        super(SACollection, self).__init__(*args, **properties)
+        super().__init__(*args, **properties)
 
-    def _setup_navi(self, pg=1):
+    def _setup_navi(self, pg: int=1) -> None:
         if not self.navi:
             navi_content = NaviParser.parse_navi(self)
             self.navi = PageNavi(self, content=navi_content)
 
         self.navi.read(pg)
 
-    def _index_to_pg(self, pg):
+    def _index_to_pg(self, pg: int) -> int:
         """
         Translates pg param to conform to a positive pg number.
 
@@ -42,10 +42,10 @@ class SACollection(SAObj):
 
         return pg
 
-    def read(self, pg=1):
+    def read(self, pg: int=1) -> None:
         pg = self._index_to_pg(pg)
 
-        super(SACollection, self).read(pg)
+        super().read(pg)
 
         url = self.url + '&' + self._page_keyword + '=' + str(pg)
         self._fetch(url)

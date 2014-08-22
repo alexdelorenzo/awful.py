@@ -1,31 +1,23 @@
-from bs4 import BeautifulSoup, element
+from bs4 import BeautifulSoup, element, Tag
 
 
 class BSWrapper(object):
     def __init__(self, parent, *args, **kwargs):
-        super(BSWrapper, self).__init__()
+        super().__init__()
         self.parent = parent
-        self._bs_wrappers = BeautifulSoup, element.Tag
-        self.wrap_parent_content()
+        self._bs_wrappers = BeautifulSoup, Tag
+        if self.parent:
+            self.wrap_parent_content()
+
+    @staticmethod
+    def wrap_content(content: str or bytes or Tag) -> BeautifulSoup:
+        return wrap_content(content)
 
     def wrap_parent_content(self):
         if self.content is None:
             return
 
-        if not self._is_wrapped():
-            try:
-                self.content = BeautifulSoup(self.content, 'lxml')
-
-            except:
-                self.content = BeautifulSoup(self.content)
-
-    def _is_wrapped(self, content=None):
-        if not content:
-            content = self.content
-
-        content_type = type(content)
-
-        return content_type in self._bs_wrappers
+        self.parent._content = wrap_content(self.content)
 
     @property
     def content(self):
@@ -35,3 +27,20 @@ class BSWrapper(object):
     def content(self, new_val):
         self.parent._content = new_val
         self.wrap_parent_content()
+
+
+def wrap_content(content: str or bytes or Tag) -> BeautifulSoup:
+    if not is_wrapped(content):
+        try:
+            content = BeautifulSoup(content, 'lxml')
+
+        except:
+            content = BeautifulSoup(content)
+
+    return content
+
+
+def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag)):
+    content_type = type(content)
+
+    return content_type in wrappers

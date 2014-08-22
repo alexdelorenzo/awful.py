@@ -9,18 +9,16 @@ class SAObj(MagicMixin, DynamicMixin):
     id = IntOrNone()
     _base_url = 'http://forums.somethingawful.com/'
 
-    def __init__(self, parent, id: int=None, content: Tag=None, name: str=None, url: str=None, **properties: dict):
-        super(SAObj, self).__init__(parent, **properties)
+    def __init__(self, parent=None, id: int=None, content: Tag=None, name: str=None, url: str=None, **properties: dict):
+        super().__init__(parent, **properties)
         self.id = id
-        self.session = self.parent.session
+        self.session = None if not self.parent else self.parent.session
         self._content = content
         self.name = name
         self.url = url if url else self._base_url
 
         self.unread = True
         self._reads = 0
-
-        self._dynamic_attr()
 
     def _fetch(self, url: str=None, params: dict=None) -> None:
         if not url:

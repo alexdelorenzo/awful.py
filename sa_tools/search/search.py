@@ -7,7 +7,7 @@ from sa_tools.parsers.search import SearchParser
 
 class SASearch(SACollection):
     def __init__(self, parent, query, q_type=None, **options):
-        super(SASearch, self).__init__(parent, id=None, name=query, **options)
+        super().__init__(parent, id=None, name=query, **options)
         self._base_url = "http://forums.somethingawful.com/search.php"
         self.query = query
         self.type = type
@@ -15,7 +15,7 @@ class SASearch(SACollection):
         self.parser = SearchParser(self)
 
     def read(self, pg=1):
-        super(SASearch, self).read(pg)
+        super().read(pg)
 
         self.parser.parse()
 
@@ -53,7 +53,7 @@ class SASearch(SACollection):
 
 class SASearchNewStyle(SACollection):
     def __init__(self, query, type, session, **options):
-        super(SASearchNewStyle, self).__init__(name=query, session=session, **options)
+        super().__init__(name=query, session=session, **options)
         self._base_url = "http://forums.somethingawful.com/f/search"
         self.query = query
         self.lihllllltype = type
@@ -77,7 +77,7 @@ class SASearchNewStyle(SACollection):
                 self.options[name] = option
 
     def read(self, pg=1):
-        super(SASearch, self).read(pg)
+        super().read(pg)
 
         for result in self.results:
             result.read()

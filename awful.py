@@ -7,12 +7,16 @@ import pickle
 import sys
 
 
+def py_ver() -> str:
+    return str(sys.version_info.major)
+
+
 class APSession(object):
     def __init__(self, username: str, passwd: str=None, save_session: bool=False, *args, **kwargs):
         self.username = username
         self.passwd = passwd
         self._session_bak = \
-            '.' + username.replace(' ', '_') + self._py_ver() + '.bak'
+            '.' + username.replace(' ', '_') + py_ver() + '.bak'
         self.session = self._get_session(save_session=save_session)
 
         del passwd
@@ -38,20 +42,19 @@ class APSession(object):
             print("Loading from backup: " + self._session_bak)
             session = pickle.load(old_session)
 
+        return session
+
     def _save_session(self, session: SASession) -> None:
         with open(self._session_bak, 'wb') as session_file:
             pickle.dump(session, session_file)
 
-    def _py_ver(self) -> str:
-        return str(sys.version_info.major)
-
 
 class AwfulPy(APSession, MagicMixin):
     def __init__(self, username, *args, **kwargs):
-        super(AwfulPy, self).__init__(username, *args, **kwargs)
+        super().__init__(username, *args, **kwargs)
         self.index = Index(self.session)
         self.name = "awful.py"
-        self.version = "v0.2014.08.21"
+        self.version = "v0.2014.08.24"
 
     def __repr__(self):
         info = '[' + self.name + ' ' + self.version + '] '

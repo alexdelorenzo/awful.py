@@ -3,7 +3,7 @@ from weakref import WeakKeyDictionary as wkdict
 
 class WeakRefDescriptor(object):
     def __init__(self, value=None, *args, **kwargs):
-        super(WeakRefDescriptor, self).__init__()
+        super().__init__()
         self.value = value
         self.weak_ref = wkdict()
         self.access_count = 0
@@ -18,12 +18,12 @@ class WeakRefDescriptor(object):
 
 class IntOrNone(WeakRefDescriptor):
     def __init__(self, value=None, *args, **kwargs):
-        super(IntOrNone, self).__init__(value)
+        super().__init__(value)
         self.value = IntOrNone.int_check(value)
 
     def __set__(self, instance, value):
         value = IntOrNone.int_check(value)
-        super(IntOrNone, self).__set__(instance, value)
+        super().__set__(instance, value)
 
     @staticmethod
     def int_check(value):
@@ -43,19 +43,19 @@ class IntOrNone(WeakRefDescriptor):
 
 class TriggerProperty(WeakRefDescriptor):
     def __init__(self, trigger, name=None, value=None, *args, **kwargs):
-        super(TriggerProperty, self).__init__(value, *args, **kwargs)
+        super().__init__(value, *args, **kwargs)
         self.trig_str = trigger
         self.name = name
 
     def __get__(self, instance, owner):
-        value = super(TriggerProperty, self).__get__(instance, owner)
+        value = super().__get__(instance, owner)
         will_trigger = self._will_trigger(value, instance)
 
         if will_trigger:
             callback = getattr(instance, self.trig_str)
             callback()
 
-            value = super(TriggerProperty, self).__get__(instance, owner)
+            value = super().__get__(instance, owner)
 
         return value
 

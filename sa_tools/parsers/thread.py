@@ -1,3 +1,7 @@
+#annotation imports:
+from sa_tools.base.base import Base
+
+
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 #from sa_tools.last_read import LastRead
@@ -9,28 +13,27 @@ from bs4 import Tag
 
 
 class ThreadParser(Parser, RegexManager):
-    def __init__(self, parent, *args, **kwargs):
-        super(ThreadParser, self).__init__(parent, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def parse(self) -> (iter, iter):
-        super(ThreadParser, self).parse()
+    def parse(self, content: Tag=None) -> (iter, iter):
+        content = super().parse(content)
         self._delete_extra()
-        info_gen = self.parse_info()
-        post_gen = gen_posts(self.content)
+
+        if content:
+            info_gen = self.gen_info(content)
+
+        else:
+            info_gen = self._parse_from_url(content)
+
+        post_gen = gen_posts(content)
 
         return info_gen, post_gen
 
-    def gen_posts(self):
-        return gen_posts(self.content)
+    def gen_posts(self, content):
+        return gen_posts(content)
 
-    def parse_info(self):
-        if self.content:
-            return self.gen_info()
-
-        else:
-            return self._parse_from_url()
-
-    def set_parser_map(self, parser_map=None) -> None:
+    def set_parser_map(self, parser_map: dict=None) -> None:
         if not parser_map:
             parser_map = \
                 {'icon': parse_icon,
@@ -42,9 +45,9 @@ class ThreadParser(Parser, RegexManager):
                  'views': parse_views,
                  'rating': parse_rating}
 
-        super(ThreadParser, self).set_parser_map(parser_map)
+        super().set_parser_map(parser_map)
 
-    def set_regex_strs(self, regex_strs=None) -> None:
+    def set_regex_strs(self, regex_strs: dict=None) -> None:
         dicts = dict, ordered
         is_dict = isinstance(regex_strs, dicts)
 
@@ -53,19 +56,13 @@ class ThreadParser(Parser, RegexManager):
                 {'lastpost': "([0-9]+:[0-9]+) ([A-Za-z 0-9]*, 20[0-9]{2})(.*)",
                  'rating': "([0-9]*) votes - ([0-5][\.[0-9]*]?) average"}
 
-        super(ThreadParser, self).set_regex_strs(regex_strs)
+        super().set_regex_strs(regex_strs)
 
-    def _parse_from_url(self):
-        yield parse_first_post(self.content)
-        yield 'title', self.content.find('a', 'bclast').text.strip()
+    def _parse_from_url(self, content: Tag) -> (str, str):
+        yield parse_first_post(content)
+        yield 'title', content.find('a', 'bclast').text.strip()
 
-    def gen_info(self, content=None) -> tuple:
-        if not content:
-            if not self.content:
-                return
-
-            content = self.content
-
+    def gen_info(self, content: Tag=None) -> (str, str ):
         need_regex = 'rating', 'lastpost'
         tds = content.find_all('td')
 
@@ -144,7 +141,7 @@ def parse_last_seen(content: Tag) -> (str, Tag):
     return key, last_read
 
 
-def parse_title(key: str, val: str, content: Tag) -> (str, str):
+def parse_title(key: str, val, content: Tag) -> (str, str):
     text = content.find('a', 'thread_title').text
     key = 'title'
 

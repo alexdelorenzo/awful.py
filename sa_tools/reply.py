@@ -3,15 +3,17 @@ from sa_tools.parsers.reply import ReplyParser
 
 
 class Reply(SAObj):
-    def __init__(self, id, body="", *args, **kwargs):
-        super(Reply, self).__init__(*args, id=id, **kwargs)
+    parser = ReplyParser(parent=None)
+
+    def __init__(self, parent, id, body="", *args, **kwargs):
+        super().__init__(parent, *args, id=id, **kwargs)
         self.body = body
         self.profile = self.parent.profile
-        self.parser = ReplyParser(self, id=self.id, reply=self.body)
 
-    def reply(self, body=None):
+    def reply(self, body: str=None) -> None:
         if not body:
             body = self.body
 
-        self.parser.reply(body)
         self.body = body
+
+        return self.parser.reply(body)

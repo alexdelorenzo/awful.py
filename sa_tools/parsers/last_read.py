@@ -5,16 +5,12 @@ from math import floor
 
 class LastReadParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(LastReadParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def parse(self):
-        super(LastReadParser, self).parse()
+    def parse(self, content, url) -> iter:
+        content = super().parse(content)
 
-        pairs = gen_parent_changes(self.content, self.parent._base_url)
-
-        for name, attr in pairs:
-            setattr(self, name, attr)
-
+        return gen_parent_changes(content, url)
 
 
 def gen_parent_changes(content, url):

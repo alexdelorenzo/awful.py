@@ -1,15 +1,13 @@
 from sa_tools.parsers.parser import Parser
-from sa_tools.base.descriptors import IntOrNone
-from sa_tools.session import SASession, Session
+from sa_tools.session import Session
 
-from requests import Session
 from bs4 import Tag, BeautifulSoup
-from functools import singledispatch
+from functools import lru_cache
 
 
 class ForumParser(Parser):
     forum_ids = \
-        dict([(1, 'gbs'),
+        dict(((1, 'gbs'),
              (26, 'fyad'),
              (268, 'byob'),
              (44, 'games'),
@@ -41,21 +39,15 @@ class ForumParser(Parser):
              (241, 'citysucks'),
              (188, 'qcs'),
              (21, 'goldmine'),
-             (25, 'gas')])
+             (25, 'gas')))
 
     def __init__(self, *args, **kwargs):
-        super(ForumParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag) -> (iter, iter, iter):
-        super(ForumParser, self).parse()
+    def parse(self, content: Tag, id: int) -> (iter, iter, iter):
+        content = super().parse(content)
 
-        if self.parent.is_index:
-            return
-
-        if self.parent.children:
-            self.parent._subforums_from_children()
-
-        info_gen = parse_info(self.id, self.forum_ids)
+        info_gen = parse_info(id, ForumParser.forum_ids)
         subforums_gen = \
             parse_subforums(content) if has_subforums(content) else None
         threads_gen = parse_threads(content)
@@ -79,19 +71,17 @@ def parse_threads(content: Tag) -> (int, Tag):
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
     for tr_thread in thread_blocks:
-        thread_id = IntOrNone.int_check(tr_thread['id'][6:])
+        thread_id = tr_thread['id'][6:]
 
         yield thread_id, tr_thread
 
 
-def parse_info(forum_id, forum_dict) -> (str, str):
+def parse_info(forum_id: int, forum_dict: dict) -> (str, str):
     yield 'icon_url', forum_icon(forum_id, forum_dict)
 
 
 def get_icon_map(session: Session) -> (int, str):
-    index = session.get("http://forums.somethingawful.com")
-    bs_index = BeautifulSoup(index.content)
-    forums = bs_index.find_all('tr', 'forum')
+    forums = get_index(session).find_all('tr', 'forum')
 
     for forum in forums:
         forum_id = int(forum.a['href'].split('=')[-1])
@@ -100,12 +90,24 @@ def get_icon_map(session: Session) -> (int, str):
         yield forum_id, forum_acronym
 
 
+@lru_cache(maxsize=None)
+def icon_map(session: Session) -> dict:
+    return dict(get_icon_map(session))
+
+
 def has_subforums(content: Tag) -> bool:
     if content.table:
         return content.table['id'] == 'subforums'
 
     else:
         return False
+
+
+@lru_cache(maxsize=None)
+def get_index(session: Session) -> Tag:
+    index = session.get("http://forums.somethingawful.com")
+
+    return BeautifulSoup(index.content)
 
 
 def forum_icon(forum_id: int, forum_dict: dict, session: Session=None) -> str or None:
@@ -120,6 +122,6 @@ def forum_icon(forum_id: int, forum_dict: dict, session: Session=None) -> str or
             return None
 
         else:
-            return forum_icon(forum_id, dict(get_icon_map(session)))
+            return forum_icon(forum_id, icon_map(session))
 
     return url + forum + ext

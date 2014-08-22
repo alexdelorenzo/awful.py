@@ -10,13 +10,16 @@ class LastRead(SAObj):
     unread_pages = TriggerProperty('read', 'unread_pages')
     unread_count = TriggerProperty('read', 'unread_count')
 
+    parser = LastReadParser(parent=None)
+
     def __init__(self, parent, id, content, name=None, **properties):
-        super(LastRead, self).__init__(parent, id, content, name, **properties)
+        super().__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages
+
         self.unread_count = 0
         self.unread_pages = 0
-        self.parser = LastReadParser(self)
+
         self._base_url = self.parent._base_url
 
         self._delete_extra()
@@ -25,13 +28,18 @@ class LastRead(SAObj):
         unread_posts = str(self.unread_count) + ' unread posts'
         pages_count = self.unread_pages + 1 if self.unread_count else 0
         unread_pages = str(pages_count) + ' unread pages'
+
         return ' '.join((unread_posts, 'in', unread_pages))
 
-    def read(self, pg=1):
-        super(LastRead, self).read(pg)
+    def read(self, pg: int=1):
+        super().read(pg)
+
         self.page = self.parent.page
         self.pages = self.parent.pages
-        self.parser.parse()
+
+        info_gen = self.parser.parse(self._content, self._base_url)
+        self._apply_key_vals(info_gen)
+
         self._delete_extra()
 
     def jump_to_new(self):

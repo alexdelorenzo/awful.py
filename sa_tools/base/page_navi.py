@@ -7,10 +7,11 @@ class PageNavi(SAObj):
     page = IntOrNone()
     pages = IntOrNone(1)
 
+    parser = PageNaviParser(parent=None)
+
     def __init__(self, *args, **properties):
-        super(PageNavi, self).__init__(*args, **properties)
+        super().__init__(*args, **properties)
         self._from_parent()
-        self.parser = PageNaviParser(self)
 
     def __repr__(self):
         if self.parent.unread:
@@ -27,9 +28,10 @@ class PageNavi(SAObj):
         self.pages = self.parent.pages
 
     def read(self, pg: int=1):
-        super(PageNavi, self).read(pg)
+        super().read(pg)
 
         self.page = pg if pg <= self.pages else self.pages
-        self.parser.parse()
+        self.pages = self.parser.parse(self._content)
+
         self._modify_parent()
         self._delete_extra()

@@ -4,10 +4,10 @@ from sa_tools.search.search_result import SASearchResult
 
 class SearchParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SearchParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def parse(self):
-        super(SearchParser, self).parse()
+        super().parse()
         self._parse_search_results()
 
     def _parse_search_results(self):

@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 class SearchResultParser(Parser):
     def __init__(self, *args, **kwargs):
-        super(SearchResultParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_post(self):
         if self.parent.unread:
@@ -19,7 +19,7 @@ class SearchResultParser(Parser):
         self._add_post(post_id, post_content)
 
     def parse(self):
-        super(SearchResultParser, self).parse()
+        super().parse()
         self.get_post()
         self._parse_content()
 

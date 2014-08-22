@@ -19,7 +19,7 @@ class Parser(SAObj, ParserDispatch):
         if self.parent._content:
             self.wrapper.wrap_parent_content()
 
-    def parse(self, *args, content=None, **kwargs):
+    def parse(self, content=None, *args, **kwargs):
         self.read()
         self.wrapper.wrap_parent_content()
 

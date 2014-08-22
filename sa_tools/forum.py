@@ -29,11 +29,12 @@ class Forum(SACollection):
 
         info_gen, subforum_gen, thread_gen = self.parser.parse(self._content)
 
+        self._apply_key_vals(info_gen)
+
         if subforum_gen:
             self._add_subforums(subforum_gen)
 
         self._add_threads(thread_gen)
-        self._apply_key_vals(info_gen)
 
     @property
     def is_index(self):

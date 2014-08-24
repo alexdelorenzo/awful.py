@@ -12,7 +12,7 @@ class Forum(SACollection):
     threads = TriggerProperty('read', 'threads')
     subforums = TriggerProperty('read', 'subforums')
 
-    parser = ForumParser(parent=None)
+    parser = ForumParser()
 
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
@@ -30,11 +30,9 @@ class Forum(SACollection):
         return self.id in index_ids
 
     def read(self, pg: int=1):
-        if self.is_index:
-            self.unread = False
-            return
 
         super().read(pg)
+
         if self.children:
             self._subforums_from_children()
 
@@ -66,8 +64,7 @@ class Forum(SACollection):
     def _subforums_from_children(self):
         if self.children and not self.subforums:
             for subforum in self.children:
-                _id = subforum.id
-                self.subforums[_id] = subforum
+                self.subforums[subforum.id] = subforum
 
 
 def find_threads_by_name(forum: Forum, name: str):

@@ -4,7 +4,7 @@ from requests import Response, Session
 
 
 class ReplyParser(Parser):
-    def __init__(self, parent, id=None, reply=None, *args, **kwargs):
+    def __init__(self, parent=None, id=None, reply=None, *args, **kwargs):
         super().__init__(parent, *args, id=id, **kwargs)
         self.body = reply
         self.id = id

@@ -3,10 +3,10 @@ awful.py
 
 #### sa_tools
 session, parsers and classes for forums, threads, posts, etc
-works with python 2.7 and 3.4, probably everything in between as well.
+works with python 3.2 and 3.4, probably everything in between as well.
 
 ##### awful_qml
-py3k only, qtquick controls from qt 5.2. bad, broken and no bs.
+py3k only, qtquick controls from qt 5.2+. bad and broken.
 
 ![screenshot](http://i.imgur.com/R6odHSE.png "screenshot_of_app")
 
@@ -15,7 +15,6 @@ Usage
 =======
 ## sa_tools
 
-Scroll to the very bottom for instructions on how to post.
 
 ### Authenticating
 

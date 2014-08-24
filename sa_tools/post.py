@@ -4,7 +4,7 @@ from sa_tools.parsers.post import PostParser
 
 
 class Post(SAObj):
-    parser = PostParser(parent=None)
+    parser = PostParser()
 
     def __init__(self, parent, id, content=None, **properties):
         super().__init__(parent, id, content, **properties)

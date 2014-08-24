@@ -10,7 +10,7 @@ class LastRead(SAObj):
     unread_pages = TriggerProperty('read', 'unread_pages')
     unread_count = TriggerProperty('read', 'unread_count')
 
-    parser = LastReadParser(parent=None)
+    parser = LastReadParser()
 
     def __init__(self, parent, id: int, content, name: str=None, **properties):
         super().__init__(parent, id, content, name, **properties)

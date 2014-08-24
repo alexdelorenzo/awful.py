@@ -43,9 +43,9 @@ class Index(MagicMixin):
             section.parent, section.id, section.name, section.children
 
         self.sections = SASection(parent, id=_id, name=name, children=children)
-        self._save(self.sections.id, self.sections)
+        self.forums.pop(self.sections.id)
 
-    def __gen_from_json(self, json: dict=None, parent: Forum=None) -> Forum:
+    def __gen_from_json(self, json: dict=None, parent: Forum=None) -> iter((Forum,)):
         if json is None:
             json = self._json
 

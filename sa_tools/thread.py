@@ -32,9 +32,7 @@ class Thread(SACollection):
 
     def _add_post(self, post_id, post_content, is_op=False):
         sa_post = Post(self, post_id, post_content)
-        post_id = sa_post.id
-
-        self.posts[post_id] = sa_post
+        self.posts[sa_post.id] = sa_post
 
         if is_op:
             self.author = sa_post.poster

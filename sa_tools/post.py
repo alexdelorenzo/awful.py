@@ -28,7 +28,7 @@ class Post(SAObj):
     def __str__(self):
         return self.body
 
-    def _add_poster(self, user_id, name, content):
+    def _add_poster(self, user_id: int, name: str, content):
         self.poster = Poster(self, id=user_id, content=content, name=name)
 
     def _set_results(self):

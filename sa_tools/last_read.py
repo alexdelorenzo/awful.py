@@ -12,7 +12,7 @@ class LastRead(SAObj):
 
     parser = LastReadParser(parent=None)
 
-    def __init__(self, parent, id, content, name=None, **properties):
+    def __init__(self, parent, id: int, content, name: str=None, **properties):
         super().__init__(parent, id, content, name, **properties)
         self.page = self.parent.page
         self.pages = self.parent.pages

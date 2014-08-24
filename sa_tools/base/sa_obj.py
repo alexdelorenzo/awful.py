@@ -59,4 +59,5 @@ def apply_key_vals(parent, results: iter, condition_map: dict=None) -> None:
         if key in condition_map:
             condition_map[key](val)
 
-        setattr(parent, key, val)
+        else:
+            setattr(parent, key, val)

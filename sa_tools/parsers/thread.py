@@ -24,7 +24,7 @@ class ThreadParser(Parser, RegexManager):
             info_gen = self.gen_info(content)
 
         else:
-            info_gen = self._parse_from_url(content)
+            info_gen = self._parse_from_url()
 
         post_gen = gen_posts(content)
 
@@ -62,15 +62,15 @@ class ThreadParser(Parser, RegexManager):
         yield parse_first_post(content)
         yield 'title', content.find('a', 'bclast').text.strip()
 
-    def gen_info(self, content: Tag=None) -> (str, str ):
-        need_regex = 'rating', 'lastpost'
+    def gen_info(self, content: Tag=None) -> (str, str):
+        needs_regex = 'rating', 'lastpost'
         tds = content.find_all('td')
 
         for td in tds:
             td_class = td['class'][-1]
             text = td.text.strip()
 
-            if td_class in need_regex:
+            if td_class in needs_regex:
                 info_pair = self.dispatch(td_class, text, td, self.regex_matches)
 
             else:
@@ -88,7 +88,7 @@ class ThreadParser(Parser, RegexManager):
         yield parse_last_seen(content)
 
 
-def gen_posts(content: Tag) -> (str, Tag):
+def gen_posts(content: Tag) -> iter((str, Tag)):
     posts_content = content.find_all('table', 'post')
 
     return ((post['id'][4:], post) for post in posts_content)
@@ -175,7 +175,6 @@ def parse_views(key: str, val, content: Tag) -> (str, int):
 
 
 def parse_replies(key: str, val, content: Tag) -> (str, int):
-    parse_page_count(val)
     reply_count = int(content.text.strip())
 
     return key, reply_count

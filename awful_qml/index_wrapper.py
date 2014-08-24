@@ -2,7 +2,7 @@ from PyQt5.QtCore import QAbstractListModel
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import pyqtProperty, pyqtSlot
 
-from AwfulQML.AwfulForum import ForumModel
+from awful_qml.awful_forum import ForumModel
 
 
 class IndexModel(QAbstractListModel):

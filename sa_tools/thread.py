@@ -11,6 +11,7 @@ from collections import OrderedDict
 
 class Thread(SACollection):
     posts = TriggerProperty('read', 'posts')
+
     parser = ThreadParser()
 
     def __init__(self, parent, id, tr_thread=None, **properties):

@@ -14,9 +14,8 @@ class Thread(SACollection):
 
     parser = ThreadParser()
 
-    def __init__(self, parent, id, tr_thread=None, **properties):
-        super().__init__(parent, id, content=tr_thread,
-                                       page=1, **properties)
+    def __init__(self, *args, **properties):
+        super().__init__(*args, page=1, **properties)
         self.url = self._base_url + '/showthread.php?threadid=' + str(self.id)
         self.posts = OrderedDict()
         self._apply_info()

@@ -2,18 +2,19 @@ from sa_tools.forum import Forum
 from sa_tools.base.magic import MagicMixin
 from sa_tools.section import SASection
 
-from collections import OrderedDict as ordered
+from collections import OrderedDict
 
 
 class Index(MagicMixin):
     def __init__(self, sa_session, *args, **kwargs):
         super().__init__(sa_session)
-        self.name = "Forum index"
 
+        self.name = "Forum index"
         self.session = sa_session.session
         self._base_url = 'http://forums.somethingawful.com/'
         self.url = self._base_url
-        self.forums = ordered()
+
+        self.forums = OrderedDict()
         self.sections = None
         self._content = None
         self._json = None
@@ -45,25 +46,25 @@ class Index(MagicMixin):
         self.sections = SASection(parent, id=_id, name=name, children=children)
         self.forums.pop(self.sections.id)
 
-    def __gen_from_json(self, json: dict=None, parent: Forum=None) -> iter((Forum,)):
-        if json is None:
-            json = self._json
+    def __gen_from_json(self):
+        return gen_from_json(self._json, self, self.forums)
 
-        if parent is None:
-            parent = self
 
-        children = json['children']
-        forum_id = json['forumid'] if json['forumid'] else None
-        title = json['title'] if 'title' in json else 'Index'
+def gen_from_json(json: dict=None, parent: Forum=None, flat_dict: dict=None) -> iter((Forum,)):
+    children = json['children']
+    forum_id = json['forumid'] if json['forumid'] else None
+    title = json['title'] if 'title' in json else 'Index'
 
-        parent = Forum(parent, id=forum_id, name=title)
-        sa_children = []
+    parent = Forum(parent, id=forum_id, name=title)
 
-        for child in children:
-            for sa_child in self.__gen_from_json(child, parent):
-                sa_children.append(sa_child)
+    sa_children = []
+    for child in children:
+        for sa_child in gen_from_json(child, parent, flat_dict):
+            sa_children.append(sa_child)
 
-        parent.children = sa_children
-        self._save(parent.id, parent)
+    parent.children = sa_children
 
-        yield parent
+    if flat_dict is not None:
+        flat_dict[parent.id] = parent
+
+    yield parent

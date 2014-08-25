@@ -7,13 +7,13 @@ class LastReadParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content, url) -> iter:
+    def parse(self, content, url: str) -> iter:
         content = super().parse(content)
 
         return gen_parent_changes(content, url)
 
 
-def gen_parent_changes(content, url):
+def gen_parent_changes(content, url: str):
     close_link = content.a
     stop_tracking_url = url + close_link['href']
     last_post_link = content.find('a', 'count')

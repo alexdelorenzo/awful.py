@@ -3,7 +3,7 @@ from sa_tools.base.descriptors import TriggerProperty
 from sa_tools.parsers.forum import ForumParser
 from sa_tools.thread import Thread
 
-from collections import OrderedDict as ordered
+from collections import OrderedDict
 
 from bs4 import BeautifulSoup
 
@@ -16,12 +16,12 @@ class Forum(SACollection):
 
     def __init__(self, parent, id, content=None, name=None,
                  page=1, subforums=None, **properties):
-        super().__init__(parent, id, content, name,page=page, **properties)
+        super().__init__(parent, id, content, name, page=page, **properties)
         self._base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self._base_url + '?forumid=' + str(id)
-        self.threads = ordered()
-        self.subforums = subforums if subforums else ordered()
+        self.threads = OrderedDict()
+        self.subforums = subforums if subforums else OrderedDict()
 
     @property
     def is_index(self):
@@ -30,14 +30,16 @@ class Forum(SACollection):
         return self.id in index_ids
 
     def read(self, pg: int=1):
-
         super().read(pg)
+
+        self.threads = OrderedDict()
 
         if self.children:
             self._subforums_from_children()
 
-        info_gen, subforum_gen, thread_gen = self.parser.parse(self._content, self.id)
+        self._apply_parser_gens(*self.parser.parse(self._content, self.id))
 
+    def _apply_parser_gens(self, info_gen, subforum_gen, thread_gen):
         self._apply_key_vals(info_gen)
 
         if subforum_gen:
@@ -67,7 +69,7 @@ class Forum(SACollection):
                 self.subforums[subforum.id] = subforum
 
 
-def find_threads_by_name(forum: Forum, name: str):
+def find_threads_by_name(forum: Forum, term: str) -> iter((Thread,)):
     if not forum.page:
         forum.read()
 

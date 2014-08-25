@@ -4,9 +4,8 @@ from sa_tools.base.base import Base
 
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
-#from sa_tools.last_read import LastRead
 
-from collections import OrderedDict as ordered
+from collections import OrderedDict
 from math import ceil
 
 from bs4 import Tag
@@ -48,7 +47,7 @@ class ThreadParser(Parser, RegexManager):
         super().set_parser_map(parser_map)
 
     def set_regex_strs(self, regex_strs: dict=None) -> None:
-        dicts = dict, ordered
+        dicts = dict, OrderedDict
         is_dict = isinstance(regex_strs, dicts)
 
         if not is_dict:

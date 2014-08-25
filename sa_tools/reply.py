@@ -10,7 +10,7 @@ class Reply(SAObj):
         self.body = body
         self.profile = self.parent.profile
 
-    def reply(self, body: str=None) -> None:
+    def reply(self, body: str=None):
         if not body:
             body = self.body
 

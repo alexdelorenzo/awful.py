@@ -28,7 +28,7 @@ class Index(MagicMixin):
 
         return repr_str
 
-    def _save(self, section_id, sa_section):
+    def _save(self, section_id: int, sa_section: SASection):
         self.forums[section_id] = sa_section
 
     def _get_json(self):

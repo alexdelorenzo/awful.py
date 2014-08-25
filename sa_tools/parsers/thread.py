@@ -1,7 +1,6 @@
 #annotation imports:
 from sa_tools.base.base import Base
 
-
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 

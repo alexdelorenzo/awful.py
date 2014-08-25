@@ -14,7 +14,7 @@ class Forum(SACollection):
 
     parser = ForumParser()
 
-    def __init__(self, parent, id, *args, page=1, subforums=None, **properties):
+    def __init__(self, parent, id: int, *args, page: int=1, subforums: dict=None, **properties):
         super().__init__(parent, id, *args, page=page, **properties)
         self._base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
@@ -38,7 +38,7 @@ class Forum(SACollection):
 
         self._apply_parser_gens(*self.parser.parse(self._content, self.id))
 
-    def _apply_parser_gens(self, info_gen, subforum_gen, thread_gen):
+    def _apply_parser_gens(self, info_gen: iter, subforum_gen: iter, thread_gen: iter):
         self._apply_key_vals(info_gen)
 
         if subforum_gen:
@@ -68,7 +68,7 @@ class Forum(SACollection):
                 self.subforums[subforum.id] = subforum
 
 
-def find_threads_by_name(forum: Forum, term: str) -> iter((Thread,)):
+def find_threads_by_name(forum: Forum, name: str) -> iter((Thread,)):
     if not forum.page:
         forum.read()
 

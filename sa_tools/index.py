@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 class Index(MagicMixin):
     def __init__(self, sa_session, *args, **kwargs):
-        super().__init__(sa_session)
+        super().__init__(sa_session, *args, **kwargs)
 
         self.name = "Forum index"
         self.session = sa_session.session
@@ -43,7 +43,7 @@ class Index(MagicMixin):
         parent, _id, name, children = \
             section.parent, section.id, section.name, section.children
 
-        self.sections = SASection(parent, id=_id, name=name, children=children)
+        self.sections = SASection(parent, _id, name=name, children=children)
         self.forums.pop(self.sections.id)
 
     def __gen_from_json(self):

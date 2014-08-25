@@ -14,9 +14,8 @@ class Forum(SACollection):
 
     parser = ForumParser()
 
-    def __init__(self, parent, id, content=None, name=None,
-                 page=1, subforums=None, **properties):
-        super().__init__(parent, id, content, name, page=page, **properties)
+    def __init__(self, parent, id, *args, page=1, subforums=None, **properties):
+        super().__init__(parent, id, *args, page=page, **properties)
         self._base_url = \
             'http://forums.somethingawful.com/forumdisplay.php'
         self.url = self._base_url + '?forumid=' + str(id)

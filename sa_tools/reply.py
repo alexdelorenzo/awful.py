@@ -5,8 +5,8 @@ from sa_tools.parsers.reply import ReplyParser
 class Reply(SAObj):
     parser = ReplyParser()
 
-    def __init__(self, parent, id, body="", *args, **kwargs):
-        super().__init__(parent, *args, id=id, **kwargs)
+    def __init__(self, *args, body="", **kwargs):
+        super().__init__(*args, **kwargs)
         self.body = body
         self.profile = self.parent.profile
 

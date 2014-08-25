@@ -6,8 +6,8 @@ from sa_tools.parsers.post import PostParser
 class Post(SAObj):
     parser = PostParser()
 
-    def __init__(self, parent, id, content=None, **properties):
-        super().__init__(parent, id, content, **properties)
+    def __init__(self, *args, **properties):
+        super().__init__(*args, **properties)
 
         self.poster = None
         self.body = ""

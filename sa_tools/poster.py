@@ -5,8 +5,8 @@ from sa_tools.parsers.poster import ProfileParser
 class Poster(SAObj):
     parser = ProfileParser()
 
-    def __init__(self, parent, id=None, content=None, name=None, **properties):
-        super().__init__(parent, id, content=content, name=name, **properties)
+    def __init__(self, *args, **properties):
+        super().__init__(*args, **properties)
 
         self.avatar_url = None
         self.title = None

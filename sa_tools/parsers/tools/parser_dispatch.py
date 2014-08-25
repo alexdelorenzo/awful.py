@@ -3,8 +3,8 @@ from bs4 import Tag
 
 
 class ParserDispatch(Base):
-    def __init__(self, parent: Base=None, parser_map: dict=None, **kwargs):
-        super().__init__(parent, **kwargs)
+    def __init__(self, *args, parser_map: dict=None, **kwargs):
+        super().__init__(*args, **kwargs)
         self.parser_map = None
         self.set_parser_map(parser_map)
 

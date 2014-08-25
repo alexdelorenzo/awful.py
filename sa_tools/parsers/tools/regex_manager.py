@@ -4,8 +4,8 @@ from re import compile
 
 
 class RegexManager(Base):
-    def __init__(self, parent: Base=None, regex_map: dict=None, regex_strs: dict=None, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+    def __init__(self, *args, regex_map: dict=None, regex_strs: dict=None, **kwargs):
+        super().__init__(*args, **kwargs)
         self.regex_map = dict()
         self.regex_strs = dict()
         self.set_regex(regex_map, regex_strs)

@@ -5,8 +5,8 @@ from sa_tools.parsers.tools.bs_wrapper import BSWrapper
 
 
 class Parser(SAObj, ParserDispatch):
-    def __init__(self, parent: Base=None, wrapper=BSWrapper, parser_map: dict=None, *args, **kwargs):
-        super().__init__(parent, *args, parser_map=parser_map, **kwargs)
+    def __init__(self, *args, wrapper=BSWrapper, parser_map: dict=None, **kwargs):
+        super().__init__(*args, parser_map=parser_map, **kwargs)
 
         if self.parent:
             self.id = self.parent.id

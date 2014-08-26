@@ -23,4 +23,4 @@ def gen_pms(content):
     pm_table = content.find('table', 'standard')
     pms = pm_table.find_all('tr')
 
-    yield from (pm for pm in pms if pm.td)
+    yield from (pm for pm in pms if pm.td and not pm.option)

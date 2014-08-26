@@ -39,32 +39,27 @@ class Index(MagicMixin):
         self._json = request.json()
 
     def _get_sections(self):
-        section = next(self.__gen_from_json())
+        section = self.__forums_from_json()
         parent, _id, name, children = \
             section.parent, section.id, section.name, section.children
 
         self.sections = SASection(parent, _id, name=name, children=children)
         self.forums.pop(self.sections.id)
 
-    def __gen_from_json(self):
-        return gen_from_json(self._json, self, self.forums)
+    def __forums_from_json(self):
+        return forums_from_json(self._json, self, self.forums)
 
 
-def gen_from_json(json: dict=None, parent: Forum=None, flat_dict: dict=None) -> iter((Forum,)):
-    children = json['children']
+def forums_from_json(json: dict=None, parent: Forum=None, forum_dict: dict=None) -> iter((Forum,)):
     forum_id = json['forumid'] if json['forumid'] else None
     title = json['title'] if 'title' in json else 'Index'
+    children = json['children']
 
     parent = Forum(parent, id=forum_id, name=title)
+    parent.children = [forums_from_json(child, parent, forum_dict)
+                       for child in children]
 
-    sa_children = []
-    for child in children:
-        for sa_child in gen_from_json(child, parent, flat_dict):
-            sa_children.append(sa_child)
+    if forum_dict is not None:
+        forum_dict[parent.id] = parent
 
-    parent.children = sa_children
-
-    if flat_dict is not None:
-        flat_dict[parent.id] = parent
-
-    yield parent
+    return parent

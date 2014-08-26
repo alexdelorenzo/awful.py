@@ -8,14 +8,14 @@ from bs4 import BeautifulSoup
 import time
 
 
-class SASession(MagicMixin):
+class SASession(Session, MagicMixin):
     _base_url = 'https://forums.somethingawful.com/'
     name = 'awful_py Session'
 
     def __init__(self, username: str, passwd: str):
         super().__init__()
 
-        self.session = Session()
+        self.session = self
         self.session.headers['User-Agent'] = user_agent()
 
         self.username = username
@@ -25,6 +25,12 @@ class SASession(MagicMixin):
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
         self._set_profile()
+
+    def get(self, url: str, *args, **kwargs) -> Response:
+        return super().get(url, **kwargs)
+
+    def post(self, url: str, *args, **kwargs) -> Response:
+        return super().post(url, *args, **kwargs)
 
     def _set_profile(self):
         self.profile = Poster(self, self.id, name=self.username)

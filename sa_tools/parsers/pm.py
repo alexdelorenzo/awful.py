@@ -1,6 +1,7 @@
 from time import strptime
 
 from bs4 import Tag
+from datetime import datetime
 
 from sa_tools.parsers.parser import Parser
 from sa_tools.parsers.tools.parser_dispatch import ParserDispatch
@@ -34,11 +35,23 @@ def gen_info(content: Tag, dispatch) -> iter(((str, object),)):
 
     for td in tds:
         key = td['class'][0]
+        key, val = dispatch(key, td)
 
-        yield dispatch(key, td)
+        if key == 'title':
+            yield from gen_info_from_title(key, val)
+
+        yield key, val
 
 
-def parse_status(key: str, content: Tag):
+def gen_info_from_title(key: str, val) -> iter(((str, str),)):
+        title, url = val
+
+        yield 'url', url
+        yield 'name', title
+        yield parse_id(key, url)
+
+
+def parse_status(key: str, content: Tag) -> (str, bool):
     new = "http://fi.somethingawful.com/images/newpm.gif"
     indicator = content.img['src']
     key = 'unread'
@@ -46,26 +59,33 @@ def parse_status(key: str, content: Tag):
     return key, indicator == new
 
 
-def parse_icon(key: str, content: Tag):
-    return key, content.img['src']
+def parse_icon(key: str, content: Tag) -> (str, str or None):
+    status = (content.img['src'] if content.img else None)
+    return key, (content.img['src'] if content.img else None)
 
 
-def parse_title(key: str, content: Tag):
+def parse_title(key: str, content: Tag) -> (str, (str, str)):
     title = content.text.strip()
     url = "http://fi.somethingawful.com/" + content.a['href']
 
     return key, (title, url)
 
 
-def parse_sender(key: str, content: Tag):
+def parse_sender(key: str, content: Tag) -> (str, str):
     return key, content.text.strip()
 
 
-def parse_date(key: str, content: Tag):
+def parse_date(key: str, content: Tag) -> (str, datetime):
     date_str = content.text.strip()
 
     return key, strptime(date_str, '%b %d, %Y at %H:%M')
 
 
-def parse_check(key: str, content: Tag):
+def parse_check(key: str, content: Tag) -> (str, Tag):
     return key, content
+
+
+def parse_id(key: str, url: str) -> (str, int):
+    id = url.split('privatemessageid=')[-1]
+
+    return 'id', id

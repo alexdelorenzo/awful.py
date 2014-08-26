@@ -1,11 +1,13 @@
-from bs4 import BeautifulSoup, element, Tag
+from bs4 import BeautifulSoup, Tag
 
 
 class BSWrapper(object):
     def __init__(self, parent, *args, **kwargs):
         super().__init__()
+
         self.parent = parent
         self._bs_wrappers = BeautifulSoup, Tag
+
         if self.parent:
             self.wrap_parent_content()
 
@@ -40,7 +42,7 @@ def wrap_content(content: str or bytes or Tag) -> BeautifulSoup:
     return content
 
 
-def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag)):
+def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag)) -> bool:
     content_type = type(content)
 
     return content_type in wrappers

@@ -1,9 +1,0 @@
-*
-.*
-.*/
-setup.py
-.gitignore
-
-!*/
-!*.py
-!*.qml

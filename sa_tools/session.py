@@ -9,20 +9,22 @@ import time
 
 
 class SASession(MagicMixin):
+    _base_url = 'https://forums.somethingawful.com/'
+    name = 'awful_py Session'
+
     def __init__(self, username: str, passwd: str):
         super().__init__()
+
         self.session = Session()
         self.session.headers['User-Agent'] = user_agent()
-        self.username = username
-        self._base_url = 'https://forums.somethingawful.com/'
 
+        self.username = username
         self.login(username, passwd)
-        self.logged_in_at = time.strftime('%x @ %X', time.localtime())
+        self.login_time = time.strftime('%x @ %X', time.localtime())
 
         self.id = self.session.cookies.get('bbuserid')
         self.profile = None
         self._set_profile()
-        self.name = 'Session: login(), reply(), post_thread(), search(), etc'
 
     def _set_profile(self):
         self.profile = Poster(self, self.id, name=self.username)
@@ -30,13 +32,13 @@ class SASession(MagicMixin):
     def login(self, username: str, passwd: str) -> Response:
         return login(self.session, username, passwd, self._base_url)
 
-    def reply(self, _id: int, body: str) -> Reply:
-        sa_reply = Reply(self, id=_id, body=body)
-        sa_reply.reply()
+    def reply(self, id: int, body: str) -> Reply:
+        return reply(self, id, body)
 
-        return sa_reply
+    def pm(self, username: str, title: str="(no title)", body: str="", tag: int=420) -> Response:
+        return pm(self.session, username, title, body, tag)
 
-    def post_thread(self, forum_id: int, title: str, body: str, tag: str=None, poll: dict=None):
+    def post_thread(self, forum_id: int, title: str, body: str, tag: int=None, poll: dict=None):
         raise NotImplementedError()
 
     def find_user_posts(self, user_id):
@@ -71,3 +73,31 @@ def user_agent() -> str:
     strs = identity, system, engine, version
 
     return ' '.join(strs)
+
+
+def reply(parent, id: int, body: str) -> Reply:
+    sa_reply = Reply(parent, id=id, body=body)
+    sa_reply.reply()
+
+    return sa_reply
+
+
+def pm(session: Session, recv_username: str, title: str="", body: str=None, tag: int=420) -> Response:
+    url = "http://forums.somethingawful.com/private.php"
+    #params = {'action': 'newmessage'}
+    #response = session.get(url, params=params)
+
+    data = {'action': 'dosend',
+            'prevmessageid': "",
+            'forward': "",
+            'touser': recv_username,
+            'title': title,
+            'iconid': tag,
+            'message': body,
+            'parseurl': 'yes',
+            'savecopy': 'yes',
+            'submit': 'Send+Message'}
+
+    response = session.post(url, data=data)
+
+    return response

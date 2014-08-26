@@ -1,4 +1,5 @@
 from sa_tools.base.magic import MagicMixin
+from sa_tools.inbox import Inbox
 from sa_tools.session import SASession
 from sa_tools.index import Index
 
@@ -53,11 +54,13 @@ class AwfulPy(APSession, MagicMixin):
     def __init__(self, username, *args, **kwargs):
         super().__init__(username, *args, **kwargs)
         self.index = Index(self.session)
+        self.inbox = Inbox(self.session)
+
         self.name = "awful.py"
         self.version = "v0.2014.08.24"
 
     def __repr__(self):
         info = '[' + self.name + ' ' + self.version + '] '
         acct = 'Logged in as ' + self.username
-        login_time = ' on ' + self.session.logged_in_at
+        login_time = ' on ' + self.session.login_time
         return info + acct + login_time

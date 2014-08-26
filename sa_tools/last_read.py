@@ -15,13 +15,11 @@ class LastRead(SAObj):
     def __init__(self, *args, **properties):
         super().__init__(*args, **properties)
 
-        self.page = self.parent.page
-        self.pages = self.parent.pages
-
         self.unread_count = 0
         self.unread_pages = 0
 
         self._base_url = self.parent._base_url
+        self._get_pages_from_parent()
 
         self._delete_extra()
 
@@ -32,11 +30,14 @@ class LastRead(SAObj):
 
         return ' '.join((unread_posts, 'in', unread_pages))
 
+    def _get_pages_from_parent(self):
+        self.page = self.parent.page
+        self.pages = self.parent.pages
+
     def read(self, pg: int=1):
         super().read(pg)
 
-        self.page = self.parent.page
-        self.pages = self.parent.pages
+        self._get_pages_from_parent()
 
         info_gen = self.parser.parse(self._content, self._base_url)
         self._apply_key_vals(info_gen)

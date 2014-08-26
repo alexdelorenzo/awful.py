@@ -1,6 +1,3 @@
-#annotation imports:
-from sa_tools.base.base import Base
-
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 
@@ -28,7 +25,7 @@ class ThreadParser(Parser, RegexManager):
 
         return info_gen, post_gen
 
-    def gen_posts(self, content):
+    def gen_posts(self, content: Tag or str or bytes):
         return gen_posts(content)
 
     def set_parser_map(self, parser_map: dict=None) -> None:
@@ -60,7 +57,7 @@ class ThreadParser(Parser, RegexManager):
         yield parse_first_post(content)
         yield 'title', content.find('a', 'bclast').text.strip()
 
-    def gen_info(self, content: Tag=None) -> (str, str):
+    def gen_info(self, content: Tag=None) -> iter(((str, str),)):
         needs_regex = 'rating', 'lastpost'
         tds = content.find_all('td')
 

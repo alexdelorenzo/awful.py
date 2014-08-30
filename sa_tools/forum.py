@@ -36,7 +36,7 @@ class Forum(SACollection):
         if self.children:
             self._subforums_from_children()
 
-        self._apply_parser_gens(*self.parser.parse(self._content, self.id))
+        self._apply_parser_gens(*self.parser.parse(self._content, self.id, self))
 
     def _apply_parser_gens(self, info_gen: iter, subforum_gen: iter, thread_gen: iter):
         self._apply_key_vals(info_gen)
@@ -46,8 +46,8 @@ class Forum(SACollection):
 
         self._add_threads(thread_gen)
 
-    def _add_thread(self, thread_id: int, thread_content: BeautifulSoup):
-        thread_obj = Thread(self, thread_id, thread_content)
+    def _add_thread(self, thread_obj: BeautifulSoup):
+        #thread_obj = Thread(self, thread_id, thread_content)
         self.threads[thread_obj.id] = thread_obj
 
     def _add_subforum(self, forum_id: int, forum_name: str):
@@ -55,8 +55,8 @@ class Forum(SACollection):
         self.subforums[forum_obj.id] = forum_obj
 
     def _add_threads(self, threads_gen: iter):
-        for thread_id, content in threads_gen:
-            self._add_thread(thread_id, content)
+        for thread_id in threads_gen:
+            self._add_thread(thread_id)
 
     def _add_subforums(self, subforums_gen: iter):
         for subforum_id, name in subforums_gen:

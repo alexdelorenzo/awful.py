@@ -3,6 +3,8 @@ from sa_tools.session import Session
 
 from bs4 import Tag, BeautifulSoup
 from functools import lru_cache
+from multiprocessing.pool import ThreadPool as Pool
+from sa_tools.thread import Thread
 
 
 class ForumParser(Parser):
@@ -44,19 +46,20 @@ class ForumParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag, id: int) -> (iter, iter, iter):
+    def parse(self, content: Tag, id: int, parent) -> (iter, iter, iter):
         content = super().parse(content)
 
         info_gen = parse_info(id, ForumParser.forum_ids)
         subforums_gen = \
             parse_subforums(content) if has_subforums(content) else None
-        threads_gen = parse_threads(content)
+        threads_gen = parse_threads(content, parent)
 
         return info_gen, subforums_gen, threads_gen
 
 
 def parse_subforums(content: Tag) -> (str, str):
     tr_subforums = content.find_all('tr', 'subforum')
+
 
     for tr_subforum in tr_subforums:
         href = tr_subforum.a['href']
@@ -66,14 +69,20 @@ def parse_subforums(content: Tag) -> (str, str):
         yield subforum_id, name
 
 
-def parse_threads(content: Tag) -> (int, Tag):
+def parse_threads(content: Tag, parent) -> (int, Tag):
     content = content.find('div', id='content')
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
-    for tr_thread in thread_blocks:
-        thread_id = tr_thread['id'][6:]
+    with Pool(4) as pool:
+        gen = ((parent, tr_thread['id'][6:], tr_thread) for tr_thread in thread_blocks)
 
-        yield thread_id, tr_thread
+        yield from pool.starmap(Thread, gen)
+
+
+    # for tr_thread in thread_blocks:
+    #     thread_id = tr_thread['id'][6:]
+    #
+    #     yield thread_id, tr_thread
 
 
 def parse_info(forum_id: int, forum_dict: dict) -> (str, str):

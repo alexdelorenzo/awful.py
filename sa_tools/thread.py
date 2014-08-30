@@ -30,8 +30,8 @@ class Thread(SACollection):
         self._add_posts()
         self._delete_extra()
 
-    def _add_post(self, post_id: int, post_content, is_op: bool=False):
-        sa_post = Post(self, post_id, post_content)
+    def _add_post(self, sa_post: Post, is_op: bool=False):
+        #sa_post = Post(self, post_id, post_content)
         self.posts[sa_post.id] = sa_post
 
         if is_op:
@@ -44,10 +44,10 @@ class Thread(SACollection):
         self.author = Poster(self, user_id, name=name)
 
     def _add_posts(self):
-        post_gen = self.parser.gen_posts(self._content)
+        post_gen = self.parser.gen_posts(self._content, self)
 
         for post_info in post_gen:
-            self._add_post(*post_info)
+            self._add_post(post_info)
 
     def _apply_parsed_results(self, results: iter):
         condition_map = {'author': expand(self._add_author),

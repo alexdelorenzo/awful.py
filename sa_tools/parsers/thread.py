@@ -1,3 +1,4 @@
+from multiprocessing.pool import ThreadPool as Pool
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 
@@ -5,13 +6,14 @@ from collections import OrderedDict
 from math import ceil
 
 from bs4 import Tag
+from sa_tools.post import Post
 
 
 class ThreadParser(Parser, RegexManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag=None) -> (iter, iter):
+    def parse(self, content: Tag=None, parent=None) -> (iter, iter):
         content = super().parse(content)
         self._delete_extra()
 
@@ -21,12 +23,12 @@ class ThreadParser(Parser, RegexManager):
         else:
             info_gen = self._parse_from_url()
 
-        post_gen = gen_posts(content)
+        post_gen = gen_posts(content, parent)
 
         return info_gen, post_gen
 
-    def gen_posts(self, content: Tag or str or bytes):
-        return gen_posts(content)
+    def gen_posts(self, content: Tag or str or bytes, parent):
+        return gen_posts(content, parent)
 
     def set_parser_map(self, parser_map: dict=None) -> None:
         if not parser_map:
@@ -83,10 +85,15 @@ class ThreadParser(Parser, RegexManager):
         yield parse_last_seen(content)
 
 
-def gen_posts(content: Tag) -> iter((str, Tag)):
+def gen_posts(content: Tag, parent) -> iter((str, Tag)):
     posts_content = content.find_all('table', 'post')
 
-    return ((post['id'][4:], post) for post in posts_content)
+    with Pool(4) as pool:
+        gen = ((parent, post['id'][4:], post) for post in posts_content)
+
+        yield from pool.starmap(Post, gen)
+
+    #return ((post['id'][4:], post) for post in posts_content)
 
 
 def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):

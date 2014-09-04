@@ -74,7 +74,8 @@ def parse_threads(content: Tag, parent) -> (int, Tag):
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
     with Pool(4) as pool:
-        gen = ((parent, tr_thread['id'][6:], tr_thread) for tr_thread in thread_blocks)
+        gen = ((parent, tr_thread['id'][6:], tr_thread)
+               for tr_thread in thread_blocks)
 
         yield from pool.starmap(Thread, gen)
 

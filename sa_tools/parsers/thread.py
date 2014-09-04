@@ -63,6 +63,7 @@ class ThreadParser(Parser, RegexManager):
 
         for td in tds:
             td_class = td['class'][-1]
+            print('class: ', td_class, td.text)
             text = td.text.strip()
 
             if td_class in needs_regex:

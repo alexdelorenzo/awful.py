@@ -30,8 +30,8 @@ class Thread(SACollection):
         self._add_posts()
         self._delete_extra()
 
-    def _add_post(self, post_id: int, post_content, is_op: bool=False):
-        sa_post = Post(self, post_id, post_content)
+    def _add_post(self, sa_post, is_op: bool=False):
+        #sa_post = Post(self, post_id, post_content)
         self.posts[sa_post.id] = sa_post
 
         if is_op:

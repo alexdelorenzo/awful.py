@@ -4,18 +4,6 @@ from bs4 import BeautifulSoup, Tag
 
 
 class BeauToLxml(object):
-    def __getstate__(self):
-        self.__getattr__ = BeauToLxml.__getattr__
-
-        return self.__dict__
-
-    def __setstate__(self, state):
-        state['__getattr__'] = BeauToLxml.__getattr__
-        self.__dict__ = state
-        setattr(self, '__getattr__', BeauToLxml.__getattr__)
-
-        return state
-
     def __init__(self, html: None):
         super().__init__()
         html_type = type(html)
@@ -62,9 +50,6 @@ class BeauToLxml(object):
     @property
     def text(self):
         return self.html.text_content()
-
-    def wrap_content(self, content: str or bytes or Tag):
-        return wrap_content(content, wrapper=self)
 
 
 def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None:

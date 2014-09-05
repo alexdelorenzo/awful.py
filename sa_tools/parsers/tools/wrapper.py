@@ -26,7 +26,7 @@ class BeauToLxml(object):
     def __getitem__(self, item):
         items = self.html.attrib[item]
 
-        if item == 'class':
+        if ' ' in items:
             items = items.split(' ')
 
         return items

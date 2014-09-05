@@ -30,7 +30,7 @@ class Thread(SACollection):
         self._add_posts()
         self._delete_extra()
 
-    def _add_post(self, sa_post: Post, is_op: bool=False):
+    def _add_post(self, sa_post, is_op: bool=False):
         #sa_post = Post(self, post_id, post_content)
         self.posts[sa_post.id] = sa_post
 
@@ -44,7 +44,7 @@ class Thread(SACollection):
         self.author = Poster(self, user_id, name=name)
 
     def _add_posts(self):
-        post_gen = self.parser.gen_posts(self._content, self)
+        post_gen = self.parser.gen_posts(self._content)
 
         for post_info in post_gen:
             self._add_post(post_info)

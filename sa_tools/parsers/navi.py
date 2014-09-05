@@ -1,4 +1,4 @@
-from sa_tools.parsers.tools.bs_wrapper import BSWrapper
+from sa_tools.parsers.tools.wrapper import Wrapper
 from sa_tools.parsers.parser import Parser
 
 
@@ -11,7 +11,7 @@ class NaviParser(Parser):
 
     @staticmethod
     def parse_navi(parent):
-        wrapper = BSWrapper(parent)
+        wrapper = Wrapper(parent)
         navi_content = wrapper.content.find('div', 'pages')
 
         return navi_content

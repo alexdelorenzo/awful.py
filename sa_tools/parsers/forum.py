@@ -1,4 +1,6 @@
+from itertools import starmap
 from sa_tools.parsers.parser import Parser
+from sa_tools.parsers.tools.wrapper import BeauToLxml
 from sa_tools.session import Session
 
 from bs4 import Tag, BeautifulSoup
@@ -47,7 +49,7 @@ class ForumParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag, id: int, parent) -> (iter, iter, iter):
-        content = super().parse(content)
+        content = super().parse(content, wrapper=BeauToLxml)
 
         info_gen = parse_info(id, ForumParser.forum_ids)
         subforums_gen = \
@@ -73,10 +75,11 @@ def parse_threads(content: Tag, parent) -> (int, Tag):
     content = content.find('div', id='content')
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
-    with Pool(4) as pool:
-        gen = ((parent, tr_thread['id'][6:], tr_thread) for tr_thread in thread_blocks)
+    #with Pool(4) as pool:
+    gen = ((parent, tr_thread['id'][6:], tr_thread)
+           for tr_thread in thread_blocks)
 
-        yield from pool.starmap(Thread, gen)
+    yield from starmap(Thread, gen)
 
 
     # for tr_thread in thread_blocks:

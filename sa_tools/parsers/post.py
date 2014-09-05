@@ -25,6 +25,6 @@ def parse_post_body(content: Tag) -> str:
 def parse_user_info(content: Tag) -> (str, str, Tag):
     user_id = content.td['class'][-1].split('userid-')[-1]
     user_name = content.dt.text
-    info_content = content.find('td', ['userinfo'])
+    info_content = content.find('td', 'userinfo')
 
     return user_id, user_name, info_content

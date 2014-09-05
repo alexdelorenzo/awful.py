@@ -16,7 +16,7 @@ class Wrapper(object):
 
     @staticmethod
     def wrap_content(content: str or bytes or Tag, wrapper=BeautifulSoup) -> BeautifulSoup:
-        return wrap_content(content)
+        return wrap_content(content, wrapper=wrapper)
 
     def wrap_parent_content(self, wrapper=BeautifulSoup):
         if self.content is None:
@@ -73,6 +73,9 @@ def find(tag: str, _class: str=None, **kwargs) -> str:
             val_xp = val_xp[:-2]
             tag_xp += 'contains(' + attr_xp + ', ' + val_xp + ')]'
 
+        elif is_class:
+            tag_xp += 'contains(' + attr_xp + ', "' + val + '")]'
+
         else:
             tag_xp += attr_xp + "='" + val + "']"
 
@@ -80,6 +83,18 @@ def find(tag: str, _class: str=None, **kwargs) -> str:
 
 
 class BeauToLxml(MagicMixin):
+    def __getstate__(self):
+        self.__getattr__ = super().__getattr__
+
+        return self.__dict__
+
+    def __setstate__(self, state):
+        state['__getattr__'] = BeauToLxml.__getattr__
+        self.__dict__ = state
+        setattr(self, '__getattr__', BeauToLxml.__getattr__)
+
+        return state
+
     def __init__(self, html: str=None):
         html_type = type(html)
 
@@ -108,7 +123,6 @@ class BeauToLxml(MagicMixin):
 
     def find(self, tag: str, _class: str=None, **kwargs):
         tag_xp = find(tag, _class, **kwargs)
-        print(tag_xp)
         result = self.html.xpath(tag_xp)[0]
 
         return BeauToLxml(result) if result is not None else None

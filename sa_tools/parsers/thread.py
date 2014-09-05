@@ -1,3 +1,4 @@
+from itertools import starmap
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 from sa_tools.parsers.tools.wrapper import BeauToLxml
@@ -30,6 +31,7 @@ class ThreadParser(Parser, RegexManager):
 
     def gen_posts(self, content: Tag or str or bytes):
         content = super().parse(content, wrapper=BeauToLxml)
+
         return gen_posts(content)
 
     def set_parser_map(self, parser_map: dict=None) -> None:
@@ -68,7 +70,6 @@ class ThreadParser(Parser, RegexManager):
 
         for td in tds:
             td_class = td['class'][-1]
-            print('class: ', td_class, td.text)
             text = td.text.strip()
 
             if td_class in needs_regex:
@@ -95,10 +96,9 @@ def expand(func):
     return new
 
 
-
-class Post(Post):
-    def __init__(self, arg, **kwargs):
-        super().__init__(*arg, **kwargs)
+# class Post(Post):
+#     def __init__(self, arg, **kwargs):
+#         super().__init__(*arg, **kwargs)
 
 
 def gen_posts(content: Tag) -> iter((str, Tag)):
@@ -107,7 +107,7 @@ def gen_posts(content: Tag) -> iter((str, Tag)):
     gen = ((None, post['id'][4:], post)
            for post in posts_content)
 
-    yield from map(Post, gen)
+    yield from starmap(Post, gen)
 
     #with Pool(8) as pool:
     #    yield from pool.imap(Post, gen)

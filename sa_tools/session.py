@@ -4,8 +4,20 @@ from sa_tools.reply import Reply
 
 from requests import Session, Response
 from bs4 import BeautifulSoup
+import dataset
 
 import time
+
+
+def cache(func):
+    def new(url, params=None, **kwargs):
+        db = dataset.connect('sqlite:///test.db')
+        response = func(url, params, **kwargs)
+        row = {'url': url, 'params': params, 'response': response}
+        db['requests'].insert(row)
+
+        return response
+    return new
 
 
 class SASession(Session, MagicMixin):

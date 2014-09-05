@@ -1,13 +1,11 @@
+from functools import lru_cache
+from lxml.html import HtmlElement, Element, fromstring
 from bs4 import BeautifulSoup, Tag
-from lxml.html import HtmlElement, Element
-from sa_tools import MagicMixin
-
-import lxml
 
 
-class BeauToLxml(MagicMixin):
+class BeauToLxml(object):
     def __getstate__(self):
-        self.__getattr__ = super().__getattr__
+        self.__getattr__ = BeauToLxml.__getattr__
 
         return self.__dict__
 
@@ -22,8 +20,8 @@ class BeauToLxml(MagicMixin):
         super().__init__()
         html_type = type(html)
 
-        if html_type == str:
-            self.html = lxml.html.fromstring(html)
+        if html_type in (str, bytes):
+            self.html = fromstring(html)
 
         elif html_type == BeauToLxml:
             self.html = html.html
@@ -31,8 +29,8 @@ class BeauToLxml(MagicMixin):
         elif html_type in (Element, HtmlElement):
             self.html = html
 
-        elif html_type in (bytes, Tag, BeautifulSoup):
-            self.html = lxml.html.fromstring(str(html))
+        elif html_type in (Tag, BeautifulSoup):
+            self.html = fromstring(str(html))
 
     def __repr__(self):
         return 'BeauToLxml: ' + repr(self.html)
@@ -47,30 +45,45 @@ class BeauToLxml(MagicMixin):
 
     def __getattr__(self, item):
         return self.find(item)
+        # val = self.find(item)
+        #
+        # if val:
+        #     return val
+        #
+        # else:
+        #     return getattr(self.html, item)
 
     def find(self, tag: str, _class: str=None, **kwargs):
-        tag_xp = find(tag, _class, **kwargs)
-        results = self.html.xpath(tag_xp)
-
-        if results:
-            result = self.html.xpath(tag_xp)[0]
-
-            return None if result is None else BeauToLxml(result)
-
-        else:
-            return None
+        return find(self.html, tag, _class, **kwargs)
 
     def find_all(self, tag: str, _class: str=None, **kwargs) -> list:
-        tag_xp = find(tag, _class, **kwargs)
-
-        return list(map(BeauToLxml, self.html.xpath(tag_xp)))
+        return find_all(self.html, tag, _class, **kwargs)
 
     @property
     def text(self):
         return self.html.text_content()
 
-    def wrap_content(self, content: str or bytes or Tag) -> BeautifulSoup:
+    def wrap_content(self, content: str or bytes or Tag):
         return wrap_content(content, wrapper=self)
+
+
+def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None:
+    tag_xp = get_xpath(tag, _class, **kwargs)
+    results = html.xpath(tag_xp)
+
+    if results:
+        result = html.xpath(tag_xp)[0]
+
+        return None if result is None else BeauToLxml(result)
+
+    else:
+        return None
+
+
+def find_all(html: Element, tag: str, _class: str=None, **kwargs) -> tuple:
+    tag_xp = get_xpath(tag, _class, **kwargs)
+
+    return tuple(map(BeauToLxml, html.xpath(tag_xp)))
 
 
 class Wrapper(object):
@@ -104,10 +117,14 @@ class Wrapper(object):
 
 def wrap_content(content: str or bytes or Tag, wrapper=BeauToLxml) -> BeautifulSoup:
     if not is_wrapped(content):
-        try:
-            content = wrapper(content, 'lxml')
+        if wrapper == BeautifulSoup:
+            try:
+                content = wrapper(content, 'lxml')
 
-        except:
+            except:
+                content = wrapper(content)
+
+        else:
             content = wrapper(content)
 
     return content
@@ -119,7 +136,8 @@ def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag, BeauToLxml)) -
     return content_type in wrappers
 
 
-def find(tag: str, _class: str=None, **kwargs) -> str:
+@lru_cache(maxsize=None)
+def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
     tag_xp = './/' + tag
 
     if _class:

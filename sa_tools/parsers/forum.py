@@ -1,4 +1,5 @@
 from sa_tools.parsers.parser import Parser
+from sa_tools.parsers.tools.wrapper import BeauToLxml
 from sa_tools.session import Session
 
 from bs4 import Tag, BeautifulSoup
@@ -47,7 +48,7 @@ class ForumParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag, id: int, parent) -> (iter, iter, iter):
-        content = super().parse(content)
+        content = super().parse(content, wrapper=BeauToLxml)
 
         info_gen = parse_info(id, ForumParser.forum_ids)
         subforums_gen = \

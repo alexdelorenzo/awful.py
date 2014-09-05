@@ -1,6 +1,9 @@
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
+from sa_tools.parsers.tools.wrapper import BeauToLxml
+from sa_tools.post import Post
 
+from multiprocessing.pool import Pool
 from collections import OrderedDict
 from math import ceil
 
@@ -12,7 +15,7 @@ class ThreadParser(Parser, RegexManager):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag=None) -> (iter, iter):
-        content = super().parse(content)
+        content = super().parse(content, wrapper=BeauToLxml)
         self._delete_extra()
 
         if content:
@@ -26,6 +29,7 @@ class ThreadParser(Parser, RegexManager):
         return info_gen, post_gen
 
     def gen_posts(self, content: Tag or str or bytes):
+        content = super().parse(content, wrapper=BeauToLxml)
         return gen_posts(content)
 
     def set_parser_map(self, parser_map: dict=None) -> None:
@@ -58,6 +62,7 @@ class ThreadParser(Parser, RegexManager):
         yield 'title', content.find('a', 'bclast').text.strip()
 
     def gen_info(self, content: Tag=None) -> iter(((str, str),)):
+        content = super().parse(content, wrapper=BeauToLxml)
         needs_regex = 'rating', 'lastpost'
         tds = content.find_all('td')
 
@@ -84,10 +89,28 @@ class ThreadParser(Parser, RegexManager):
         yield parse_last_seen(content)
 
 
+def expand(func):
+    def new(arg):
+        return func(*arg)
+    return new
+
+
+
+class Post(Post):
+    def __init__(self, arg, **kwargs):
+        super().__init__(*arg, **kwargs)
+
+
 def gen_posts(content: Tag) -> iter((str, Tag)):
     posts_content = content.find_all('table', 'post')
 
-    return ((post['id'][4:], post) for post in posts_content)
+    gen = ((None, post['id'][4:], post)
+           for post in posts_content)
+
+    yield from map(Post, gen)
+
+    #with Pool(8) as pool:
+    #    yield from pool.imap(Post, gen)
 
 
 def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):

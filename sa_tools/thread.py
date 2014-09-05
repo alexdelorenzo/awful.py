@@ -47,7 +47,7 @@ class Thread(SACollection):
         post_gen = self.parser.gen_posts(self._content)
 
         for post_info in post_gen:
-            self._add_post(*post_info)
+            self._add_post(post_info)
 
     def _apply_parsed_results(self, results: iter):
         condition_map = {'author': expand(self._add_author),

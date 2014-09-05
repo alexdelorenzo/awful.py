@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from sa_tools.base.sa_obj import SAObj
 from sa_tools.base.base import Base
 from sa_tools.parsers.tools.parser_dispatch import ParserDispatch
-from sa_tools.parsers.tools.wrapper import Wrapper
+from sa_tools.parsers.tools.wrapper import Wrapper, BeauToLxml
 
 
 class Parser(SAObj, ParserDispatch):
@@ -22,9 +22,9 @@ class Parser(SAObj, ParserDispatch):
         self.wrapper = wrapper(self.parent)
 
         if self.parent and self.parent._content:
-            self.wrapper.wrap_parent_content()
+            self.wrapper.wrap_parent_content(wrapper=BeauToLxml)
 
-    def parse(self, content=None, wrapper=BeautifulSoup, *args, **kwargs) -> Wrapper:
+    def parse(self, content=None, wrapper=BeauToLxml, *args, **kwargs) -> Wrapper:
         self.read()
 
         if self.parent:

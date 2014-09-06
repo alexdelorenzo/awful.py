@@ -13,7 +13,6 @@ class Post(SAObj):
         self.body = ""
         self.date_posted = dict()
         self.user_info = dict()
-        self.read()
 
     def __repr__(self):
         if self.body and self.poster:

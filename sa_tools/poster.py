@@ -33,3 +33,6 @@ class Poster(SAObj):
 
     def _get_from_url(self):
         self._fetch()
+
+    def pm(self, *args, **kwargs):
+        return self.session.pm(self.name, *args, **kwargs)

@@ -6,8 +6,12 @@ class NaviParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self):
-        super().parse()
+    def parse(self, content):
+        content = super().parse(content)
+        navi_content = content.find('div', 'pages')
+
+        return navi_content
+
 
     @staticmethod
     def parse_navi(parent):

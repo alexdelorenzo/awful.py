@@ -1,6 +1,7 @@
 BeautifulSoup4
 lxml
 requests
+dataset
 
 #PyQt5
 #kivy

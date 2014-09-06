@@ -1,4 +1,5 @@
 from functools import lru_cache
+from lxml.etree import XPath
 from lxml.html import HtmlElement, Element, fromstring
 from bs4 import BeautifulSoup, Tag
 
@@ -53,26 +54,70 @@ class BeauToLxml(object):
 
 
 def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None:
-    tag_xp = get_xpath(tag, _class, **kwargs)
-    results = html.xpath(tag_xp)
+    results = find_all(html, tag, _class, iter=True, **kwargs)
 
-    if results:
-        result = html.xpath(tag_xp)[0]
+    return next(results) if results else None
 
-        return None if result is None else BeauToLxml(result)
 
+def find_all(html: Element, tag: str, _class: str=None, iter=False, **kwargs) -> tuple:
+    xpath = get_xpath(tag, _class, **kwargs)
+    elems = xpath(html)
+    
+    if not elems:
+        return tuple()
+    
+    wrapper_imap = map(BeauToLxml, elems)
+    
+    if iter:
+        return wrapper_imap
+    
     else:
-        return None
+        return tuple(map(BeauToLxml, wrapper_imap))
 
 
-def find_all(html: Element, tag: str, _class: str=None, **kwargs) -> tuple:
-    tag_xp = get_xpath(tag, _class, **kwargs)
+@lru_cache(maxsize=None)
+def get_xpath(tag: str, _class: str=None, **kwargs) -> XPath:
+    tag_xp = './/' + tag
 
-    return tuple(map(BeauToLxml, html.xpath(tag_xp)))
+    if _class:
+        kwargs['class'] = _class
+
+    for attr, val in kwargs.items():
+        tag_xp += '['
+        attr_xp = '@' + attr
+        val_type = type(val)
+
+        is_collection = val_type in (set, list, tuple)
+        is_bool = val_type == bool
+        is_str = val_type == str
+
+        if is_bool:
+            if val is True:
+                tag_xp += attr_xp
+
+            else:
+                tag_xp += 'not(' + attr_xp + ')'
+
+        elif is_collection:
+            for item in val:
+                val_xp = '"' + item + '", '
+
+            val_xp = val_xp[:-2]
+            tag_xp += 'contains(' + attr_xp + ', ' + val_xp + ')'
+
+        elif is_str:
+            tag_xp += 'contains(' + attr_xp + ', "' + val + '")'
+
+        else:
+            tag_xp += attr_xp + "='" + val + "'"
+
+        tag_xp += ']'
+
+    return XPath(tag_xp)
 
 
 class Wrapper(object):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent=None, *args, **kwargs):
         super().__init__()
 
         self.parent = parent
@@ -116,50 +161,6 @@ def wrap_content(content: str or bytes or Tag, wrapper=BeauToLxml) -> BeautifulS
 
 
 def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag, BeauToLxml)) -> bool:
-    content_type = type(content)
-
-    return content_type in wrappers
-
-
-@lru_cache(maxsize=None)
-def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
-    tag_xp = './/' + tag
-
-    if _class:
-        kwargs['class'] = _class
-
-    elif not kwargs:
-        return tag_xp
-
-    for attr, val in kwargs.items():
-        tag_xp += '['
-        attr_xp = '@' + attr
-        val_type = type(val)
-
-        is_collection = val_type in (set, list, tuple)
-        is_bool = val_type == bool
-        is_str = val_type == str
-
-        if is_bool:
-            if val is True:
-                tag_xp += attr_xp + ']'
-
-            else:
-                tag_xp += 'not(' + attr_xp + ')]'
-
-        elif is_collection:
-            for item in val:
-                val_xp = '"' + item + '", '
-
-            val_xp = val_xp[:-2]
-            tag_xp += 'contains(' + attr_xp + ', ' + val_xp + ')]'
-
-        elif is_str:
-            tag_xp += 'contains(' + attr_xp + ', "' + val + '")]'
-
-        else:
-            tag_xp += attr_xp + "='" + val + "']"
-
-    return tag_xp
+    return type(content) in wrappers
 
 

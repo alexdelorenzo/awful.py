@@ -8,6 +8,7 @@ class SACollection(SAObj):
     page = IntOrNone()
     pages = IntOrNone(1)
     navi = TriggerProperty('read', 'navi')
+    _navi_parser = NaviParser()
 
     def __init__(self, *args, **properties):
         self._collection = None
@@ -20,7 +21,7 @@ class SACollection(SAObj):
 
     def _setup_navi(self, pg: int=1) -> None:
         if not self.navi:
-            navi_content = NaviParser.parse_navi(self)
+            navi_content = self._navi_parser.parse(self._content)
             self.navi = PageNavi(self, content=navi_content)
 
         self.navi.read(pg)

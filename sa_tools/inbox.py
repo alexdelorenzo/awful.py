@@ -17,6 +17,7 @@ class Inbox(SAObj):
 
         self.url = "http://forums.somethingawful.com/private.php"
         self.pms = OrderedDict()
+        self.name = 'PM Inbox'
 
     def __repr__(self):
         desc = self.name
@@ -51,3 +52,6 @@ class Inbox(SAObj):
         unread_count = len([pm for pm in self.pms.values() if pm.unread])
 
         return count, unread_count
+
+    def pm(self, *args, **kwargs):
+        return self.session.pm(*args, **kwargs)

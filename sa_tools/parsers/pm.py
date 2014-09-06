@@ -46,7 +46,7 @@ def gen_info(content: Tag, dispatch) -> iter(((str, object),)):
 def gen_info_from_title(key: str, val) -> iter(((str, str),)):
         title, url = val
 
-        yield 'url', url
+        #yield 'url', url
         yield 'name', title
         yield parse_id(key, url)
 
@@ -60,8 +60,8 @@ def parse_status(key: str, content: Tag) -> (str, bool):
 
 
 def parse_icon(key: str, content: Tag) -> (str, str or None):
-    status = (content.img['src'] if content.img else None)
-    return key, (content.img['src'] if content.img else None)
+    status = content.img['src'] if content.img else None
+    return key, status
 
 
 def parse_title(key: str, content: Tag) -> (str, (str, str)):

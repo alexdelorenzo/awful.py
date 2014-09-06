@@ -59,6 +59,12 @@ class Thread(SACollection):
         self._apply_parsed_results(info_gen)
         self.name = self.title
 
+    def reply(self, body: str):
+        reply = self.session.reply(self.id, body)
+        self.read(self.page)
+
+        return reply
+
 
 def expand(func):
     def new(arg):

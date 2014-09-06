@@ -107,7 +107,8 @@ def gen_posts(content: Tag) -> iter((str, Tag)):
     gen = ((None, post['id'][4:], post)
            for post in posts_content)
 
-    yield from starmap(Post, gen)
+    yield from (post for post in starmap(Post, gen)
+                if post.read() is None)
 
     #with Pool(8) as pool:
     #    yield from pool.imap(Post, gen)

@@ -67,10 +67,15 @@ class Forum(SACollection):
             for subforum in self.children:
                 self.subforums[subforum.id] = subforum
 
+    def find_threads_by_name(self, name: str):
+        return find_threads_by_name(self, name)
+
 
 def find_threads_by_name(forum: Forum, name: str) -> iter((Thread,)):
     if not forum.page:
         forum.read()
+
+    current_page = forum.page
 
     while forum.page <= forum.pages:
         threads = forum.threads.values()
@@ -79,8 +84,10 @@ def find_threads_by_name(forum: Forum, name: str) -> iter((Thread,)):
             if name in thread.name:
                 yield thread
 
-        if forum.page == forum.pages:
+        if forum.page >= forum.pages:
             break
 
         else:
-            forum.read(forum.pages + 1)
+            forum.read(forum.page + 1)
+
+    forum.read(current_page)

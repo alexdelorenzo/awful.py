@@ -9,17 +9,6 @@ import dataset
 import time
 
 
-def cache(func):
-    def new(url, params=None, **kwargs):
-        db = dataset.connect('sqlite:///test.db')
-        response = func(url, params, **kwargs)
-        row = {'url': url, 'params': params, 'response': response}
-        db['requests'].insert(row)
-
-        return response
-    return new
-
-
 class SASession(Session, MagicMixin):
     _base_url = 'https://forums.somethingawful.com/'
     name = 'awful_py Session'
@@ -119,3 +108,42 @@ def pm(session: Session, recv_username: str, title: str="", body: str=None, tag:
     response = session.post(url, data=data)
 
     return response
+
+
+def post_thread(session: Session, forum_id: int=21, title: str='nt', body: str='nt', tag: int=420, poll: dict=None, bookmark=False):
+    url = "http://forums.somethingawful.com/newthread.php"
+    params = {'action': 'newthread',
+              'forumid': forum_id}
+
+    response = session.get(url, params)
+
+    data = {'forumid': forum_id,
+            'action': 'postthread',
+            'subject': title,
+            'iconid': tag,
+            'message': body,
+            'bookmark': 'yes' if bookmark else 'no'}
+
+
+def cache(func, retrieve: bool=False):
+    def new(url, params=None, **kwargs):
+        db = dataset.connect('sqlite:///cache.db')
+
+        if retrieve:
+            in_db = False
+
+            if not in_db:
+                return cache(func, False)(url, params, **kwargs)
+            #response = func(url, params, **kwargs)
+
+        elif retrieve is False:
+            response = func(url, params, **kwargs)
+            row = {'url': url, 'params': params, 'response': response}
+            db['requests'].insert(row)
+
+        elif retrieve is None:
+            response = func(url, params, **kwargs)
+
+        return response
+
+    return new

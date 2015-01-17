@@ -69,8 +69,14 @@ class ThreadParser(Parser, RegexManager):
         tds = content.find_all('td')
 
         for td in tds:
-            td_class = td['class'][-1]
+            td_class = td['class']
+
+            if isinstance(td_class, list):
+                td_class = td_class[-1]
+            #td_class = td_class if not isinstance(td_class, list) else td_class[-1]
+
             text = td.text.strip()
+            print(td_class, td)
 
             if td_class in needs_regex:
                 info_pair = self.dispatch(td_class, text, td, self.regex_matches)
@@ -96,21 +102,11 @@ def expand(func):
     return new
 
 
-# class Post(Post):
-#     def __init__(self, arg, **kwargs):
-#         super().__init__(*arg, **kwargs)
-
-
 def gen_posts(content: Tag) -> iter((str, Tag)):
     posts_content = content.find_all('table', 'post')
 
-    gen = ((None, post['id'][4:], post)
-           for post in posts_content)
-
-    yield from starmap(Post, gen)
-
-    #with Pool(8) as pool:
-    #    yield from pool.imap(Post, gen)
+    for post in posts_content:
+        yield None, post['id'][4:], post
 
 
 def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):
@@ -171,7 +167,7 @@ def parse_rating(key: str, val, content: Tag, regex_matches) -> (str, dict):
     img_tag = content.img
 
     if img_tag:
-        title_attr = img_tag['title'].strip()
+        title_attr = ' '.join(img_tag['title'])
 
         votes, avg = regex_matches(key, title_attr)
         votes, avg = int(votes), float(avg)

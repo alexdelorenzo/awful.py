@@ -1,11 +1,12 @@
 from functools import lru_cache
-from lxml.html import HtmlElement, Element, fromstring
+from lxml.html import HtmlElement, Element, fromstring, tostring
 from bs4 import BeautifulSoup, Tag
 
 
 class BeauToLxml(object):
     def __init__(self, html: None):
         super().__init__()
+
         html_type = type(html)
 
         if html_type in (str, bytes):
@@ -50,6 +51,10 @@ class BeauToLxml(object):
     @property
     def text(self):
         return self.html.text_content()
+
+    @property
+    def raw_html(self):
+        return tostring(self.html)
 
 
 def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None:
@@ -161,5 +166,3 @@ def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
             tag_xp += attr_xp + "='" + val + "']"
 
     return tag_xp
-
-

@@ -1,10 +1,7 @@
-from itertools import starmap
 from sa_tools.parsers.tools.regex_manager import RegexManager
 from sa_tools.parsers.parser import Parser
 from sa_tools.parsers.tools.wrapper import BeauToLxml
-from sa_tools.post import Post
 
-from multiprocessing.pool import Pool
 from collections import OrderedDict
 from math import ceil
 
@@ -73,10 +70,8 @@ class ThreadParser(Parser, RegexManager):
 
             if isinstance(td_class, list):
                 td_class = td_class[-1]
-            #td_class = td_class if not isinstance(td_class, list) else td_class[-1]
 
             text = td.text.strip()
-            print(td_class, td)
 
             if td_class in needs_regex:
                 info_pair = self.dispatch(td_class, text, td, self.regex_matches)
@@ -167,7 +162,7 @@ def parse_rating(key: str, val, content: Tag, regex_matches) -> (str, dict):
     img_tag = content.img
 
     if img_tag:
-        title_attr = ' '.join(img_tag['title'])
+        title_attr = img_tag['title'].strip()
 
         votes, avg = regex_matches(key, title_attr)
         votes, avg = int(votes), float(avg)

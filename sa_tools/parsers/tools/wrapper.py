@@ -9,16 +9,16 @@ class BeauToLxml(object):
 
         html_type = type(html)
 
-        if html_type in (str, bytes):
+        if isinstance(html, (str, bytes)):
             self.html = fromstring(html)
 
-        elif html_type == BeauToLxml:
+        elif isinstance(html, BeauToLxml):
             self.html = html.html
 
-        elif html_type in (Element, HtmlElement):
+        elif isinstance(html, HtmlElement):
             self.html = html
 
-        elif html_type in (Tag, BeautifulSoup):
+        elif isinstance(html, (Tag, BeautifulSoup)):
             self.html = fromstring(str(html))
 
     def __repr__(self):
@@ -27,7 +27,7 @@ class BeauToLxml(object):
     def __getitem__(self, item):
         items = self.html.attrib[item]
 
-        if ' ' in items:
+        if item == 'class' and ' ' in items:
             items = items.split(' ')
 
         return items
@@ -139,27 +139,22 @@ def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
     for attr, val in kwargs.items():
         tag_xp += '['
         attr_xp = '@' + attr
-        val_type = type(val)
 
-        is_collection = val_type in (set, list, tuple)
-        is_bool = val_type == bool
-        is_str = val_type == str
-
-        if is_bool:
+        if isinstance(val, bool):
             if val is True:
                 tag_xp += attr_xp + ']'
 
             else:
                 tag_xp += 'not(' + attr_xp + ')]'
 
-        elif is_collection:
+        elif isinstance(val, (set, list, tuple)):
             for item in val:
                 val_xp = '"' + item + '", '
 
             val_xp = val_xp[:-2]
             tag_xp += 'contains(' + attr_xp + ', ' + val_xp + ')]'
 
-        elif is_str:
+        elif isinstance(val, str):
             tag_xp += 'contains(' + attr_xp + ', "' + val + '")]'
 
         else:

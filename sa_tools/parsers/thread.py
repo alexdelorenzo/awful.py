@@ -101,7 +101,7 @@ def gen_posts(content: Tag) -> iter((str, Tag)):
     posts_content = content.find_all('table', 'post')
 
     for post in posts_content:
-        yield None, post['id'][4:], post
+        yield post['id'][4:], post
 
 
 def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):

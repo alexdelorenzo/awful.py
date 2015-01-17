@@ -11,7 +11,6 @@ from collections import OrderedDict
 
 class Thread(SACollection):
     posts = TriggerProperty('read', 'posts')
-
     parser = ThreadParser()
 
     def __init__(self, *args, **properties):
@@ -31,7 +30,8 @@ class Thread(SACollection):
         self._delete_extra()
 
     def _add_post(self, sa_post, is_op: bool=False):
-        #sa_post = Post(self, post_id, post_content)
+        post_id, post_content = sa_post
+        sa_post = Post(self, post_id, post_content)
         self.posts[sa_post.id] = sa_post
 
         if is_op:

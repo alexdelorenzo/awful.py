@@ -67,20 +67,29 @@ class Forum(SACollection):
             for subforum in self.children:
                 self.subforums[subforum.id] = subforum
 
+    def find_threads(self, title: str) -> iter:
+        return find_threads_by_name(self, title)
+
 
 def find_threads_by_name(forum: Forum, name: str) -> iter((Thread,)):
     if not forum.page:
         forum.read()
 
-    while forum.page <= forum.pages:
-        threads = forum.threads.values()
+    page = forum.page
 
-        for thread in threads:
-            if name in thread.name:
-                yield thread
+    try:
+        while forum.page <= forum.pages:
+            threads = forum.threads.values()
 
-        if forum.page == forum.pages:
-            break
+            for thread in threads:
+                if name in thread.name:
+                    yield thread
 
-        else:
-            forum.read(forum.pages + 1)
+            if forum.page == forum.pages:
+                break
+
+            else:
+                forum.read(forum.pages + 1)
+
+    finally:
+        forum.read(page)

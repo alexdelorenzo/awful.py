@@ -8,7 +8,7 @@ class LastReadParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content, url: str) -> iter:
-        content = super().parse(content)
+        content = self.wrap(content)
 
         return gen_parent_changes(content, url)
 

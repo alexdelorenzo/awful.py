@@ -10,7 +10,7 @@ class PostParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag) -> (str, tuple or str):
-        content = super().parse(content, wrapper=BeauToLxml)
+        content = self.wrap(content, wrapper=BeauToLxml)
         yield 'user_info', parse_user_info(content=content)
         yield 'body', parse_post_body(content=content)
 

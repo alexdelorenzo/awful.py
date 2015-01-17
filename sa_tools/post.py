@@ -16,7 +16,7 @@ class Post(SAObj):
         self.read()
 
     def __repr__(self):
-        if self.body and self.poster:
+        if self.poster:
             id, username = str(self.id), self.poster.name
             info_str = 'Post by ' + username
 

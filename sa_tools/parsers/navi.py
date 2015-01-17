@@ -7,7 +7,7 @@ class NaviParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self):
-        super().parse()
+        self.wrap()
 
     @staticmethod
     def parse_navi(parent):

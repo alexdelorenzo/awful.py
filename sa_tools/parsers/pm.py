@@ -23,7 +23,7 @@ class PMParser(Parser, ParserDispatch):
         super().set_parser_map(parser_map=parser_map)
 
     def parse(self, content: Tag) -> iter:
-        content = super().parse(content)
+        content = self.wrap(content)
 
         info_gen = gen_info(content, self.dispatch)
 

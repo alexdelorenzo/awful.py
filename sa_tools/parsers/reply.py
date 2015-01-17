@@ -17,7 +17,7 @@ class ReplyParser(Parser):
         return reply(session, url, inputs)
 
     def parse(self, session: Session, url: str, reply: str=None) -> dict:
-        super().parse()
+        self.wrap()
 
         content = fetch(session, url)
         inputs = parse_inputs(content, reply)

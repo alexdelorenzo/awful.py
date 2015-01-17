@@ -49,7 +49,7 @@ class ForumParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag, id: int, parent) -> (iter, iter, iter):
-        content = super().parse(content, wrapper=BeauToLxml)
+        content = self.wrap(content, wrapper=BeauToLxml)
 
         info_gen = parse_info(id, ForumParser.forum_ids)
         subforums_gen = \

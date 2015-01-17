@@ -19,7 +19,7 @@ class SearchResultParser(Parser):
         self._add_post(post_id, post_content)
 
     def parse(self):
-        super().parse()
+        self.wrap()
         self.get_post()
         self._parse_content()
 

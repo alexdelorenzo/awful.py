@@ -9,7 +9,7 @@ class ProfileParser(Parser):
 
     def parse(self, content: Tag=None):
         if content:
-            content = super().parse(content)
+            content = self.wrap(content)
 
             info_gen = gen_info(content)
             contact_info_gen = parse_contact_info(content)

@@ -6,7 +6,7 @@ class PageNaviParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content) -> int:
-        content = super().parse(content)
+        content = self.wrap(content)
 
         return parse_page_selector(content)
 

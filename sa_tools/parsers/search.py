@@ -7,7 +7,7 @@ class SearchParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self):
-        super().parse()
+        self.wrap()
         self._parse_search_results()
 
     def _parse_search_results(self):

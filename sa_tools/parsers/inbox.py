@@ -8,7 +8,7 @@ class InboxParser(Parser):
         super().__init__(*args, **kwargs)
 
     def parse(self, content: Tag) -> (iter, iter):
-        content = super().parse(content)
+        content = self.wrap(content)
 
         info_gen, pm_gen = gen_info(content), gen_pms(content)
 

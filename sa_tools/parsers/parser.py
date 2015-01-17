@@ -24,7 +24,7 @@ class Parser(SAObj, ParserDispatch):
         if self.parent and self.parent._content:
             self.wrapper.wrap_parent_content(wrapper=BeauToLxml)
 
-    def parse(self, content=None, wrapper=BeauToLxml, *args, **kwargs) -> Wrapper:
+    def wrap(self, content=None, wrapper=BeauToLxml, *args, **kwargs) -> Wrapper:
         self.read()
 
         if self.parent:
@@ -32,6 +32,9 @@ class Parser(SAObj, ParserDispatch):
 
         if content:
             return self.wrapper.wrap_content(content, wrapper)
+
+    def parse(self, *args, **kwargs):
+        return self.wrap(*args, **kwargs)
 
 
     @property

@@ -5,15 +5,13 @@ from sa_tools.parsers.tools.wrapper import BeauToLxml
 from collections import OrderedDict
 from math import ceil
 
-from bs4 import Tag
-
 
 class ThreadParser(Parser, RegexManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag=None) -> (iter, iter):
-        content = super().parse(content, wrapper=BeauToLxml)
+    def parse(self, content: BeauToLxml=None) -> (iter, iter):
+        content = self.wrap(content, wrapper=BeauToLxml)
         self._delete_extra()
 
         if content:
@@ -26,8 +24,8 @@ class ThreadParser(Parser, RegexManager):
 
         return info_gen, post_gen
 
-    def gen_posts(self, content: Tag or str or bytes):
-        content = super().parse(content, wrapper=BeauToLxml)
+    def gen_posts(self, content: BeauToLxml or str or bytes):
+        content = self.wrap(content, wrapper=BeauToLxml)
 
         return gen_posts(content)
 
@@ -56,12 +54,12 @@ class ThreadParser(Parser, RegexManager):
 
         super().set_regex_strs(regex_strs)
 
-    def _parse_from_url(self, content: Tag) -> (str, str):
+    def _parse_from_url(self, content: BeauToLxml) -> (str, str):
         yield parse_first_post(content)
         yield 'title', content.find('a', 'bclast').text.strip()
 
-    def gen_info(self, content: Tag=None) -> iter(((str, str),)):
-        content = super().parse(content, wrapper=BeauToLxml)
+    def gen_info(self, content: BeauToLxml=None) -> iter(((str, str),)):
+        content = self.wrap(content, wrapper=BeauToLxml)
         needs_regex = 'rating', 'lastpost'
         tds = content.find_all('td')
 
@@ -97,14 +95,14 @@ def expand(func):
     return new
 
 
-def gen_posts(content: Tag) -> iter((str, Tag)):
+def gen_posts(content: BeauToLxml) -> iter((str, BeauToLxml)):
     posts_content = content.find_all('table', 'post')
 
     for post in posts_content:
         yield post['id'][4:], post
 
 
-def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):
+def parse_first_post(content: BeauToLxml) -> (str, (str, BeauToLxml, bool)):
     post_content = content.find('table', 'post')
 
     post_id = post_content['id'][4:]
@@ -113,13 +111,13 @@ def parse_first_post(content: Tag) -> (str, (str, Tag, bool)):
     return 'op', result
 
 
-def parse_icon(key: str, val: str, content: Tag) -> (str, str):
+def parse_icon(key: str, val: str, content: BeauToLxml) -> (str, str):
     text = content.a['href'].split('posticon=')[-1]
 
     return key, text
 
 
-def parse_last_post(key: str, val: str, content: Tag, regex_matches) -> (str, dict):
+def parse_last_post(key: str, val: str, content: BeauToLxml, regex_matches) -> (str, dict):
     #TODO: use the groups() method
     groups = 'time', 'date', 'user'
     matches = regex_matches(key, val)
@@ -128,7 +126,7 @@ def parse_last_post(key: str, val: str, content: Tag, regex_matches) -> (str, di
     return key, matches
 
 
-def parse_author(key: str, val, content: Tag) -> (str, (str, str)):
+def parse_author(key: str, val, content: BeauToLxml) -> (str, (str, str)):
     link = content.a
     author = link.text.strip()
     user_id = link['href'].split('id=')[-1]
@@ -144,21 +142,21 @@ def parse_page_count(val: str) -> (str, int):
     return key, pages
 
 
-def parse_last_seen(content: Tag) -> (str, Tag):
+def parse_last_seen(content: BeauToLxml) -> (str, BeauToLxml):
     last_read = content.find('div', 'lastseen')
     key = 'last_read'
 
     return key, last_read
 
 
-def parse_title(key: str, val, content: Tag) -> (str, str):
+def parse_title(key: str, val, content: BeauToLxml) -> (str, str):
     text = content.find('a', 'thread_title').text
     key = 'title'
 
     return key, text
 
 
-def parse_rating(key: str, val, content: Tag, regex_matches) -> (str, dict):
+def parse_rating(key: str, val, content: BeauToLxml, regex_matches) -> (str, dict):
     img_tag = content.img
 
     if img_tag:
@@ -178,13 +176,13 @@ def parse_rating(key: str, val, content: Tag, regex_matches) -> (str, dict):
     return key, rating
 
 
-def parse_views(key: str, val, content: Tag) -> (str, int):
+def parse_views(key: str, val, content: BeauToLxml) -> (str, int):
     views = int(content.text.strip())
 
     return key, views
 
 
-def parse_replies(key: str, val, content: Tag) -> (str, int):
+def parse_replies(key: str, val, content: BeauToLxml) -> (str, int):
     reply_count = int(content.text.strip())
 
     return key, reply_count

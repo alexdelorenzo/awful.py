@@ -1,5 +1,5 @@
 from copy import copy
-from sa_tools.base.sa_obj import SAObj, SAImmutableObject
+from sa_tools.base.sa_obj import SAObj
 from sa_tools.base.descriptors import TriggerProperty, IntOrNone
 from sa_tools.base.page_navi import PageNavi
 from sa_tools.parsers.navi import NaviParser

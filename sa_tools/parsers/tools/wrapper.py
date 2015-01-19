@@ -46,13 +46,8 @@ class BeauToLxml(BS4Adaoter):
     def __repr__(self):
         return 'BeauToLxml: ' + repr(self.html)
 
-    def __getitem__(self, item):
-        items = self.html.attrib[item]
-
-        if item == 'class' and ' ' in items:
-            items = items.split(' ')
-
-        return items
+    def __getitem__(self, item: str) -> str or list:
+        return get(self, item)
 
     def __getattr__(self, item):
         return self.find(item)
@@ -64,11 +59,17 @@ class BeauToLxml(BS4Adaoter):
         # else:
         #     return getattr(self.html, item)
 
-    def find(self, tag: str, _class: str=None, **kwargs):
-        return find(self.html, tag, _class, **kwargs)
+    def decode(self, pretty_print: bool=False, eventual_encoding: str='utf-8', **kwargs):
+        return str(self.raw_html, eventual_encoding)
 
-    def find_all(self, tag: str, _class: str=None, **kwargs) -> list:
-        return find_all(self.html, tag, _class, **kwargs)
+    def get(self, key: str, default=None):
+        return self[key] if self[key] else default
+
+    def find(self, tag: str, attrs: dict=None, **kwargs):
+        return find(self.html, tag, attrs, **kwargs)
+
+    def find_all(self, tag: str, attrs: dict=None, **kwargs) -> list:
+        return find_all(self.html, tag, attrs, **kwargs)
 
     @property
     def text(self):
@@ -79,8 +80,19 @@ class BeauToLxml(BS4Adaoter):
         return tostring(self.html)
 
 
-def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None:
-    tag_xp = get_xpath(tag, _class, **kwargs)
+
+
+def get(html: BeauToLxml, item: str) -> str or list:
+    items = html.attrib[item]
+
+    if item == 'class' and ' ' in items:
+        items = items.split(' ')
+
+    return items
+
+
+def find(html: Element, tag: str, attrs: dict=None, **kwargs) -> Element or None:
+    tag_xp = get_xpath(tag, attrs, **kwargs)
     results = html.xpath(tag_xp)
 
     if results:
@@ -92,8 +104,8 @@ def find(html: Element, tag: str, _class: str=None, **kwargs) -> Element or None
         return None
 
 
-def find_all(html: Element, tag: str, _class: str=None, **kwargs) -> tuple:
-    tag_xp = get_xpath(tag, _class, **kwargs)
+def find_all(html: Element, tag: str, attrs: dict=None, **kwargs) -> tuple:
+    tag_xp = get_xpath(tag, attrs, **kwargs)
 
     return tuple(map(BeauToLxml, html.xpath(tag_xp)))
 
@@ -149,11 +161,17 @@ def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag, BeauToLxml)) -
 
 
 @lru_cache(maxsize=None)
-def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
+def get_xpath(tag: str, attrs: dict=None, **kwargs) -> str:
     tag_xp = './/' + tag
 
-    if _class:
-        kwargs['class'] = _class
+    if isinstance(attrs, dict):
+        kwargs.update(attrs)
+
+    elif isinstance(attrs, str):
+        kwargs['class'] = attrs
+
+    if 'class_' in kwargs:
+        kwargs['class'] = kwargs['class_']
 
     elif not kwargs:
         return tag_xp
@@ -163,13 +181,13 @@ def get_xpath(tag: str, _class: str=None, **kwargs) -> str:
         attr_xp = '@' + attr
 
         if isinstance(val, bool):
-            if val is True:
+            if val:
                 tag_xp += attr_xp + ']'
 
             else:
                 tag_xp += 'not(' + attr_xp + ')]'
 
-        elif isinstance(val, (set, list, tuple)):
+        elif isinstance(val, (set, list, tuple, iter)):
             for item in val:
                 val_xp = '"' + item + '", '
 

@@ -1,13 +1,35 @@
+from abc import ABC, abstractmethod
 from functools import lru_cache
 from lxml.html import HtmlElement, Element, fromstring, tostring
 from bs4 import BeautifulSoup, Tag
 
 
-class BeauToLxml(object):
+class BS4Adaoter(ABC):
+    @abstractmethod
+    def __getitem__(self, item):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def __getattr__(self, item):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find(self, tag: str, _class: str=None, **kwargs):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_all(self, tag: str, _class: str=None, **kwargs) -> list:
+        raise NotImplementedError()
+
+    @abstractmethod
+    @property
+    def text(self):
+        raise NotImplementedError()
+
+
+class BeauToLxml(BS4Adaoter):
     def __init__(self, html: None):
         super().__init__()
-
-        html_type = type(html)
 
         if isinstance(html, (str, bytes)):
             self.html = fromstring(html)
@@ -18,7 +40,7 @@ class BeauToLxml(object):
         elif isinstance(html, HtmlElement):
             self.html = html
 
-        elif isinstance(html, (Tag, BeautifulSoup)):
+        elif str(type(html)) in ('Tag', 'BeautifulSoup'):
             self.html = fromstring(str(html))
 
     def __repr__(self):

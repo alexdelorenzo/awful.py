@@ -33,7 +33,7 @@ class SACollection(SAObj):
         Handles negative page numbers to act like negative indices in lists.
         """
 
-        negative_index = pg < 0v
+        negative_index = pg < 0
 
         if negative_index:
             if not self.pages:

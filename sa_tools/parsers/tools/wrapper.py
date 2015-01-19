@@ -21,8 +21,8 @@ class BS4Adaoter(ABC):
     def find_all(self, tag: str, _class: str=None, **kwargs) -> list:
         raise NotImplementedError()
 
-    @abstractmethod
     @property
+    @abstractmethod
     def text(self):
         raise NotImplementedError()
 
@@ -78,8 +78,6 @@ class BeauToLxml(BS4Adaoter):
     @property
     def raw_html(self):
         return tostring(self.html)
-
-
 
 
 def get(html: BeauToLxml, item: str) -> str or list:
@@ -187,7 +185,7 @@ def get_xpath(tag: str, attrs: dict=None, **kwargs) -> str:
             else:
                 tag_xp += 'not(' + attr_xp + ')]'
 
-        elif isinstance(val, (set, list, tuple, iter)):
+        elif isinstance(val, (set, list, tuple)):
             for item in val:
                 val_xp = '"' + item + '", '
 

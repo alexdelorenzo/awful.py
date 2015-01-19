@@ -4,6 +4,9 @@ from lxml.html import HtmlElement, Element, fromstring, tostring
 
 
 class BS4Adapter(ABC):
+    """
+    Limited BeautifulSoup4 API adapter interface.
+    """
     @abstractmethod
     def __getitem__(self, item):
         raise NotImplementedError()
@@ -13,11 +16,11 @@ class BS4Adapter(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find(self, tag: str, _class: str=None, **kwargs):
+    def find(self, tag: str, attrs: dict=None, **kwargs):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_all(self, tag: str, _class: str=None, **kwargs) -> tuple:
+    def find_all(self, tag: str, attrs: dict=None, **kwargs) -> tuple:
         raise NotImplementedError()
 
     @property
@@ -46,7 +49,7 @@ class BeauToLxml(BS4Adapter):
         return 'BeauToLxml: ' + repr(self.html)
 
     def __getitem__(self, item: str) -> str or tuple or None:
-        return get(self, item)
+        return get(self.html, item)
 
     def __getattr__(self, item):
         return self.find(item)
@@ -72,8 +75,8 @@ class BeauToLxml(BS4Adapter):
         return tostring(self.html)
 
 
-def get(html: BeauToLxml, item: str) -> str or list:
-    items = html.html.attrib[item]
+def get(html: Element, item: str) -> str or list:
+    items = html.attrib[item]
 
     if item == 'class' and ' ' in items:
         items = items.split(' ')

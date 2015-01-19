@@ -1,8 +1,8 @@
 from sa_tools.base.base import Base
 
 class MagicMixin(Base):
-    def __init__(self, parent: Base=None, *args, **properties):
-        super().__init__(parent, *args, **properties)
+    def __init__(self, parent: Base=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
     def __repr__(self):

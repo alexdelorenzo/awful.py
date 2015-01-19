@@ -3,16 +3,15 @@ from requests import Session
 from sa_tools.base.dynamic import DynamicMixin
 from sa_tools.base.magic import MagicMixin
 from sa_tools.base.descriptors import IntOrNone
-
-from bs4 import Tag
+from sa_tools.parsers.tools.wrapper import BS4Adapter
 
 
 class SAObj(MagicMixin, DynamicMixin):
     id = IntOrNone()
     _base_url = 'http://forums.somethingawful.com/'
 
-    def __init__(self, parent=None, id: int=None, content: Tag=None, name: str=None, url: str=None, **properties: dict):
-        super().__init__(parent, **properties)
+    def __init__(self, parent=None, id: int=None, content: BS4Adapter=None, name: str=None, url: str=None, **kwargs: dict):
+        super().__init__(parent, **kwargs)
         self.id = id
         self.session = None if not self.parent else self.parent.session
         self._content = content
@@ -42,16 +41,12 @@ class SAObj(MagicMixin, DynamicMixin):
         apply_key_vals(self, results, condition_map)
 
 
-class SAImmutableObject(SAObj):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def _fetch(self, url: str=None, params: dict=None) -> str or bytes:
-        url = url if url else self. url
-        return fetch(self.session, url, params)
-
-    def read(self, pg: int=1):
-        return copy(self)
+def get_constructor_args(sa_obj: SAObj):
+    return {'parent': sa_obj.parent,
+            'id': sa_obj.id,
+            'content': sa_obj._content,
+            'name': sa_obj.name,
+            'url': sa_obj.url}
 
 
 def fetch(session: Session, url: str, params: dict=None):

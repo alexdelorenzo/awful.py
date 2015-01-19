@@ -1,13 +1,12 @@
 from sa_tools.parsers.parser import Parser
-
-from bs4 import Tag
+from sa_tools.parsers.tools.wrapper import BS4Adapter
 
 
 class ProfileParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag=None):
+    def parse(self, content: BS4Adapter=None):
         if content:
             content = self.wrap(content)
 
@@ -24,7 +23,7 @@ class ProfileParser(Parser):
         return self.parse(pertinent_info)
 
 
-def gen_info(content: Tag) -> (str, str):
+def gen_info(content: BS4Adapter) -> (str, str):
     yield 'id', content.td['class'][-1]
     yield 'avatar_url', content.img['src']
     yield 'name', content.find('dt', 'author').text.strip()
@@ -32,7 +31,7 @@ def gen_info(content: Tag) -> (str, str):
     yield 'dict', content.find('dd', 'registered').text.strip()
 
 
-def parse_contact_info(content: Tag) -> iter:
+def parse_contact_info(content: BS4Adapter) -> iter:
     contacts = content.find('dl', 'contacts')
     dts, dds = contacts.find_all('dt'), contacts.find_all('dd')
 

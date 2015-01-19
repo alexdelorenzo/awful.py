@@ -1,8 +1,7 @@
 from sa_tools.parsers.parser import Parser
-from sa_tools.parsers.tools.wrapper import BeauToLxml
+from sa_tools.parsers.tools.wrapper import BeauToLxml, BS4Adapter
 from sa_tools.session import Session
 
-from bs4 import Tag
 from functools import lru_cache
 from sa_tools.thread import Thread
 
@@ -46,7 +45,7 @@ class ForumParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag, id: int, parent) -> (iter, iter, iter):
+    def parse(self, content: BS4Adapter, id: int, parent) -> (iter, iter, iter):
         content = self.wrap(content, wrapper=BeauToLxml)
 
         info_gen = parse_info(id, ForumParser.forum_ids)
@@ -57,7 +56,7 @@ class ForumParser(Parser):
         return info_gen, subforums_gen, threads_gen
 
 
-def parse_subforums(content: Tag) -> (str, str):
+def parse_subforums(content: BS4Adapter) -> (str, str):
     tr_subforums = content.find_all('tr', 'subforum')
 
     for tr_subforum in tr_subforums:
@@ -68,7 +67,7 @@ def parse_subforums(content: Tag) -> (str, str):
         yield subforum_id, name
 
 
-def parse_threads(content: Tag, parent) -> (int, Tag):
+def parse_threads(content: BS4Adapter, parent) -> (int, BS4Adapter):
     content = content.find('div', id='content')
     thread_blocks = content.find_all('tr', 'thread', id=True)
 
@@ -95,7 +94,7 @@ def icon_map(session: Session) -> dict:
     return dict(get_icon_map(session))
 
 
-def has_subforums(content: Tag) -> bool:
+def has_subforums(content: BS4Adapter) -> bool:
     if content.table:
         return content.table['id'] == 'subforums'
 
@@ -104,7 +103,7 @@ def has_subforums(content: Tag) -> bool:
 
 
 @lru_cache(maxsize=None)
-def get_index(session: Session) -> Tag:
+def get_index(session: Session) -> BS4Adapter:
     index = session.get("http://forums.somethingawful.com")
 
     return BeauToLxml(index.content)
@@ -125,3 +124,4 @@ def forum_icon(forum_id: int, forum_dict: dict, session: Session=None) -> str or
             return forum_icon(forum_id, icon_map(session))
 
     return url + forum + ext
+

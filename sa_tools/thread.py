@@ -1,3 +1,4 @@
+from sa_tools import get_constructor_args
 from sa_tools.base.sa_collection import SACollection
 from sa_tools.base.descriptors import TriggerProperty
 from sa_tools.parsers.thread import ThreadParser
@@ -65,6 +66,14 @@ def gen_posts(thread_obj: Thread):
 
     for post_info in post_gen:
         yield Post(thread_obj, *post_info)
+
+
+def read(thread_obj: Thread, pg: int=1):
+    args = get_constructor_args(thread_obj)
+    new_thread = Thread(**args)
+    new_thread.read(pg)
+
+    return new_thread
 
 
 def expand(func):

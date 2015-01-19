@@ -1,10 +1,10 @@
 from time import strptime
 
-from bs4 import Tag
 from datetime import datetime
 
 from sa_tools.parsers.parser import Parser
 from sa_tools.parsers.tools.parser_dispatch import ParserDispatch
+from sa_tools.parsers.tools.wrapper import BS4Adapter
 
 
 class PMParser(Parser, ParserDispatch):
@@ -22,7 +22,7 @@ class PMParser(Parser, ParserDispatch):
 
         super().set_parser_map(parser_map=parser_map)
 
-    def parse(self, content: Tag) -> iter:
+    def parse(self, content: BS4Adapter) -> iter:
         content = self.wrap(content)
 
         info_gen = gen_info(content, self.dispatch)
@@ -30,7 +30,7 @@ class PMParser(Parser, ParserDispatch):
         return info_gen
 
 
-def gen_info(content: Tag, dispatch) -> iter(((str, object),)):
+def gen_info(content: BS4Adapter, dispatch) -> iter(((str, object),)):
     tds = content.find_all('td')
 
     for td in tds:
@@ -51,7 +51,7 @@ def gen_info_from_title(key: str, val) -> iter(((str, str),)):
         yield parse_id(key, url)
 
 
-def parse_status(key: str, content: Tag) -> (str, bool):
+def parse_status(key: str, content: BS4Adapter) -> (str, bool):
     new = "http://fi.somethingawful.com/images/newpm.gif"
     indicator = content.img['src']
     key = 'unread'
@@ -59,29 +59,29 @@ def parse_status(key: str, content: Tag) -> (str, bool):
     return key, indicator == new
 
 
-def parse_icon(key: str, content: Tag) -> (str, str or None):
+def parse_icon(key: str, content: BS4Adapter) -> (str, str or None):
     status = (content.img['src'] if content.img else None)
     return key, (content.img['src'] if content.img else None)
 
 
-def parse_title(key: str, content: Tag) -> (str, (str, str)):
+def parse_title(key: str, content: BS4Adapter) -> (str, (str, str)):
     title = content.text.strip()
     url = "http://fi.somethingawful.com/" + content.a['href']
 
     return key, (title, url)
 
 
-def parse_sender(key: str, content: Tag) -> (str, str):
+def parse_sender(key: str, content: BS4Adapter) -> (str, str):
     return key, content.text.strip()
 
 
-def parse_date(key: str, content: Tag) -> (str, datetime):
+def parse_date(key: str, content: BS4Adapter) -> (str, datetime):
     date_str = content.text.strip()
 
     return key, strptime(date_str, '%b %d, %Y at %H:%M')
 
 
-def parse_check(key: str, content: Tag) -> (str, Tag):
+def parse_check(key: str, content: BS4Adapter) -> (str, BS4Adapter):
     return key, content
 
 

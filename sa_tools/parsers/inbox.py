@@ -1,13 +1,13 @@
-from bs4 import Tag
 
 from sa_tools.parsers.parser import Parser
+from sa_tools.parsers.tools.wrapper import BS4Adapter
 
 
 class InboxParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def parse(self, content: Tag) -> (iter, iter):
+    def parse(self, content: BS4Adapter) -> (iter, iter):
         content = self.wrap(content)
 
         info_gen, pm_gen = gen_info(content), gen_pms(content)

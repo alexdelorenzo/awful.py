@@ -5,8 +5,6 @@ from sa_tools.thread import Thread
 
 from collections import OrderedDict
 
-from bs4 import BeautifulSoup
-
 
 class Forum(SACollection):
     threads = TriggerProperty('read', 'threads')
@@ -46,7 +44,7 @@ class Forum(SACollection):
 
         self._add_threads(thread_gen)
 
-    def _add_thread(self, thread_obj: BeautifulSoup):
+    def _add_thread(self, thread_obj: Thread):
         #thread_obj = Thread(self, thread_id, thread_content)
         self.threads[thread_obj.id] = thread_obj
 

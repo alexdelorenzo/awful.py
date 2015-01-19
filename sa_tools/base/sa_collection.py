@@ -51,16 +51,3 @@ class SACollection(SAObj):
         url = self.url + '&' + self._page_keyword + '=' + str(pg)
         self._fetch(url)
         self._setup_navi(pg)
-
-
-class SAImmutableCollection(SAImmutableObject, SACollection):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.unread = False
-
-    def _read(self, pg: int=1):
-        super().read()
-
-    def read(self, pg: int=1):
-        _copy = copy(self)
-        _copy.read(pg)

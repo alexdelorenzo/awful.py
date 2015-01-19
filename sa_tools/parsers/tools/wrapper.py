@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from functools import lru_cache
 from lxml.html import HtmlElement, Element, fromstring, tostring
-from bs4 import BeautifulSoup, Tag
 
 
-class BS4Adaoter(ABC):
+class BS4Adapter(ABC):
     @abstractmethod
     def __getitem__(self, item):
         raise NotImplementedError()
@@ -18,7 +17,7 @@ class BS4Adaoter(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_all(self, tag: str, _class: str=None, **kwargs) -> list:
+    def find_all(self, tag: str, _class: str=None, **kwargs) -> tuple:
         raise NotImplementedError()
 
     @property
@@ -27,8 +26,8 @@ class BS4Adaoter(ABC):
         raise NotImplementedError()
 
 
-class BeauToLxml(BS4Adaoter):
-    def __init__(self, html: None):
+class BeauToLxml(BS4Adapter):
+    def __init__(self, html):
         super().__init__()
 
         if isinstance(html, (str, bytes)):
@@ -46,18 +45,11 @@ class BeauToLxml(BS4Adaoter):
     def __repr__(self):
         return 'BeauToLxml: ' + repr(self.html)
 
-    def __getitem__(self, item: str) -> str or list:
+    def __getitem__(self, item: str) -> str or tuple or None:
         return get(self, item)
 
     def __getattr__(self, item):
         return self.find(item)
-        # val = self.find(item)
-        #
-        # if val:
-        #     return val
-        #
-        # else:
-        #     return getattr(self.html, item)
 
     def decode(self, pretty_print: bool=False, eventual_encoding: str='utf-8', **kwargs):
         return str(self.raw_html, eventual_encoding)
@@ -81,7 +73,7 @@ class BeauToLxml(BS4Adaoter):
 
 
 def get(html: BeauToLxml, item: str) -> str or list:
-    items = html.attrib[item]
+    items = html.html.attrib[item]
 
     if item == 'class' and ' ' in items:
         items = items.split(' ')
@@ -118,7 +110,7 @@ class Wrapper(object):
             self.wrap_parent_content()
 
     @staticmethod
-    def wrap_content(content: str or bytes or Tag, wrapper=BeauToLxml) -> BeautifulSoup:
+    def wrap_content(content: str or bytes or BS4Adapter, wrapper=BeauToLxml) -> BS4Adapter:
         return wrap_content(content, wrapper=wrapper)
 
     def wrap_parent_content(self, wrapper=BeauToLxml):
@@ -137,9 +129,9 @@ class Wrapper(object):
         self.wrap_parent_content()
 
 
-def wrap_content(content: str or bytes or Tag, wrapper=BeauToLxml) -> BeautifulSoup:
+def wrap_content(content: str or bytes or BS4Adapter, wrapper=BeauToLxml) -> BS4Adapter:
     if not is_wrapped(content):
-        if wrapper == BeautifulSoup:
+        if wrapper == BS4Adapter:
             try:
                 content = wrapper(content, 'lxml')
 
@@ -152,7 +144,7 @@ def wrap_content(content: str or bytes or Tag, wrapper=BeauToLxml) -> BeautifulS
     return content
 
 
-def is_wrapped(content: Tag, wrappers: tuple=(BeautifulSoup, Tag, BeauToLxml)) -> bool:
+def is_wrapped(content: BS4Adapter, wrappers: tuple=(BS4Adapter, BeauToLxml)) -> bool:
     content_type = type(content)
 
     return content_type in wrappers

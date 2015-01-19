@@ -1,6 +1,6 @@
 BeautifulSoup4
 requests
-PyQt5
+#PyQt5
 kivy
 
 #PyQt4

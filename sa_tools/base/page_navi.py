@@ -35,3 +35,12 @@ class PageNavi(SAObj):
 
         self._modify_parent()
         self._delete_extra()
+
+
+class ImmutablePageNavi(PageNavi):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def read(*args, **kwargs):
+        pass
+

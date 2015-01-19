@@ -1,3 +1,5 @@
+from copy import copy
+from requests import Session
 from sa_tools.base.dynamic import DynamicMixin
 from sa_tools.base.magic import MagicMixin
 from sa_tools.base.descriptors import IntOrNone
@@ -21,19 +23,8 @@ class SAObj(MagicMixin, DynamicMixin):
         self._reads = 0
 
     def _fetch(self, url: str=None, params: dict=None) -> None:
-        if not url:
-            url = self.url
-
-        if not params:
-            params = dict()
-
-        response = self.session.get(url, params=params)
-
-        if not response.ok:
-            raise Exception(("There was an error with your request ",
-                             url, response.status_code, response.reason))
-
-        self._content = response.content
+        url = url if url else self. url
+        self._content = fetch(self.session, url, params)
 
     def read(self, pg: int=1) -> None:
         """
@@ -49,6 +40,31 @@ class SAObj(MagicMixin, DynamicMixin):
 
     def _apply_key_vals(self, results, condition_map: dict=None) -> None:
         apply_key_vals(self, results, condition_map)
+
+
+class SAImmutableObject(SAObj):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _fetch(self, url: str=None, params: dict=None) -> str or bytes:
+        url = url if url else self. url
+        return fetch(self.session, url, params)
+
+    def read(self, pg: int=1):
+        return copy(self)
+
+
+def fetch(session: Session, url: str, params: dict=None):
+    if not params:
+        params = dict()
+
+    response = session.get(url, params=params)
+
+    if not response.ok:
+        raise Exception(("There was an error with your request ",
+                         url, response.status_code, response.reason))
+
+    return response.content
 
 
 def apply_key_vals(parent, results: iter, condition_map: dict=None) -> None:

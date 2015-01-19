@@ -1,4 +1,5 @@
-from sa_tools.base.sa_obj import SAObj
+from copy import copy
+from sa_tools.base.sa_obj import SAObj, SAImmutableObject
 from sa_tools.base.descriptors import TriggerProperty, IntOrNone
 from sa_tools.base.page_navi import PageNavi
 from sa_tools.parsers.navi import NaviParser
@@ -32,7 +33,7 @@ class SACollection(SAObj):
         Handles negative page numbers to act like negative indices in lists.
         """
 
-        negative_index = pg < 0
+        negative_index = pg < 0v
 
         if negative_index:
             if not self.pages:
@@ -50,3 +51,16 @@ class SACollection(SAObj):
         url = self.url + '&' + self._page_keyword + '=' + str(pg)
         self._fetch(url)
         self._setup_navi(pg)
+
+
+class SAImmutableCollection(SAImmutableObject, SACollection):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unread = False
+
+    def _read(self, pg: int=1):
+        super().read()
+
+    def read(self, pg: int=1):
+        _copy = copy(self)
+        _copy.read(pg)

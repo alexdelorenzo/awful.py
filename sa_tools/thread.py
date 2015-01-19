@@ -60,6 +60,13 @@ class Thread(SACollection):
         self.name = self.title
 
 
+def gen_posts(thread_obj: Thread):
+    post_gen = thread_obj.parser.gen_posts(thread_obj._content)
+
+    for post_info in post_gen:
+        yield Post(thread_obj, *post_info)
+
+
 def expand(func):
     def new(arg):
         return func(*arg)

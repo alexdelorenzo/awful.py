@@ -13,7 +13,8 @@ class Post(SAObj):
         self.body = ""
         self.date_posted = dict()
         self.user_info = dict()
-        self.read()
+        self._set_results()
+        self._delete_extra()
 
     def __repr__(self):
         if self.poster:
@@ -38,7 +39,5 @@ class Post(SAObj):
     def read(self):
         super().read()
 
-        self._set_results()
-        self._delete_extra()
 
 

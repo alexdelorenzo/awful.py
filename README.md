@@ -167,37 +167,6 @@ In [26]: the_pos.navi.
 the_pos.navi.page     the_pos.navi.parent   the_pos.navi.session
 the_pos.navi.pages    the_pos.navi.read     the_pos.navi.unread
 
-In [64]: pprint(the_pos.threads)
-{3522839: Your Operating System is a Piece of Shit: THE RULES,
- 3617700: CJS: no butt stuff,
- 3620430: You would all fuck your computers if they had an appropriate orifice for it,
- 3617332: it's the new pics thread,
- 3620724: it raining out =[,
- 3201527: Description: that darn feline.jpg,
- 3606857: Bitcoin: This is not funny. I feel violated.,
- 3617986: Comptuer advertising: A hole, the entire content is the ad,
- 3606828: Games: never pay more than $35.65 for a computer jame, sage advice from Tim Schafer,
- 3620594: computers will never compete with this,
- 3609208: YVCPOS II: George Lucas Jack-Me-Off Special edition,
- 3561097: Post your idiot spare time projects.,
- 3548182: terrible programmer safe zone/hideout,
- 3620722: Little known fact about microchips,
- 3610457: maul droppers, motorola and moonbounce: the yospos radio thread,
- 3620716: I turned 32 today,
- 3491370: it is the future and we need the yosposest cyberpunk names you got,
- 3619802: the mac pro,
- 3486712: post the most worthless kickstarters and greatest investor rewards you got,
- 3481275: The PL (Programming Language) thread: I'm glad Python is the current hipste,
- 3620250: what to tell your parents when they say their computer is running slow or h,
- 3420578: sci fi postin,
- 3568120: YOSPOS fitness thread,
- 3607978: What the h*ck is happening to Microsoft?,
- 3618779: we havent had a life hacks thread in a while so here's a life hack thread,
- 3619547: Facebook releases new Virtual Reality Farmville games,
- 3602746: Silicon Valley containment zone: Comedy Autopsy,
- 3620315: g+. the greatest social network thing on the thing,
- 3620450: I have an MBP and MPB,
- 3620278: Security fuckup megathread v69 - nadim kobeissi is an idiot}
 ```
 
 ### Threads and LastRead
@@ -329,7 +298,7 @@ In [75]: bad_post.id
 Out[75]: 421953760
 
 In [76]: bad_post.poster
-Out[76]: vaginal culture
+Out[76]: Bad Poster
 ```
 
 ```python
